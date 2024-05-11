@@ -1,9 +1,6 @@
 package com.meztlitech.agrobitacora.controller;
 
-import com.meztlitech.agrobitacora.dto.ActionStatusResponse;
-import com.meztlitech.agrobitacora.dto.JwtAuthenticationResponse;
-import com.meztlitech.agrobitacora.dto.SignInRequest;
-import com.meztlitech.agrobitacora.dto.UserDto;
+import com.meztlitech.agrobitacora.dto.*;
 import com.meztlitech.agrobitacora.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -24,7 +21,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signUp")
-    public ResponseEntity<UserDto> signup(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserResponse> signup(@RequestBody UserDto userDto) {
         return ResponseEntity.ok(authenticationService.create(userDto));
     }
 
@@ -35,7 +32,7 @@ public class AuthenticationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ActionStatusResponse> update(@PathVariable(name = "id") final long id) {
+    public ResponseEntity<ActionStatusResponse> delete(@PathVariable(name = "id") final long id) {
         return ResponseEntity.ok(authenticationService.delete(id));
     }
 }

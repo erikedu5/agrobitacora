@@ -1,5 +1,7 @@
 package com.meztlitech.agrobitacora.service;
 
+import com.meztlitech.agrobitacora.entity.UserEntity;
+import com.meztlitech.agrobitacora.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -27,6 +29,8 @@ public class JwtService {
     @Value("${token.expiration.millis}")
     private long expirationMillis;
 
+    private final UserRepository userRepository;
+
 
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -35,7 +39,10 @@ public class JwtService {
 
     public String generateToken(UserDetails userDetails, Long id) {
         HashMap<String, Object> claims = new HashMap<>();
-        claims.put("ciudadano_id", id);
+        claims.put("user_id", id);
+        Optional<UserEntity> user = userRepository.findById(id);
+        claims.put("role", user.isPresent() ? user.get().getRole(): "N/A");
+        claims.put("fullName", user.get().getName());
         return generateToken(claims, userDetails);
     }
 

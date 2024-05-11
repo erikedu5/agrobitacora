@@ -19,13 +19,16 @@ import java.util.HashSet;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users", uniqueConstraints =  @UniqueConstraint(columnNames = { "user_name", "ciudadano_id" }))
+@Table(name = "users", uniqueConstraints =  @UniqueConstraint(columnNames = { "user_name" }))
 @Data
 public class UserEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "user_name")
     private String userName;
@@ -35,6 +38,12 @@ public class UserEntity implements UserDetails {
 
     @Column(name = "active")
     private boolean active;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "role_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private RoleEntity role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -75,4 +84,7 @@ public class UserEntity implements UserDetails {
         return this.active;
     }
 
+    public RoleEntity getRole() {
+        return role;
+    }
 }
