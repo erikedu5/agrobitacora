@@ -18,15 +18,18 @@ public class CropController {
 
     private final CropService cropService;
 
+    @GetMapping("/all")
+    public ResponseEntity<Page<CropEntity>> getAll(@RequestParam int page,
+                                                   @RequestParam int size,
+                                                   @RequestHeader(value = "Authorization") final String token) {
+        CropFilter cropFilter = new CropFilter(page, size);
+        return ResponseEntity.ok(cropService.getAll(cropFilter, token));
+    }
+
     @PostMapping
     public ResponseEntity<CropEntity> create(@RequestBody CropDto cropDto,
                                              @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(cropService.create(cropDto, token));
     }
 
-    @PostMapping("/all")
-    public ResponseEntity<Page<CropEntity>> getAll(@RequestBody CropFilter cropFilter,
-                                       @RequestHeader(value = "Authorization") final String token) {
-        return ResponseEntity.ok(cropService.getAll(cropFilter, token));
-    }
 }

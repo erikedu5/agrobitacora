@@ -18,10 +18,12 @@ public class IrrigationController {
 
     private final IrrigationService irrigationService;
 
-    @PostMapping("/all")
-    public ResponseEntity<Page<IrrigationEntity>> getAll(@RequestBody IrrigationFilter irrigationFilter,
+    @GetMapping("/all")
+    public ResponseEntity<Page<IrrigationEntity>> getAll(@RequestParam int page,
+                                                         @RequestParam int size,
                                                          @RequestHeader(value = "cropId") final Long cropId,
                                                          @RequestHeader(value = "Authorization") final String token) {
+        IrrigationFilter irrigationFilter = new IrrigationFilter(page, size);
         return ResponseEntity.ok(irrigationService.getAll(irrigationFilter, cropId, token));
     }
 
