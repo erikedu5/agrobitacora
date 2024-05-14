@@ -43,6 +43,7 @@ public class AuthenticationService {
             UserEntity user = userRepository.findByUserName(request.getUserName())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
             String jwt = jwtService.generateToken(user, user.getId());
+
             UserResponse userDto = new UserResponse();
             userDto.setEmail(user.getUsername());
             userDto.setId(user.getId());
@@ -68,15 +69,9 @@ public class AuthenticationService {
             user.setName(request.getName());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setActive(true);
-            UserEntity saved = userRepository.save(user);
+            userRepository.save(user);
 
-            UserResponse userDto = new UserResponse();
-            userDto.setEmail(saved.getUsername());
-            userDto.setId(saved.getId());
-            userDto.setFullName(saved.getName());
-            userDto.setRole(saved.getRole());
-            userDto.setToken(this.signIn(new SignInRequest(request.getUserName(), request.getPassword())).getToken());
-            return userDto;
+            return this.signIn(new SignInRequest(request.getUserName(), request.getPassword()));
         } catch (Exception e) {
             log.info(e.getMessage());
         }
