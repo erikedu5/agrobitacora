@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LaborRepository extends JpaRepository<LaborEntity, Long> {
 
-    @Query("FROM LaborRepository l WHERE l.crop.id = :cropId")
+    @Query("FROM LaborEntity ie WHERE ie.crop.id = :cropId")
     Page<LaborEntity> findAllByCropId(Long cropId, Pageable paging);
 }
