@@ -36,14 +36,20 @@ public class AuthenticationService {
 
     private final RoleRepository roleRepository;
 
-    public JwtAuthenticationResponse signIn(SignInRequest request) {
+    public UserResponse signIn(SignInRequest request) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword()));
             UserEntity user = userRepository.findByUserName(request.getUserName())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
             String jwt = jwtService.generateToken(user, user.getId());
-            return JwtAuthenticationResponse.builder().token(jwt).build();
+            UserResponse userDto = new UserResponse();
+            userDto.setEmail(user.getUsername());
+            userDto.setId(user.getId());
+            userDto.setFullName(user.getName());
+            userDto.setRole(user.getRole());
+            userDto.setToken(JwtAuthenticationResponse.builder().token(jwt).build().getToken());
+            return userDto;
         } catch (Exception e) {
             log.info(e.getMessage());
         }
