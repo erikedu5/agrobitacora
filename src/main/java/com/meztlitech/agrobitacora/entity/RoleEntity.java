@@ -22,7 +22,7 @@ public class RoleEntity {
     private String name;
 
     @Column(name= "isDefault")
-    private boolean isDefault;
+    private boolean forOmission;
 
     @Column(name = "active")
     private boolean active;
