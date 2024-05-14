@@ -39,8 +39,8 @@ public class AuthenticationService {
     public UserResponse signIn(SignInRequest request) {
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword()));
-            UserEntity user = userRepository.findByUserName(request.getUserName())
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            UserEntity user = userRepository.findByUserName(request.getEmail())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
             String jwt = jwtService.generateToken(user, user.getId());
 
@@ -65,13 +65,13 @@ public class AuthenticationService {
             } else if (Objects.isNull(user.getRole())) {
                 user.setRole(roleRepository.findByIsDefault(true));
             }
-            user.setUserName(request.getUserName());
+            user.setUserName(request.getEmail());
             user.setName(request.getName());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setActive(true);
             userRepository.save(user);
 
-            return this.signIn(new SignInRequest(request.getUserName(), request.getPassword()));
+            return this.signIn(new SignInRequest(request.getEmail(), request.getPassword()));
         } catch (Exception e) {
             log.info(e.getMessage());
         }
