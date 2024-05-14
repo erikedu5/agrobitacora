@@ -29,7 +29,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class NutritionService {
+public class FumigationService {
 
     private final ApplicationRepository applicationRepository;
     private final ApplicationDetailRepository applicationDetailRepository;
@@ -41,14 +41,13 @@ public class NutritionService {
     private static final String ROLE_PRODUCTOR = "Productor";
     private static final String ROLE_INGENIERO = "Ingeniero";
 
-
     public ApplicationResponse create(ApplicationDto applicationDto, Long cropId, String token) {
         Claims claimsToken = cropUtil.validateCropByUser(token, cropId);
         RoleEntity role = objectMapper.convertValue(claimsToken.get("role"), RoleEntity.class);
         Long userId = Long.parseLong(claimsToken.get("user_id").toString());
 
         ApplicationEntity applicationEntity = new ApplicationEntity();
-        applicationEntity.setApplicationType(ApplicationType.NUTRICION);
+        applicationEntity.setApplicationType(ApplicationType.FUMIGACION);
         applicationEntity.setDetail(applicationDto.getDetail());
         if (role.getName().equals(ROLE_PRODUCTOR)) {
             applicationEntity.setApplicationDate(applicationDto.getApplicationDate());
@@ -77,7 +76,7 @@ public class NutritionService {
     public Page<ApplicationResponse> getAll(ApplicationFilter applicationFilter, Long cropId, String token) {
         cropUtil.validateCropByUser(token, cropId);
         Pageable paging = PageRequest.of(applicationFilter.getPage(), applicationFilter.getSize());
-        Page<ApplicationEntity> pageApp = applicationRepository.findAllByApplicationType(ApplicationType.NUTRICION, cropId, paging);
+        Page<ApplicationEntity> pageApp = applicationRepository.findAllByApplicationType(ApplicationType.FUMIGACION, cropId, paging);
         List<ApplicationResponse> content = new ArrayList<>();
         pageApp.get().forEach(nutrition -> content.add(this.mapNutrition(nutrition, new ArrayList<>())));
 

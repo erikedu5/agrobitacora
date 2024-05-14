@@ -3,7 +3,7 @@ package com.meztlitech.agrobitacora.dto;
 import lombok.Data;
 
 @Data
-public class NutritionDetailDto {
+public class ApplicationDetailDto {
 
     private Long dosis;
 

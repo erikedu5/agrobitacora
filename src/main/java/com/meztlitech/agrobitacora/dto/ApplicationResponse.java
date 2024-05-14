@@ -1,11 +1,12 @@
 package com.meztlitech.agrobitacora.dto;
 
 import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class NutritionDto {
+public class ApplicationResponse {
 
     private String applicationType;
 
@@ -15,6 +16,12 @@ public class NutritionDto {
 
     private String detail;
 
-    private List<NutritionDetailDto> appDetails;
+    private List<ApplicationDetailDto> appDetails;
+
+    private String technicalName;
+
+    private String recommendationType;
+
+    private Long id;
 
 }
