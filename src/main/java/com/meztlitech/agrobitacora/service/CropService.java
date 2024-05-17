@@ -31,6 +31,9 @@ public class CropService {
         cropEntity.setLatitud(cropDto.getLatitud());
         cropEntity.setLongitud(cropDto.getLongitud());
         cropEntity.setLocation(cropDto.getLocation());
+        cropEntity.setArea(cropDto.getArea());
+        cropEntity.setFlowerName(cropDto.getFlowerName());
+        cropEntity.setNumberPlants(cropDto.getNumberPlants());
         cropEntity.setUser(userRepository.findById(userId).get());
         return cropRepository.save(cropEntity);
     }

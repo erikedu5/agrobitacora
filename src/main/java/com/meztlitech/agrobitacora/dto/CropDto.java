@@ -9,4 +9,8 @@ public class CropDto {
     private Long latitud;
     private Long longitud;
     private String location;
+    private String flowerName;
+    private Long area;
+    private Long numberPlants;
+
 }
