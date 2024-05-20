@@ -39,7 +39,7 @@ public class JwtService {
 
     public String generateToken(UserDetails userDetails, Long id) {
         HashMap<String, Object> claims = new HashMap<>();
-        claims.put("user_id", id);
+        claims.put("id", id);
         Optional<UserEntity> user = userRepository.findById(id);
         claims.put("role", user.isPresent() ? user.get().getRole(): "N/A");
         claims.put("fullName", user.get().getName());

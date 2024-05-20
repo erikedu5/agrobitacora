@@ -24,7 +24,7 @@ public class CropService {
 
     public CropEntity create(CropDto cropDto, String token) {
         Claims claims = jwtService.decodeToken(token);
-        Long userId = Long.parseLong(claims.get("user_id").toString());
+        Long userId = Long.parseLong(claims.get("id").toString());
 
         CropEntity cropEntity = new CropEntity();
         cropEntity.setAlias(cropDto.getAlias());
@@ -40,7 +40,7 @@ public class CropService {
 
     public Page<CropEntity> getAll(CropFilter cropFilter, String token) {
         Claims claims = jwtService.decodeToken(token);
-        Long userId = Long.parseLong(claims.get("user_id").toString());
+        Long userId = Long.parseLong(claims.get("id").toString());
         Pageable paging = PageRequest.of(cropFilter.getPage(), cropFilter.getSize());
         return cropRepository.findAllByUserId(userId, paging);
     }

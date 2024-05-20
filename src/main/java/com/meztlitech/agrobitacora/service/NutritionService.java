@@ -45,7 +45,7 @@ public class NutritionService {
     public ApplicationResponse create(ApplicationDto applicationDto, Long cropId, String token) {
         Claims claimsToken = cropUtil.validateCropByUser(token, cropId);
         RoleEntity role = objectMapper.convertValue(claimsToken.get("role"), RoleEntity.class);
-        Long userId = Long.parseLong(claimsToken.get("user_id").toString());
+        Long userId = Long.parseLong(claimsToken.get("id").toString());
 
         ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setApplicationType(ApplicationType.NUTRICION);
