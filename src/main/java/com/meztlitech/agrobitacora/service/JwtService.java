@@ -42,6 +42,7 @@ public class JwtService {
         claims.put("id", id);
         Optional<UserEntity> user = userRepository.findById(id);
         claims.put("role", user.isPresent() ? user.get().getRole(): "N/A");
+        claims.put("email", user.isPresent() ? user.get().getUsername(): "N/A");
         claims.put("fullName", user.get().getName());
         return generateToken(claims, userDetails);
     }

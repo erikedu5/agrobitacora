@@ -26,6 +26,16 @@ public class CropController {
         return ResponseEntity.ok(cropService.getAll(cropFilter, token));
     }
 
+    @GetMapping("/getById")
+    public ResponseEntity<CropEntity> getById(@RequestParam Long id, @RequestHeader(value = "Authorization") final String token){
+        return ResponseEntity.ok(cropService.getById(id, token));
+    }
+
+    @PutMapping()
+    public ResponseEntity<CropEntity> update(@RequestBody CropDto cropDto, Long id, @RequestHeader(value = "Authorization") final String token){
+        return ResponseEntity.ok(cropService.update(cropDto, id, token));
+    }
+
     @PostMapping
     public ResponseEntity<CropEntity> create(@RequestBody CropDto cropDto,
                                              @RequestHeader(value = "Authorization") final String token) {

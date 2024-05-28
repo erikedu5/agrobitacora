@@ -38,6 +38,34 @@ public class CropService {
         return cropRepository.save(cropEntity);
     }
 
+    public CropEntity getById(Long id, String token){
+
+        Claims claims = jwtService.decodeToken(token);
+        Long userId = Long.parseLong(claims.get("id").toString());
+
+        return cropRepository.findByIdAndUserIdEntity(id, userId);
+
+    }
+
+
+    public CropEntity update(CropDto cropDto, Long id, String token){
+        Claims claims = jwtService.decodeToken(token);
+        Long userId = Long.parseLong(claims.get("id").toString());
+
+        CropEntity crop = cropRepository.findByIdAndUserIdEntity(id, userId);
+
+        crop.setAlias(cropDto.getAlias());
+        crop.setLatitud(cropDto.getLatitud());
+        crop.setLongitud(cropDto.getLongitud());
+        crop.setLocation(cropDto.getLocation());
+        crop.setArea(cropDto.getArea());
+        crop.setFlowerName(cropDto.getFlowerName());
+        crop.setNumberPlants(cropDto.getNumberPlants());
+
+        crop.setUser(userRepository.findById(userId).get());
+        return cropRepository.save(crop);
+    }
+
     public Page<CropEntity> getAll(CropFilter cropFilter, String token) {
         Claims claims = jwtService.decodeToken(token);
         Long userId = Long.parseLong(claims.get("id").toString());
