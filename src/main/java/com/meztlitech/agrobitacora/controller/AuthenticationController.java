@@ -25,6 +25,11 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.create(userDto));
     }
 
+    @PostMapping("/verifySession")
+    public ResponseEntity<UserResponse> verify(@RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(authenticationService.verify(token));
+    }
+
     @PutMapping("/changePassword/{id}")
     public ResponseEntity<ActionStatusResponse> update(@PathVariable(name = "id") final long id,
                                                        @RequestBody UserDto userDto) {

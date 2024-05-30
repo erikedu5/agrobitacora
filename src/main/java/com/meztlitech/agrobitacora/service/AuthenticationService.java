@@ -8,6 +8,7 @@ import com.meztlitech.agrobitacora.dto.UserResponse;
 import com.meztlitech.agrobitacora.entity.UserEntity;
 import com.meztlitech.agrobitacora.repository.RoleRepository;
 import com.meztlitech.agrobitacora.repository.UserRepository;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -117,4 +118,19 @@ public class AuthenticationService {
         return actionStatusResponse;
     }
 
+    public UserResponse verify(String token) {
+        Claims claims = jwtService.decodeToken(token);
+
+        UserEntity user = userRepository.findByUserName(claims.get("email").toString())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
+
+        UserResponse userDto = new UserResponse();
+        userDto.setEmail(user.getUsername());
+        userDto.setId(user.getId());
+        userDto.setFullName(user.getName());
+        userDto.setRole(user.getRole());
+        userDto.setToken(token);
+
+        return userDto;
+    }
 }
