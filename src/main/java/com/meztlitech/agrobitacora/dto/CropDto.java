@@ -6,8 +6,8 @@ import lombok.Data;
 public class CropDto {
 
     private String alias;
-    private Long latitud;
-    private Long longitud;
+    private Double latitud;
+    private Double longitud;
     private String location;
     private String flowerName;
     private Long area;

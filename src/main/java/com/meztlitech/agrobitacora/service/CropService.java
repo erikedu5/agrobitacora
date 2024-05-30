@@ -43,7 +43,7 @@ public class CropService {
         Claims claims = jwtService.decodeToken(token);
         Long userId = Long.parseLong(claims.get("id").toString());
 
-        return cropRepository.findByIdAndUserIdEntity(id, userId);
+        return cropRepository.findByIdAndUserId(id, userId).orElseThrow();
 
     }
 
@@ -52,7 +52,7 @@ public class CropService {
         Claims claims = jwtService.decodeToken(token);
         Long userId = Long.parseLong(claims.get("id").toString());
 
-        CropEntity crop = cropRepository.findByIdAndUserIdEntity(id, userId);
+        CropEntity crop = cropRepository.findByIdAndUserId(id, userId).orElseThrow();
 
         crop.setAlias(cropDto.getAlias());
         crop.setLatitud(cropDto.getLatitud());

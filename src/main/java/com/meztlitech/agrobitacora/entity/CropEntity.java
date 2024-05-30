@@ -28,10 +28,10 @@ public class CropEntity {
     private String location;
 
     @Column(name = "latitud")
-    private Long latitud;
+    private Double latitud;
 
     @Column(name = "longitud")
-    private Long longitud;
+    private Double longitud;
 
     @Column(name = "flower_name")
     private String flowerName;
