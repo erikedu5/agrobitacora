@@ -1,6 +1,7 @@
 package com.meztlitech.agrobitacora.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.meztlitech.agrobitacora.dto.enums.KindBillAssociated;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,16 +16,25 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "production")
+@Table(name = "bill")
 @Data
-public class ProductionEntity {
+public class BillEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "production_date")
-    private LocalDateTime productionDate;
+    @Column(name = "bill_date")
+    private LocalDateTime billDate;
+
+    @Column(name = "concept")
+    private String concept;
+
+    @Column(name = "cost")
+    private Double cost;
+
+    @Column(name = "path_evidence")
+    private String pathEvidence;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "crop_id", nullable = false)
@@ -32,4 +42,10 @@ public class ProductionEntity {
     @JsonIgnore
     private CropEntity crop;
 
+    @Column(name = "bill_associated_id")
+    private Long idBillAssociated;
+
+
+    @Column(name = "kind_bill_associated")
+    private KindBillAssociated kindBillAssociated;
 }
