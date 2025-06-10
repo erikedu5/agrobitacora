@@ -4,6 +4,7 @@ import com.meztlitech.agrobitacora.dto.*;
 import com.meztlitech.agrobitacora.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +21,18 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.signIn(request));
     }
 
+    @PostMapping(value = "/signIn", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<UserResponse> signInForm(SignInRequest request) {
+        return ResponseEntity.ok(authenticationService.signIn(request));
+    }
+
     @PostMapping("/signUp")
     public ResponseEntity<UserResponse> signup(@RequestBody UserDto userDto) {
+        return ResponseEntity.ok(authenticationService.create(userDto));
+    }
+
+    @PostMapping(value = "/signUp", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<UserResponse> signupForm(UserDto userDto) {
         return ResponseEntity.ok(authenticationService.create(userDto));
     }
 
