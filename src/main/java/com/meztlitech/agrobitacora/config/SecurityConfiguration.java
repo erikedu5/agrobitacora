@@ -44,7 +44,16 @@ public class SecurityConfiguration {
             "/v2/api-docs/**",
             "/swagger-resources/**",
             "/auth/signIn",
-            "/auth/signUp"
+            "/auth/signUp",
+            "/",
+            "/auth",
+            "/bill",
+            "/crop",
+            "/fumigation",
+            "/irrigation",
+            "/labor",
+            "/nutrition",
+            "/production"
     };
 
     @Bean

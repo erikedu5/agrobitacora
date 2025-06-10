@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head('Labor')"></head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/}">Agro Bitácora</a>
+  </div>
+</nav>
+<div class="container mt-4">
+  <h1 class="mb-4">Labor Management</h1>
+  <form method="post" action="/labor" class="mb-4">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Fecha</label>
+        <input type="date" name="laborDate" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Tipo</label>
+        <input type="text" name="kindLabor" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Tiempo</label>
+        <input type="number" name="timeLabor" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Trabajadores</label>
+        <input type="number" name="workers_number" class="form-control">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Descripción</label>
+        <textarea name="description" class="form-control"></textarea>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success mt-3">Crear</button>
+  </form>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tipo</th>
+        <th>Fecha</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Aquí se mostrarán las labores -->
+    </tbody>
+  </table>
+  <p><a th:href="@{/}">Volver al inicio</a></p>
+</div>
+<div th:replace="fragments/scripts :: scripts"></div>
+</body>
+</html>
