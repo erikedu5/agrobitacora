@@ -8,7 +8,12 @@ public class ViewController {
 
     @GetMapping("/")
     public String index() {
-        return "index";
+        return "home";
+    }
+
+    @GetMapping("/home")
+    public String home() {
+        return "home";
     }
 
     @GetMapping("/auth")
