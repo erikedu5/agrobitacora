@@ -55,4 +55,18 @@ public class ProductionController {
     public ResponseEntity<ProductionResponse> findById(@PathVariable(name = "id") final long id) {
         return ResponseEntity.ok(productionService.findById(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductionEntity> update(@PathVariable Long id,
+                                                   @Valid @RequestBody ProductionDto productionDto,
+                                                   @RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(productionService.update(id, productionDto, token));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id,
+                                       @RequestHeader(value = "Authorization") final String token) {
+        productionService.delete(id, token);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -42,4 +42,18 @@ public class IrrigationController {
                                    @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(irrigationService.create(irrigationDto, cropId, token));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<IrrigationEntity> update(@PathVariable Long id,
+                                                   @Valid @RequestBody IrrigationDto irrigationDto,
+                                                   @RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(irrigationService.update(id, irrigationDto, token));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id,
+                                       @RequestHeader(value = "Authorization") final String token) {
+        irrigationService.delete(id, token);
+        return ResponseEntity.ok().build();
+    }
 }

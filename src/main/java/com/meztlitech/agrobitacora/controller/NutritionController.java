@@ -54,4 +54,18 @@ public class NutritionController {
     public ResponseEntity<ApplicationResponse> findById(@PathVariable(name = "id") final long id) {
         return ResponseEntity.ok(nutritionService.findById(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApplicationResponse> update(@PathVariable Long id,
+                                                     @Valid @RequestBody ApplicationDto applicationDto,
+                                                     @RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(nutritionService.update(id, applicationDto, token));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id,
+                                       @RequestHeader(value = "Authorization") final String token) {
+        nutritionService.delete(id, token);
+        return ResponseEntity.ok().build();
+    }
 }

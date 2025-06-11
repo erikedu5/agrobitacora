@@ -40,4 +40,20 @@ public class IrrigationService {
 
         return irrigationRepository.save(irrigationEntity);
     }
+
+    public IrrigationEntity update(Long id, IrrigationDto irrigationDto, String token) {
+        IrrigationEntity irrigation = irrigationRepository.findById(id).orElseThrow();
+        cropUtil.validateCropByUser(token, irrigation.getCrop().getId());
+        irrigation.setType(IrrigationType.valueOf(irrigationDto.getType()));
+        irrigation.setTimeInIrrigationInMinutes(irrigationDto.getTimeInIrrigationInMinutes());
+        irrigation.setDate(irrigationDto.getDate());
+        irrigation.setConditions(irrigationDto.getConditions());
+        return irrigationRepository.save(irrigation);
+    }
+
+    public void delete(Long id, String token) {
+        IrrigationEntity irrigation = irrigationRepository.findById(id).orElseThrow();
+        cropUtil.validateCropByUser(token, irrigation.getCrop().getId());
+        irrigationRepository.delete(irrigation);
+    }
 }

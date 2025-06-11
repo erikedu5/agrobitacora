@@ -47,4 +47,18 @@ public class FumigationController {
     public ResponseEntity<ApplicationResponse> findById(@PathVariable(name = "id") final long id) {
         return ResponseEntity.ok(fumigationService.findById(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApplicationResponse> update(@PathVariable Long id,
+                                                     @Valid @RequestBody ApplicationDto applicationDto,
+                                                     @RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(fumigationService.update(id, applicationDto, token));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id,
+                                       @RequestHeader(value = "Authorization") final String token) {
+        fumigationService.delete(id, token);
+        return ResponseEntity.ok().build();
+    }
 }

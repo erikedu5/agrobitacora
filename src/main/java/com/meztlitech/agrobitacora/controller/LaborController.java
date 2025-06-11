@@ -48,4 +48,18 @@ public class LaborController {
         LaborFilter laborFilter = new LaborFilter(page, size);
         return ResponseEntity.ok(laborService.getAll(laborFilter, cropId, token));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<LaborEntity> update(@PathVariable Long id,
+                                              @Valid @RequestBody LaborDto laborDto,
+                                              @RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(laborService.update(id, laborDto, token));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id,
+                                       @RequestHeader(value = "Authorization") final String token) {
+        laborService.delete(id, token);
+        return ResponseEntity.ok().build();
+    }
 }

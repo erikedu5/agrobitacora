@@ -50,4 +50,11 @@ public class CropController {
         return ResponseEntity.ok(cropService.create(cropDto, token));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id,
+                                       @RequestHeader(value = "Authorization") final String token) {
+        cropService.delete(id, token);
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -65,4 +65,21 @@ public class BillService {
         return billRepository.save(bill);
     }
 
+    public BillEntity updateBill(Long id, BillDto billDto, String token) {
+        BillEntity bill = billRepository.findById(id).orElseThrow();
+        cropUtil.validateCropByUser(token, bill.getCrop().getId());
+        bill.setBillDate(billDto.getBillDate());
+        bill.setCost(billDto.getCost());
+        bill.setConcept(billDto.getConcept());
+        bill.setIdBillAssociated(billDto.getIdBillAssociated());
+        bill.setKindBillAssociated(billDto.getKindBillAssociated());
+        return billRepository.save(bill);
+    }
+
+    public void delete(Long id, String token) {
+        BillEntity bill = billRepository.findById(id).orElseThrow();
+        cropUtil.validateCropByUser(token, bill.getCrop().getId());
+        billRepository.delete(bill);
+    }
+
 }

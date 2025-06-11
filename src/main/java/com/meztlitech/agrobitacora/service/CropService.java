@@ -72,4 +72,11 @@ public class CropService {
         Pageable paging = PageRequest.of(cropFilter.getPage(), cropFilter.getSize());
         return cropRepository.findAllByUserId(userId, paging);
     }
+
+    public void delete(Long id, String token) {
+        Claims claims = jwtService.decodeToken(token);
+        Long userId = Long.parseLong(claims.get("id").toString());
+        CropEntity crop = cropRepository.findByIdAndUserId(id, userId).orElseThrow();
+        cropRepository.delete(crop);
+    }
 }

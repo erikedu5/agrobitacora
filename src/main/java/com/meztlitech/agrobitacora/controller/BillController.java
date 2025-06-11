@@ -33,11 +33,25 @@ public class BillController {
         return ResponseEntity.ok(billService.createBill(billDto, cropId, token));
     }
 
-    @PutMapping("/{id}")
+    @PostMapping("/file/{id}")
     public ResponseEntity<BillEntity> addFile(@PathVariable(name = "id") final long id,
                                               @RequestHeader(value = "Authorization") final String token,
                                               @RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok(billService.uploadFile(id, file, token));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BillEntity> update(@PathVariable Long id,
+                                             @Valid @RequestBody BillDto billDto,
+                                             @RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(billService.updateBill(id, billDto, token));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id,
+                                       @RequestHeader(value = "Authorization") final String token) {
+        billService.delete(id, token);
+        return ResponseEntity.ok().build();
     }
 
 }
