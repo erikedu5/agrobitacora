@@ -5,6 +5,8 @@ import com.meztlitech.agrobitacora.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +24,14 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/signIn", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<UserResponse> signInForm(SignInRequest request) {
-        return ResponseEntity.ok(authenticationService.signIn(request));
+    public ResponseEntity<Void> signInForm(SignInRequest request) {
+        UserResponse response = authenticationService.signIn(request);
+        if (response != null && response.getToken() != null) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.LOCATION, "/home");
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @PostMapping("/signUp")
@@ -32,8 +40,14 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/signUp", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<UserResponse> signupForm(UserDto userDto) {
-        return ResponseEntity.ok(authenticationService.create(userDto));
+    public ResponseEntity<Void> signupForm(UserDto userDto) {
+        UserResponse response = authenticationService.create(userDto);
+        if (response != null && response.getToken() != null) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.LOCATION, "/home");
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     @PostMapping("/verifySession")
