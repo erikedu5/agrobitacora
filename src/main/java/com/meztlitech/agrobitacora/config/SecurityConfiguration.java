@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -43,14 +44,20 @@ public class SecurityConfiguration {
             "/swagger-ui/**",
             "/v2/api-docs/**",
             "/swagger-resources/**",
-            "/auth/**"
+            "/auth/**",
+            "/"
     };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(withDefaults())
                 .authorizeHttpRequests(request -> request.requestMatchers(AUTH_WHITE_LIST)
-                        .permitAll().anyRequest().authenticated())
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/bill", "/crop", "/fumigation",
+                                "/irrigation", "/labor", "/nutrition",
+                                "/production").permitAll()
+                        .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
