@@ -55,6 +55,16 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.verify(token));
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<UserResponse> refreshToken(@RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(authenticationService.refreshToken(token));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        return ResponseEntity.ok().build();
+    }
+
     @PutMapping("/changePassword/{id}")
     public ResponseEntity<ActionStatusResponse> update(@PathVariable(name = "id") final long id,
                                                        @RequestBody UserDto userDto) {

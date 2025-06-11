@@ -6,6 +6,14 @@
                 location.href = '/auth';
                 return;
             }
+            const originalFetch = window.fetch;
+            window.fetch = async (input, init = {}) => {
+                init.headers = {
+                    ...(init.headers || {}),
+                    ...(localStorage.getItem('token') ? { 'Authorization': 'Bearer ' + localStorage.getItem('token') } : {})
+                };
+                return originalFetch(input, init);
+            };
             document.querySelectorAll('form.api').forEach(form => {
                 form.addEventListener('submit', async e => {
                     e.preventDefault();
@@ -13,8 +21,7 @@
                     const res = await fetch(form.action, {
                         method: form.method,
                         headers: {
-                            'Content-Type': 'application/json',
-                            ...(localStorage.getItem('token') ? { 'Authorization': 'Bearer ' + localStorage.getItem('token') } : {})
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(data)
                     });
@@ -32,6 +39,58 @@
                     }
                 });
             });
+            const btnLogout = document.getElementById('logout');
+            if (btnLogout) {
+                btnLogout.addEventListener('click', async () => {
+                    await fetch('/auth/logout', { method: 'POST' });
+                    localStorage.removeItem('token');
+                    location.href = '/auth';
+                });
+            }
+
+            async function loadData() {
+                const path = location.pathname;
+                let url = null;
+                let headers = {};
+                let buildRow = () => '';
+
+                if (path === '/crop') {
+                    url = '/crop/all?page=0&size=20';
+                    buildRow = c => `<tr><td>${c.id}</td><td>${c.alias}</td><td>${c.location}</td><td></td></tr>`;
+                }
+
+                const cropId = localStorage.getItem('cropId');
+                if (['/irrigation', '/production', '/labor', '/nutrition', '/fumigation'].includes(path)) {
+                    if (!cropId) return; // no crop selected
+                    headers['cropId'] = cropId;
+                    const base = path.replace('/', '');
+                    url = `/${base}/all?page=0&size=20`;
+                    if (path === '/irrigation') {
+                        buildRow = i => `<tr><td>${i.id}</td><td>${i.date}</td><td>${i.type}</td><td></td></tr>`;
+                    } else if (path === '/labor') {
+                        buildRow = l => `<tr><td>${l.id}</td><td>${l.laborDate}</td><td>${l.kindLabor}</td><td></td></tr>`;
+                    } else if (path === '/production') {
+                        buildRow = p => `<tr><td>${p.id}</td><td>${p.productionDate}</td><td></td><td></td></tr>`;
+                    } else if (path === '/nutrition' || path === '/fumigation') {
+                        buildRow = n => `<tr><td>${n.id}</td><td>${n.applicationType}</td><td>${n.applicationDate}</td><td></td></tr>`;
+                    }
+                }
+
+                if (!url) return;
+                const res = await fetch(url, { headers });
+                if (!res.ok) return;
+                const data = await res.json();
+                const items = data.content || [];
+                const tbody = document.querySelector('table tbody');
+                tbody.innerHTML = '';
+                items.forEach(item => tbody.insertAdjacentHTML('beforeend', buildRow(item)));
+
+                if (path === '/crop' && !cropId && items.length > 0) {
+                    localStorage.setItem('cropId', items[0].id);
+                }
+            }
+
+            loadData();
         });
     </script>
 </th:block>
