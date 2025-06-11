@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head('Crops')"></head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/}">Agro Bitácora</a>
+  </div>
+</nav>
+<div class="container mt-4">
+  <h1 class="mb-4">Crop Management</h1>
+  <form class="api mb-4" method="post" action="/crop">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Alias</label>
+        <input type="text" name="alias" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Ubicación</label>
+        <input type="text" name="location" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Latitud</label>
+        <input type="number" step="0.0001" name="latitud" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Longitud</label>
+        <input type="number" step="0.0001" name="longitud" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Flor</label>
+        <input type="text" name="flowerName" class="form-control">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Area</label>
+        <input type="number" name="area" class="form-control">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Plantas</label>
+        <input type="number" name="numberPlants" class="form-control">
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success mt-3">Crear</button>
+  </form>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Alias</th>
+        <th>Ubicación</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Aquí se listarán los cultivos -->
+    </tbody>
+  </table>
+  <p><a th:href="@{/}">Volver al inicio</a></p>
+</div>
+<div th:replace="fragments/scripts :: scripts"></div>
+</body>
+</html>

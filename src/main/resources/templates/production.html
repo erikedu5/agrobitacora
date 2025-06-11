@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head('Production')"></head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/}">Agro Bitácora</a>
+  </div>
+</nav>
+<div class="container mt-4">
+  <h1 class="mb-4">Production Management</h1>
+  <form class="api mb-4" method="post" action="/production">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Fecha de producción</label>
+        <input type="date" name="productionDate" class="form-control">
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success mt-3">Crear</button>
+  </form>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Aquí se mostrarán las producciones -->
+    </tbody>
+  </table>
+  <p><a th:href="@{/}">Volver al inicio</a></p>
+</div>
+<div th:replace="fragments/scripts :: scripts"></div>
+</body>
+</html>

@@ -7,6 +7,7 @@ import com.meztlitech.agrobitacora.service.NutritionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,13 @@ public class NutritionController {
     public ResponseEntity<ApplicationResponse> create(@RequestBody ApplicationDto applicationDto,
                                                       @RequestHeader(value = "cropId") final Long cropId,
                                                       @RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(nutritionService.create(applicationDto, cropId, token));
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<ApplicationResponse> createForm(ApplicationDto applicationDto,
+                                                          @RequestHeader(value = "cropId") final Long cropId,
+                                                          @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(nutritionService.create(applicationDto, cropId, token));
     }
 

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head('Agro Bitácora')"></head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/}">Agro Bitácora</a>
+  </div>
+</nav>
+<div class="container mt-4">
+  <h1 class="mb-4">Agro-Bitácora</h1>
+  <div class="list-group">
+    <a class="list-group-item list-group-item-action" th:href="@{/bill}">Bills</a>
+    <a class="list-group-item list-group-item-action" th:href="@{/crop}">Crops</a>
+    <a class="list-group-item list-group-item-action" th:href="@{/fumigation}">Fumigation</a>
+    <a class="list-group-item list-group-item-action" th:href="@{/irrigation}">Irrigation</a>
+    <a class="list-group-item list-group-item-action" th:href="@{/labor}">Labor</a>
+    <a class="list-group-item list-group-item-action" th:href="@{/nutrition}">Nutrition</a>
+    <a class="list-group-item list-group-item-action" th:href="@{/production}">Production</a>
+  </div>
+  <button id="logout" class="btn btn-danger mt-3">Cerrar sesión</button>
+</div>
+<div th:replace="fragments/scripts :: scripts"></div>
+</body>
+</html>

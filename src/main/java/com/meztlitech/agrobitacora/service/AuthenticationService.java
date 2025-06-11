@@ -133,4 +133,21 @@ public class AuthenticationService {
 
         return userDto;
     }
+
+    public UserResponse refreshToken(String token) {
+        Claims claims = jwtService.decodeToken(token);
+        String email = claims.get("email").toString();
+        UserEntity user = userRepository.findByUserName(email)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid token"));
+        String newToken = jwtService.generateToken(user, user.getId());
+
+        UserResponse userDto = new UserResponse();
+        userDto.setEmail(user.getUsername());
+        userDto.setId(user.getId());
+        userDto.setFullName(user.getName());
+        userDto.setRole(user.getRole());
+        userDto.setToken(newToken);
+
+        return userDto;
+    }
 }
