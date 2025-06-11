@@ -115,4 +115,33 @@ public class FumigationService {
         List<ApplicationDetailEntity> applicationDetails = applicationDetailRepository.findAllByApplicationId(application.getId());
         return this.mapNutrition(application, applicationDetails);
     }
+
+    public ApplicationResponse update(Long id, ApplicationDto applicationDto, String token) {
+        ApplicationEntity application = applicationRepository.findById(id).orElseThrow();
+        cropUtil.validateCropByUser(token, application.getCrop().getId());
+        application.setDetail(applicationDto.getDetail());
+        application.setApplicationDate(applicationDto.getApplicationDate());
+        application.setVisitDate(applicationDto.getVisitDate());
+        applicationDetailRepository.deleteAll(applicationDetailRepository.findAllByApplicationId(id));
+        List<ApplicationDetailEntity> detailEntities = new ArrayList<>();
+        applicationDto.getAppDetails().forEach(det -> {
+            ApplicationDetailEntity entity = new ApplicationDetailEntity();
+            entity.setCondiciones(det.getCondiciones());
+            entity.setDosis(det.getDosis());
+            entity.setUnit(det.getUnit());
+            entity.setActiveIngredient(det.getActiveIngredient());
+            entity.setProductName(det.getProductName());
+            entity.setApplication(application);
+            detailEntities.add(applicationDetailRepository.save(entity));
+        });
+        ApplicationEntity saved = applicationRepository.save(application);
+        return this.mapNutrition(saved, detailEntities);
+    }
+
+    public void delete(Long id, String token) {
+        ApplicationEntity application = applicationRepository.findById(id).orElseThrow();
+        cropUtil.validateCropByUser(token, application.getCrop().getId());
+        applicationDetailRepository.deleteAll(applicationDetailRepository.findAllByApplicationId(id));
+        applicationRepository.delete(application);
+    }
 }

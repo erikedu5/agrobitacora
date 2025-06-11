@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/fumigation")
@@ -20,14 +21,14 @@ public class FumigationController {
     private final FumigationService fumigationService;
 
     @PostMapping
-    public ResponseEntity<ApplicationResponse> create(@RequestBody ApplicationDto applicationDto,
+    public ResponseEntity<ApplicationResponse> create(@Valid @RequestBody ApplicationDto applicationDto,
                                                       @RequestHeader(value = "cropId") final Long cropId,
                                                       @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(fumigationService.create(applicationDto, cropId, token));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<ApplicationResponse> createForm(ApplicationDto applicationDto,
+    public ResponseEntity<ApplicationResponse> createForm(@Valid ApplicationDto applicationDto,
                                                           @RequestHeader(value = "cropId") final Long cropId,
                                                           @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(fumigationService.create(applicationDto, cropId, token));
@@ -45,5 +46,19 @@ public class FumigationController {
     @GetMapping("/{id}")
     public ResponseEntity<ApplicationResponse> findById(@PathVariable(name = "id") final long id) {
         return ResponseEntity.ok(fumigationService.findById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApplicationResponse> update(@PathVariable Long id,
+                                                     @Valid @RequestBody ApplicationDto applicationDto,
+                                                     @RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(fumigationService.update(id, applicationDto, token));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id,
+                                       @RequestHeader(value = "Authorization") final String token) {
+        fumigationService.delete(id, token);
+        return ResponseEntity.ok().build();
     }
 }
