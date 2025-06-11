@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/crop")
@@ -33,18 +34,18 @@ public class CropController {
     }
 
     @PutMapping()
-    public ResponseEntity<CropEntity> update(@RequestBody CropDto cropDto, Long id, @RequestHeader(value = "Authorization") final String token){
+    public ResponseEntity<CropEntity> update(@Valid @RequestBody CropDto cropDto, Long id, @RequestHeader(value = "Authorization") final String token){
         return ResponseEntity.ok(cropService.update(cropDto, id, token));
     }
 
     @PostMapping
-    public ResponseEntity<CropEntity> create(@RequestBody CropDto cropDto,
+    public ResponseEntity<CropEntity> create(@Valid @RequestBody CropDto cropDto,
                                              @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(cropService.create(cropDto, token));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<CropEntity> createForm(CropDto cropDto,
+    public ResponseEntity<CropEntity> createForm(@Valid CropDto cropDto,
                                                  @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(cropService.create(cropDto, token));
     }

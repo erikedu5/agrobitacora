@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/labor")
@@ -26,14 +27,14 @@ public class LaborController {
     private final LaborService laborService;
 
     @PostMapping
-    public ResponseEntity<LaborEntity> create(@RequestBody LaborDto laborDto,
+    public ResponseEntity<LaborEntity> create(@Valid @RequestBody LaborDto laborDto,
                                               @RequestHeader(value = "cropId") final Long cropId,
                                               @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(laborService.create(laborDto, cropId, token));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<LaborEntity> createForm(LaborDto laborDto,
+    public ResponseEntity<LaborEntity> createForm(@Valid LaborDto laborDto,
                                                   @RequestHeader(value = "cropId") final Long cropId,
                                                   @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(laborService.create(laborDto, cropId, token));

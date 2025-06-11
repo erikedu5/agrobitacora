@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/irrigation")
@@ -29,14 +30,14 @@ public class IrrigationController {
     }
 
     @PostMapping
-    public ResponseEntity<IrrigationEntity> create(@RequestBody IrrigationDto irrigationDto,
+    public ResponseEntity<IrrigationEntity> create(@Valid @RequestBody IrrigationDto irrigationDto,
                                  @RequestHeader(value = "cropId") final Long cropId,
                                  @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(irrigationService.create(irrigationDto, cropId, token));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<IrrigationEntity> createForm(IrrigationDto irrigationDto,
+    public ResponseEntity<IrrigationEntity> createForm(@Valid IrrigationDto irrigationDto,
                                    @RequestHeader(value = "cropId") final Long cropId,
                                    @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(irrigationService.create(irrigationDto, cropId, token));

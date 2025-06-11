@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/bill")
@@ -19,14 +20,14 @@ public class BillController {
     private final BillService billService;
 
     @PostMapping
-    public ResponseEntity<BillEntity> create(@RequestBody BillDto billDto,
+    public ResponseEntity<BillEntity> create(@Valid @RequestBody BillDto billDto,
                                              @RequestHeader(value = "cropId") final Long cropId,
                                              @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(billService.createBill(billDto, cropId, token));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<BillEntity> createForm(BillDto billDto,
+    public ResponseEntity<BillEntity> createForm(@Valid BillDto billDto,
                                                  @RequestHeader(value = "cropId") final Long cropId,
                                                  @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(billService.createBill(billDto, cropId, token));

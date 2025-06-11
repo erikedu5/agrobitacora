@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/production")
@@ -28,14 +29,14 @@ public class ProductionController {
     private final ProductionService productionService;
 
     @PostMapping
-    public ResponseEntity<ProductionEntity> create(@RequestBody ProductionDto productionDto,
+    public ResponseEntity<ProductionEntity> create(@Valid @RequestBody ProductionDto productionDto,
                                                       @RequestHeader(value = "cropId") final Long cropId,
                                                       @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(productionService.create(productionDto, cropId, token));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<ProductionEntity> createForm(ProductionDto productionDto,
+    public ResponseEntity<ProductionEntity> createForm(@Valid ProductionDto productionDto,
                                                        @RequestHeader(value = "cropId") final Long cropId,
                                                        @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(productionService.create(productionDto, cropId, token));

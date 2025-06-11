@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/nutrition")
@@ -27,14 +28,14 @@ public class NutritionController {
     private final NutritionService nutritionService;
 
     @PostMapping
-    public ResponseEntity<ApplicationResponse> create(@RequestBody ApplicationDto applicationDto,
+    public ResponseEntity<ApplicationResponse> create(@Valid @RequestBody ApplicationDto applicationDto,
                                                       @RequestHeader(value = "cropId") final Long cropId,
                                                       @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(nutritionService.create(applicationDto, cropId, token));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<ApplicationResponse> createForm(ApplicationDto applicationDto,
+    public ResponseEntity<ApplicationResponse> createForm(@Valid ApplicationDto applicationDto,
                                                           @RequestHeader(value = "cropId") final Long cropId,
                                                           @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(nutritionService.create(applicationDto, cropId, token));
