@@ -32,6 +32,14 @@
                     }
                 });
             });
+            const btnLogout = document.getElementById('logout');
+            if (btnLogout) {
+                btnLogout.addEventListener('click', async () => {
+                    await fetch('/auth/logout', { method: 'POST', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }});
+                    localStorage.removeItem('token');
+                    location.href = '/auth';
+                });
+            }
         });
     </script>
 </th:block>

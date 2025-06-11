@@ -11,6 +11,8 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.apache.commons.lang3.StringUtils;
+import java.util.Objects;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -48,8 +50,8 @@ public class UserEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<SimpleGrantedAuthority> authorities = new HashSet<>();
-        if (this.id.equals(0L)) {
-            authorities.add(new SimpleGrantedAuthority("admin"));
+        if (Objects.nonNull(this.role) && StringUtils.isNotBlank(this.role.getName())) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role.getName().toUpperCase()));
         }
         return authorities;
     }
