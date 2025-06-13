@@ -1,6 +1,7 @@
 <th:block th:fragment="scripts">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         $(function () {
             if (location.pathname !== '/auth' && !localStorage.getItem('token')) {
@@ -93,6 +94,50 @@
                 renumberProductGroups();
             }
 
+            let cropMap, cropMarker;
+            async function setCropLocation(lat, lng) {
+                const $lat = $('input[name="latitud"]');
+                const $lng = $('input[name="longitud"]');
+                const $loc = $('input[name="location"]');
+                $lat.val(lat.toFixed(6));
+                $lng.val(lng.toFixed(6));
+                try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+                    if (res.ok) {
+                        const info = await res.json();
+                        $loc.val(info.display_name || '');
+                    }
+                } catch (e) {}
+            }
+
+            function initCropMap() {
+                const $map = $('#map');
+                if ($map.length === 0) return;
+                const $lat = $('input[name="latitud"]');
+                const $lng = $('input[name="longitud"]');
+                const lat = parseFloat($lat.val()) || 19.4326;
+                const lng = parseFloat($lng.val()) || -99.1332;
+                if (!cropMap) {
+                    cropMap = L.map('map').setView([lat, lng], 13);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; OpenStreetMap contributors'
+                    }).addTo(cropMap);
+                    cropMarker = L.marker([lat, lng], { draggable: true }).addTo(cropMap);
+                    cropMap.on('click', e => {
+                        cropMarker.setLatLng(e.latlng);
+                        setCropLocation(e.latlng.lat, e.latlng.lng);
+                    });
+                    cropMarker.on('dragend', () => {
+                        const p = cropMarker.getLatLng();
+                        setCropLocation(p.lat, p.lng);
+                    });
+                } else {
+                    cropMap.setView([lat, lng], 13);
+                    cropMarker.setLatLng([lat, lng]);
+                }
+                setCropLocation(lat, lng);
+            }
+
             $('form.api').on('submit', async function (e) {
                 e.preventDefault();
                 const data = formDataToObject(this);
@@ -132,6 +177,8 @@
                 crop: {
                     url: '/crop/all?page=0&size=20',
                     buildRow: c => `<tr data-item="${enc(c)}"><td>${c.id}</td><td>${c.alias}</td><td>${c.location}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
+                    onPageLoad: () => initCropMap(),
+                    onEdit: () => initCropMap(),
                     afterLoad: items => {
                         if (!localStorage.getItem('cropId') && items.length) {
                             localStorage.setItem('cropId', items[0].id);
