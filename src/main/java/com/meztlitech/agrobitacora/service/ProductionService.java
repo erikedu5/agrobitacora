@@ -76,4 +76,27 @@ public class ProductionService {
         ProductionEntity production = productionRepository.findById(id).orElseThrow();
         return this.mapProduction(production);
     }
+
+    public ProductionEntity update(Long id, ProductionDto productionDto, String token) {
+        ProductionEntity production = productionRepository.findById(id).orElseThrow();
+        cropUtil.validateCropByUser(token, production.getCrop().getId());
+        production.setProductionDate(productionDto.getProductionDate());
+        productionDetailRepository.deleteAll(productionDetailRepository.findAllByProductionId(id));
+        for (ProductionDetailDto detail : productionDto.getDetailDtoList()) {
+            ProductionDetailEntity productionDetailEntity = new ProductionDetailEntity();
+            productionDetailEntity.setDescriptionProduct(detail.getDescriptionProduct());
+            productionDetailEntity.setProductionNumber(detail.getProductionNumber());
+            productionDetailEntity.setAnnotation(detail.getAnnotation());
+            productionDetailEntity.setProduction(production);
+            productionDetailRepository.save(productionDetailEntity);
+        }
+        return productionRepository.save(production);
+    }
+
+    public void delete(Long id, String token) {
+        ProductionEntity production = productionRepository.findById(id).orElseThrow();
+        cropUtil.validateCropByUser(token, production.getCrop().getId());
+        productionDetailRepository.deleteAll(productionDetailRepository.findAllByProductionId(id));
+        productionRepository.delete(production);
+    }
 }

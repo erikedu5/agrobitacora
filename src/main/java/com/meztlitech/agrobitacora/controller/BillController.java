@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/bill")
@@ -19,24 +20,38 @@ public class BillController {
     private final BillService billService;
 
     @PostMapping
-    public ResponseEntity<BillEntity> create(@RequestBody BillDto billDto,
+    public ResponseEntity<BillEntity> create(@Valid @RequestBody BillDto billDto,
                                              @RequestHeader(value = "cropId") final Long cropId,
                                              @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(billService.createBill(billDto, cropId, token));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<BillEntity> createForm(BillDto billDto,
+    public ResponseEntity<BillEntity> createForm(@Valid BillDto billDto,
                                                  @RequestHeader(value = "cropId") final Long cropId,
                                                  @RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(billService.createBill(billDto, cropId, token));
     }
 
-    @PutMapping("/{id}")
+    @PostMapping("/file/{id}")
     public ResponseEntity<BillEntity> addFile(@PathVariable(name = "id") final long id,
                                               @RequestHeader(value = "Authorization") final String token,
                                               @RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok(billService.uploadFile(id, file, token));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BillEntity> update(@PathVariable Long id,
+                                             @Valid @RequestBody BillDto billDto,
+                                             @RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(billService.updateBill(id, billDto, token));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id,
+                                       @RequestHeader(value = "Authorization") final String token) {
+        billService.delete(id, token);
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -39,4 +39,21 @@ public class LaborService {
         Pageable paging = PageRequest.of(laborFilter.getPage(), laborFilter.getSize());
         return laborRepository.findAllByCropId(cropId, paging);
     }
+
+    public LaborEntity update(Long id, LaborDto laborDto, String token) {
+        LaborEntity labor = laborRepository.findById(id).orElseThrow();
+        cropUtil.validateCropByUser(token, labor.getCrop().getId());
+        labor.setKindLabor(laborDto.getKindLabor());
+        labor.setLaborDate(laborDto.getLaborDate());
+        labor.setTimeLabor(laborDto.getTimeLabor());
+        labor.setDescription(laborDto.getDescription());
+        labor.setWorkers_number(laborDto.getWorkers_number());
+        return laborRepository.save(labor);
+    }
+
+    public void delete(Long id, String token) {
+        LaborEntity labor = laborRepository.findById(id).orElseThrow();
+        cropUtil.validateCropByUser(token, labor.getCrop().getId());
+        laborRepository.delete(labor);
+    }
 }

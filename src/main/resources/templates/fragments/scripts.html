@@ -53,10 +53,11 @@
                 let url = null;
                 let headers = {};
                 let buildRow = () => '';
+                const enc = obj => encodeURIComponent(JSON.stringify(obj));
 
                 if (path === '/crop') {
                     url = '/crop/all?page=0&size=20';
-                    buildRow = c => `<tr><td>${c.id}</td><td>${c.alias}</td><td>${c.location}</td><td></td></tr>`;
+                    buildRow = c => `<tr data-item="${enc(c)}"><td>${c.id}</td><td>${c.alias}</td><td>${c.location}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`;
                 }
 
                 const cropId = localStorage.getItem('cropId');
@@ -66,13 +67,13 @@
                     const base = path.replace('/', '');
                     url = `/${base}/all?page=0&size=20`;
                     if (path === '/irrigation') {
-                        buildRow = i => `<tr><td>${i.id}</td><td>${i.date}</td><td>${i.type}</td><td></td></tr>`;
+                        buildRow = i => `<tr data-item="${enc(i)}"><td>${i.id}</td><td>${i.date}</td><td>${i.type}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`;
                     } else if (path === '/labor') {
-                        buildRow = l => `<tr><td>${l.id}</td><td>${l.laborDate}</td><td>${l.kindLabor}</td><td></td></tr>`;
+                        buildRow = l => `<tr data-item="${enc(l)}"><td>${l.id}</td><td>${l.laborDate}</td><td>${l.kindLabor}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`;
                     } else if (path === '/production') {
-                        buildRow = p => `<tr><td>${p.id}</td><td>${p.productionDate}</td><td></td><td></td></tr>`;
+                        buildRow = p => `<tr data-item="${enc(p)}"><td>${p.id}</td><td>${p.productionDate}</td><td></td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`;
                     } else if (path === '/nutrition' || path === '/fumigation') {
-                        buildRow = n => `<tr><td>${n.id}</td><td>${n.applicationType}</td><td>${n.applicationDate}</td><td></td></tr>`;
+                        buildRow = n => `<tr data-item="${enc(n)}"><td>${n.id}</td><td>${n.applicationType}</td><td>${n.applicationDate}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`;
                     }
                 }
 
@@ -84,6 +85,29 @@
                 const tbody = document.querySelector('table tbody');
                 tbody.innerHTML = '';
                 items.forEach(item => tbody.insertAdjacentHTML('beforeend', buildRow(item)));
+                tbody.querySelectorAll('button.delete').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const tr = btn.closest('tr');
+                        const id = JSON.parse(decodeURIComponent(tr.dataset.item)).id;
+                        const base = location.pathname.replace('/', '');
+                        const res = await fetch(`/${base}/${id}`, { method: 'DELETE' });
+                        if (res.ok) loadData();
+                    });
+                });
+                tbody.querySelectorAll('button.edit').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const tr = btn.closest('tr');
+                        const data = JSON.parse(decodeURIComponent(tr.dataset.item));
+                        const form = document.querySelector('form.api');
+                        if (!form) return;
+                        Object.entries(data).forEach(([k,v]) => {
+                            const input = form.querySelector(`[name="${k}"]`);
+                            if (input) input.value = v;
+                        });
+                        form.action = `${location.pathname}/${data.id}`;
+                        form.method = 'PUT';
+                    });
+                });
 
                 if (path === '/crop' && !cropId && items.length > 0) {
                     localStorage.setItem('cropId', items[0].id);
