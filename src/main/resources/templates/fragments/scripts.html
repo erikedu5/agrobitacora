@@ -55,6 +55,47 @@
                 });
             }
 
+            function renumberProductGroups() {
+                const container = document.getElementById('products');
+                if (!container) return;
+                container.querySelectorAll('.product-item').forEach((item, idx) => {
+                    item.querySelectorAll('[data-field]').forEach(input => {
+                        const field = input.dataset.field;
+                        input.name = `appDetails[${idx}].${field}`;
+                    });
+                });
+            }
+
+            function addProductGroup(data = {}) {
+                const template = document.getElementById('product-template');
+                const container = document.getElementById('products');
+                if (!template || !container) return;
+                const node = template.content.cloneNode(true);
+                container.appendChild(node);
+                const item = container.lastElementChild;
+                const btn = item.querySelector('.remove-product');
+                if (btn) {
+                    btn.addEventListener('click', () => {
+                        item.remove();
+                        renumberProductGroups();
+                    });
+                }
+                renumberProductGroups();
+                fillForm(item, data);
+            }
+
+            function setProductGroupCount(count) {
+                const container = document.getElementById('products');
+                if (!container) return;
+                while (container.querySelectorAll('.product-item').length < count) {
+                    addProductGroup();
+                }
+                while (container.querySelectorAll('.product-item').length > count) {
+                    container.lastElementChild.remove();
+                }
+                renumberProductGroups();
+            }
+
             document.querySelectorAll('form.api').forEach(form => {
                 form.addEventListener('submit', async e => {
                     e.preventDefault();
@@ -88,6 +129,12 @@
                     localStorage.removeItem('token');
                     location.href = '/auth';
                 });
+            }
+
+            if (location.pathname === '/fumigation') {
+                const addBtn = document.getElementById('add-product');
+                if (addBtn) addBtn.addEventListener('click', () => addProductGroup());
+                addProductGroup();
             }
 
             async function loadData() {
@@ -142,6 +189,10 @@
                         const data = JSON.parse(decodeURIComponent(tr.dataset.item));
                         const form = document.querySelector('form.api');
                         if (!form) return;
+                        if (location.pathname === '/fumigation') {
+                            const len = (data.appDetails && data.appDetails.length) || 1;
+                            setProductGroupCount(len);
+                        }
                         fillForm(form, data);
                         form.action = `${location.pathname}/${data.id}`;
                         form.dataset.method = 'PUT';
