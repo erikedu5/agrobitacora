@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/head :: head('Irrigation')"></head>
+<head th:replace="fragments/head :: head(#{irrigation.title})"></head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <div class="container-fluid">
-    <a class="navbar-brand" th:href="@{/}">Agro Bitácora</a>
-  </div>
-</nav>
+<nav th:replace="fragments/nav :: nav"></nav>
 <div class="container mt-4">
-  <h1 class="mb-4">Irrigation Management</h1>
+  <h1 class="mb-4" th:text="#{irrigation.title}">Irrigation Management</h1>
   <form class="api mb-4" method="post" action="/irrigation">
     <div class="row g-3">
       <div class="col-md-6">
@@ -24,7 +20,7 @@
         <input type="number" name="timeInIrrigationInMinutes" class="form-control" required>
       </div>
     </div>
-    <button type="submit" class="btn btn-success mt-3">Crear</button>
+    <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Crear</button>
   </form>
   <table class="table table-striped">
     <thead>
@@ -39,7 +35,7 @@
       <!-- Aquí se listarán los riegos -->
     </tbody>
   </table>
-  <p><a th:href="@{/}">Volver al inicio</a></p>
+  <p><a th:href="@{/}" th:text="#{link.home}">Volver al inicio</a></p>
 </div>
 <div th:replace="fragments/scripts :: scripts"></div>
 </body>
