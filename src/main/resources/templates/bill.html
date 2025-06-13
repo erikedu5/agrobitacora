@@ -14,6 +14,16 @@
       <label class="form-label">Costo</label>
       <input type="number" step="0.01" name="cost" class="form-control" required>
     </div>
+    <div class="mb-3">
+      <label class="form-label">Tipo de factura</label>
+      <select name="kindBillAssociated" class="form-select" required>
+        <option value="FUMIGATION" th:text="#{bill.kind.FUMIGATION}">FUMIGATION</option>
+        <option value="IRRIGATION" th:text="#{bill.kind.IRRIGATION}">IRRIGATION</option>
+        <option value="LABOR" th:text="#{bill.kind.LABOR}">LABOR</option>
+        <option value="NUTRITION" th:text="#{bill.kind.NUTRITION}">NUTRITION</option>
+        <option value="OTHER" th:text="#{bill.kind.OTHER}">OTHER</option>
+      </select>
+    </div>
     <button type="submit" class="btn btn-success" th:text="#{create.button}">Crear</button>
   </form>
   <table class="table table-striped">

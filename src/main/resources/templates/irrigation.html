@@ -13,7 +13,12 @@
       </div>
       <div class="col-md-6">
         <label class="form-label">Tipo</label>
-        <input type="text" name="type" class="form-control" required>
+        <select name="type" class="form-select" required>
+          <option value="ASPERSION" th:text="#{irr.type.ASPERSION}">ASPERSION</option>
+          <option value="GOTEO" th:text="#{irr.type.GOTEO}">GOTEO</option>
+          <option value="GRAVEDAD" th:text="#{irr.type.GRAVEDAD}">GRAVEDAD</option>
+          <option value="HIDROPONICO" th:text="#{irr.type.HIDROPONICO}">HIDROPONICO</option>
+        </select>
       </div>
       <div class="col-md-6">
         <label class="form-label">Duración (minutos)</label>

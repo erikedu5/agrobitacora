@@ -9,7 +9,10 @@
     <div class="row g-3">
       <div class="col-md-6">
         <label class="form-label">Tipo de aplicación</label>
-        <input type="text" name="applicationType" class="form-control" required>
+        <select name="applicationType" class="form-select" required>
+          <option value="FUMIGACION" th:text="#{app.type.FUMIGACION}">FUMIGACION</option>
+          <option value="NUTRICION" th:text="#{app.type.NUTRICION}">NUTRICION</option>
+        </select>
       </div>
       <div class="col-md-6">
         <label class="form-label">Fecha de visita</label>
