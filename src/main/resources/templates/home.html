@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/head :: head(#{home.title})"></head>
+<head th:replace="~{fragments/head :: head(#{home.title})}"></head>
 <body>
-<nav th:replace="fragments/nav :: nav"></nav>
+<nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
   <h1 class="mb-4" th:text="#{home.title}">Agro-Bitácora</h1>
   <div class="list-group">
@@ -16,6 +16,6 @@
   </div>
   <button id="logout" class="btn btn-danger mt-3" th:text="#{nav.logout}">Cerrar sesión</button>
 </div>
-<div th:replace="fragments/scripts :: scripts"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
 </body>
 </html>

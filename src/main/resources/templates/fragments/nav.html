@@ -2,8 +2,8 @@
   <div class="container-fluid">
     <a class="navbar-brand" th:href="@{/}" th:text="#{nav.title}">Agro Bitácora</a>
     <div class="navbar-nav ms-auto">
-      <a class="nav-link" th:href="|${#request.requestURI}?lang=es|">ES</a>
-      <a class="nav-link" th:href="|${#request.requestURI}?lang=en|">EN</a>
+      <a class="nav-link" th:href="@{?lang=es}">ES</a>
+      <a class="nav-link" th:href="@{?lang=en}">EN</a>
     </div>
   </div>
 </nav>

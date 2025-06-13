@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/head :: head(#{crop.title})"></head>
+<head th:replace="~{fragments/head :: head(#{crop.title})}"></head>
 <body>
-<nav th:replace="fragments/nav :: nav"></nav>
+<nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
   <h1 class="mb-4" th:text="#{crop.title}">Crop Management</h1>
   <form class="api mb-4" method="post" action="/crop">
@@ -53,6 +53,6 @@
   </table>
   <p><a th:href="@{/}" th:text="#{link.home}">Volver al inicio</a></p>
 </div>
-<div th:replace="fragments/scripts :: scripts"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
 </body>
 </html>
