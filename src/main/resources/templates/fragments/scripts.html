@@ -8,14 +8,54 @@
                 location.href = '/auth';
                 return;
             }
+
             const originalFetch = window.fetch;
             window.fetch = async (input, init = {}) => {
                 init.headers = {
                     ...(init.headers || {}),
-                    ...(localStorage.getItem('token') ? { 'Authorization': 'Bearer ' + localStorage.getItem('token') } : {})
+                    ...(localStorage.getItem('token') ? { 'Authorization': 'Bearer ' + localStorage.getItem('token') } : {}),
+                    ...(localStorage.getItem('role') === 'Productor' && localStorage.getItem('cropId') ? { cropId: localStorage.getItem('cropId') } : {})
                 };
                 return originalFetch(input, init);
             };
+
+            async function ensureRole() {
+                if (!localStorage.getItem('role') && localStorage.getItem('token')) {
+                    const res = await fetch('/auth/verify', { method: 'POST' });
+                    if (res.ok) {
+                        const info = await res.json();
+                        if (info.role && info.role.name) {
+                            localStorage.setItem('role', info.role.name);
+                        }
+                    }
+                }
+            }
+
+            async function loadCropSelect() {
+                if (localStorage.getItem('role') !== 'Productor') return;
+                const $select = $('#crop-select');
+                if ($select.length === 0) return;
+                const res = await fetch('/crop/all?page=0&size=20');
+                if (!res.ok) return;
+                const data = await res.json();
+                const items = data.content || [];
+                $select.empty();
+                items.forEach(c => $select.append(`<option value="${c.id}">${c.alias}</option>`));
+                if (!localStorage.getItem('cropId') && items.length) {
+                    localStorage.setItem('cropId', items[0].id);
+                }
+                $select.val(localStorage.getItem('cropId'));
+                $select.removeClass('d-none');
+                $select.on('change', function () {
+                    localStorage.setItem('cropId', this.value);
+                    location.reload();
+                });
+            }
+
+            (async () => {
+                await ensureRole();
+                await loadCropSelect();
+            })();
             function assign(obj, keys, value) {
                 let current = obj;
                 for (let i = 0; i < keys.length; i++) {
@@ -151,6 +191,9 @@
                     if (this.id === 'sign-in-form' || this.id === 'sign-up-form') {
                         const info = await res.json();
                         localStorage.setItem('token', info.token);
+                        if (info.role && info.role.name) {
+                            localStorage.setItem('role', info.role.name);
+                        }
                         location.href = '/';
                     } else {
                         location.reload();
