@@ -88,8 +88,19 @@
             function formDataToObject(form) {
                 const data = {};
                 for (const [key, value] of new FormData(form).entries()) {
+                    const input = form.querySelector(`[name="${key}"]`);
+                    let val = value;
+                    if (input) {
+                        if (input.type === 'number') {
+                            val = value ? Number(value) : null;
+                        } else if (input.type === 'datetime-local') {
+                            val = value ? new Date(value).toISOString().slice(0, 19) : null;
+                        } else if (input.dataset.array === 'csv') {
+                            val = value ? value.split(',').map(v => v.trim()).filter(v => v) : [];
+                        }
+                    }
                     const parts = key.split(/\.|\[|\]/).filter(Boolean);
-                    assign(data, parts, value);
+                    assign(data, parts, val);
                 }
                 return data;
             }
@@ -103,7 +114,15 @@
                         fillForm(form, v, name);
                     } else {
                         const input = form.querySelector(`[name="${name}"]`);
-                        if (input) input.value = v;
+                        if (input) {
+                            let val = v;
+                            if (input.type === 'datetime-local' && typeof v === 'string') {
+                                val = v.substring(0, 19);
+                            } else if (input.dataset.array === 'csv' && Array.isArray(v)) {
+                                val = v.join(', ');
+                            }
+                            input.value = val;
+                        }
                     }
                 });
             }

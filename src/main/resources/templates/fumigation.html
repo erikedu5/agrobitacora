@@ -16,11 +16,11 @@
       </div>
       <div class="col-md-6">
         <label class="form-label">Fecha de visita</label>
-        <input type="date" name="visitDate" class="form-control" required>
+        <input type="datetime-local" step="1" name="visitDate" class="form-control" required>
       </div>
       <div class="col-md-6">
         <label class="form-label">Fecha de aplicación</label>
-        <input type="date" name="applicationDate" class="form-control" required>
+        <input type="datetime-local" step="1" name="applicationDate" class="form-control" required>
       </div>
       <div class="col-12">
         <label class="form-label">Detalle</label>
@@ -54,7 +54,7 @@
           </div>
           <div class="col-12">
             <label class="form-label">Condiciones (separadas por coma)</label>
-            <input type="text" data-field="condiciones" class="form-control">
+            <input type="text" data-field="condiciones" data-array="csv" class="form-control">
           </div>
           <div class="col-12 text-end">
             <button type="button" class="btn btn-danger btn-sm remove-product">Eliminar</button>
