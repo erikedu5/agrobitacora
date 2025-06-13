@@ -1,34 +1,33 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/head :: head('Nutrition')"></head>
+<head th:replace="~{fragments/head :: head(#{nutrition.title})}"></head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <div class="container-fluid">
-    <a class="navbar-brand" th:href="@{/}">Agro Bitácora</a>
-  </div>
-</nav>
+<nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
-  <h1 class="mb-4">Nutrition Management</h1>
+  <h1 class="mb-4" th:text="#{nutrition.title}">Nutrition Management</h1>
   <form class="api mb-4" method="post" action="/nutrition">
     <div class="row g-3">
       <div class="col-md-6">
         <label class="form-label">Tipo de aplicación</label>
-        <input type="text" name="applicationType" class="form-control" required>
+        <select name="applicationType" class="form-select" required>
+          <option value="FUMIGACION" th:text="#{app.type.FUMIGACION}">FUMIGACION</option>
+          <option value="NUTRICION" th:text="#{app.type.NUTRICION}">NUTRICION</option>
+        </select>
       </div>
       <div class="col-md-6">
         <label class="form-label">Fecha de visita</label>
-        <input type="date" name="visitDate" class="form-control" required>
+        <input type="datetime-local" step="1" name="visitDate" class="form-control" required>
       </div>
       <div class="col-md-6">
         <label class="form-label">Fecha de aplicación</label>
-        <input type="date" name="applicationDate" class="form-control" required>
+        <input type="datetime-local" step="1" name="applicationDate" class="form-control" required>
       </div>
       <div class="col-12">
         <label class="form-label">Detalle</label>
         <textarea name="detail" class="form-control" required></textarea>
       </div>
     </div>
-    <button type="submit" class="btn btn-success mt-3">Crear</button>
+    <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Crear</button>
   </form>
   <table class="table table-striped">
     <thead>
@@ -43,8 +42,8 @@
       <!-- Aquí se mostrarán las aplicaciones nutricionales -->
     </tbody>
   </table>
-  <p><a th:href="@{/}">Volver al inicio</a></p>
+  <p><a th:href="@{/}" th:text="#{link.home}">Volver al inicio</a></p>
 </div>
-<div th:replace="fragments/scripts :: scripts"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
 </body>
 </html>

@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/head :: head('Crops')"></head>
+<head th:replace="~{fragments/head :: head(#{crop.title})}"></head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <div class="container-fluid">
-    <a class="navbar-brand" th:href="@{/}">Agro Bitácora</a>
-  </div>
-</nav>
+<nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
-  <h1 class="mb-4">Crop Management</h1>
+  <h1 class="mb-4" th:text="#{crop.title}">Crop Management</h1>
   <form class="api mb-4" method="post" action="/crop">
     <div class="row g-3">
       <div class="col-md-6">
@@ -27,6 +23,9 @@
         <label class="form-label">Longitud</label>
         <input type="number" step="0.0001" name="longitud" class="form-control" required>
       </div>
+      <div class="col-12">
+        <div id="map" style="height: 300px" class="mb-3"></div>
+      </div>
       <div class="col-md-6">
         <label class="form-label">Flor</label>
         <input type="text" name="flowerName" class="form-control" required>
@@ -40,7 +39,7 @@
         <input type="number" name="numberPlants" class="form-control" required>
       </div>
     </div>
-    <button type="submit" class="btn btn-success mt-3">Crear</button>
+    <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Crear</button>
   </form>
   <table class="table table-striped">
     <thead>
@@ -55,8 +54,8 @@
       <!-- Aquí se listarán los cultivos -->
     </tbody>
   </table>
-  <p><a th:href="@{/}">Volver al inicio</a></p>
+  <p><a th:href="@{/}" th:text="#{link.home}">Volver al inicio</a></p>
 </div>
-<div th:replace="fragments/scripts :: scripts"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
 </body>
 </html>
