@@ -27,6 +27,30 @@
         <label class="form-label">Detalle</label>
         <textarea name="detail" class="form-control" required></textarea>
       </div>
+      <div class="col-12">
+        <hr>
+        <h5>Producto</h5>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Nombre del producto</label>
+        <input type="text" name="appDetails[0].productName" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Ingrediente activo</label>
+        <input type="text" name="appDetails[0].activeIngredient" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Dosis</label>
+        <input type="number" name="appDetails[0].dosis" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Unidad</label>
+        <input type="text" name="appDetails[0].unit" class="form-control" required>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Condiciones (separadas por coma)</label>
+        <input type="text" name="appDetails[0].condiciones" class="form-control">
+      </div>
     </div>
     <button type="submit" class="btn btn-success mt-3">Crear</button>
   </form>

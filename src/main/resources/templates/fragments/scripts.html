@@ -14,10 +14,51 @@
                 };
                 return originalFetch(input, init);
             };
+            function assign(obj, keys, value) {
+                let current = obj;
+                for (let i = 0; i < keys.length; i++) {
+                    const key = keys[i];
+                    const prop = isNaN(Number(key)) ? key : Number(key);
+                    const last = i === keys.length - 1;
+                    if (last) {
+                        current[prop] = value;
+                    } else {
+                        if (current[prop] === undefined) {
+                            const nextIsNum = !isNaN(Number(keys[i + 1]));
+                            current[prop] = nextIsNum ? [] : {};
+                        }
+                        current = current[prop];
+                    }
+                }
+            }
+
+            function formDataToObject(form) {
+                const data = {};
+                for (const [key, value] of new FormData(form).entries()) {
+                    const parts = key.split(/\.|\[|\]/).filter(Boolean);
+                    assign(data, parts, value);
+                }
+                return data;
+            }
+
+            function fillForm(form, data, prefix = '') {
+                Object.entries(data).forEach(([k, v]) => {
+                    const name = prefix ? `${prefix}.${k}` : k;
+                    if (Array.isArray(v)) {
+                        v.forEach((item, idx) => fillForm(form, item, `${name}[${idx}]`));
+                    } else if (v && typeof v === 'object') {
+                        fillForm(form, v, name);
+                    } else {
+                        const input = form.querySelector(`[name="${name}"]`);
+                        if (input) input.value = v;
+                    }
+                });
+            }
+
             document.querySelectorAll('form.api').forEach(form => {
                 form.addEventListener('submit', async e => {
                     e.preventDefault();
-                    const data = Object.fromEntries(new FormData(form).entries());
+                    const data = formDataToObject(form);
                     const method = form.dataset.method || form.getAttribute('method') || form.method;
                     const res = await fetch(form.action, {
                         method,
@@ -101,10 +142,7 @@
                         const data = JSON.parse(decodeURIComponent(tr.dataset.item));
                         const form = document.querySelector('form.api');
                         if (!form) return;
-                        Object.entries(data).forEach(([k,v]) => {
-                            const input = form.querySelector(`[name="${k}"]`);
-                            if (input) input.value = v;
-                        });
+                        fillForm(form, data);
                         form.action = `${location.pathname}/${data.id}`;
                         form.dataset.method = 'PUT';
                     });
