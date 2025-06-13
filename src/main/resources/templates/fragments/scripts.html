@@ -1,7 +1,8 @@
 <th:block th:fragment="scripts">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        $(function () {
             if (location.pathname !== '/auth' && !localStorage.getItem('token')) {
                 location.href = '/auth';
                 return;
@@ -56,152 +57,145 @@
             }
 
             function renumberProductGroups() {
-                const container = document.getElementById('products');
-                if (!container) return;
-                container.querySelectorAll('.product-item').forEach((item, idx) => {
-                    item.querySelectorAll('[data-field]').forEach(input => {
-                        const field = input.dataset.field;
-                        input.name = `appDetails[${idx}].${field}`;
+                const $container = $('#products');
+                if ($container.length === 0) return;
+                $container.find('.product-item').each(function (idx) {
+                    $(this).find('[data-field]').each(function () {
+                        const field = $(this).data('field');
+                        $(this).attr('name', `appDetails[${idx}].${field}`);
                     });
                 });
             }
 
             function addProductGroup(data = {}) {
-                const template = document.getElementById('product-template');
-                const container = document.getElementById('products');
-                if (!template || !container) return;
-                const node = template.content.cloneNode(true);
-                container.appendChild(node);
-                const item = container.lastElementChild;
-                const btn = item.querySelector('.remove-product');
-                if (btn) {
-                    btn.addEventListener('click', () => {
-                        item.remove();
-                        renumberProductGroups();
-                    });
-                }
+                const $template = $('#product-template');
+                const $container = $('#products');
+                if ($template.length === 0 || $container.length === 0) return;
+                const $node = $($template.html());
+                $container.append($node);
+                $node.find('.remove-product').on('click', function () {
+                    $node.remove();
+                    renumberProductGroups();
+                });
                 renumberProductGroups();
-                fillForm(item, data);
+                fillForm($node[0], data);
             }
 
             function setProductGroupCount(count) {
-                const container = document.getElementById('products');
-                if (!container) return;
-                while (container.querySelectorAll('.product-item').length < count) {
+                const $container = $('#products');
+                if ($container.length === 0) return;
+                while ($container.find('.product-item').length < count) {
                     addProductGroup();
                 }
-                while (container.querySelectorAll('.product-item').length > count) {
-                    container.lastElementChild.remove();
+                while ($container.find('.product-item').length > count) {
+                    $container.children().last().remove();
                 }
                 renumberProductGroups();
             }
 
-            document.querySelectorAll('form.api').forEach(form => {
-                form.addEventListener('submit', async e => {
-                    e.preventDefault();
-                    const data = formDataToObject(form);
-                    const method = form.dataset.method || form.getAttribute('method') || form.method;
-                    const res = await fetch(form.action, {
-                        method,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    });
-                    if (res.ok) {
-                        if (form.id === 'sign-in-form' || form.id === 'sign-up-form') {
-                            const info = await res.json();
-                            localStorage.setItem('token', info.token);
-                            location.href = '/';
-                        } else {
-                            location.reload();
-                        }
-                    } else if (res.status === 401) {
-                        localStorage.removeItem('token');
-                        location.href = '/auth';
-                    }
+            $('form.api').on('submit', async function (e) {
+                e.preventDefault();
+                const data = formDataToObject(this);
+                const method = this.dataset.method || $(this).attr('method') || this.method;
+                const res = await fetch(this.action, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
                 });
+                if (res.ok) {
+                    if (this.id === 'sign-in-form' || this.id === 'sign-up-form') {
+                        const info = await res.json();
+                        localStorage.setItem('token', info.token);
+                        location.href = '/';
+                    } else {
+                        location.reload();
+                    }
+                } else if (res.status === 401) {
+                    localStorage.removeItem('token');
+                    location.href = '/auth';
+                }
             });
-            const btnLogout = document.getElementById('logout');
-            if (btnLogout) {
-                btnLogout.addEventListener('click', async () => {
+            const $btnLogout = $('#logout');
+            if ($btnLogout.length) {
+                $btnLogout.on('click', async function () {
                     await fetch('/auth/logout', { method: 'POST' });
                     localStorage.removeItem('token');
                     location.href = '/auth';
                 });
             }
 
-            if (location.pathname === '/fumigation') {
-                const addBtn = document.getElementById('add-product');
-                if (addBtn) addBtn.addEventListener('click', () => addProductGroup());
-                addProductGroup();
-            }
+            const page = location.pathname.replace('/', '');
+
+            const enc = obj => encodeURIComponent(JSON.stringify(obj));
+
+            const entities = {
+                crop: {
+                    url: '/crop/all?page=0&size=20',
+                    buildRow: c => `<tr data-item="${enc(c)}"><td>${c.id}</td><td>${c.alias}</td><td>${c.location}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
+                    afterLoad: items => {
+                        if (!localStorage.getItem('cropId') && items.length) {
+                            localStorage.setItem('cropId', items[0].id);
+                        }
+                    }
+                },
+                irrigation: {
+                    url: '/irrigation/all?page=0&size=20',
+                    headers: () => ({ cropId: localStorage.getItem('cropId') }),
+                    buildRow: i => `<tr data-item="${enc(i)}"><td>${i.id}</td><td>${i.date}</td><td>${i.type}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`
+                },
+                labor: {
+                    url: '/labor/all?page=0&size=20',
+                    headers: () => ({ cropId: localStorage.getItem('cropId') }),
+                    buildRow: l => `<tr data-item="${enc(l)}"><td>${l.id}</td><td>${l.laborDate}</td><td>${l.kindLabor}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`
+                },
+                production: {
+                    url: '/production/all?page=0&size=20',
+                    headers: () => ({ cropId: localStorage.getItem('cropId') }),
+                    buildRow: p => `<tr data-item="${enc(p)}"><td>${p.id}</td><td>${p.productionDate}</td><td></td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`
+                },
+                nutrition: {
+                    url: '/nutrition/all?page=0&size=20',
+                    headers: () => ({ cropId: localStorage.getItem('cropId') }),
+                    buildRow: n => `<tr data-item="${enc(n)}"><td>${n.id}</td><td>${n.applicationType}</td><td>${n.applicationDate}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`
+                },
+                fumigation: {
+                    url: '/fumigation/all?page=0&size=20',
+                    headers: () => ({ cropId: localStorage.getItem('cropId') }),
+                    buildRow: f => `<tr data-item="${enc(f)}"><td>${f.id}</td><td>${f.applicationType}</td><td>${f.applicationDate}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
+                    onPageLoad: () => { $('#add-product').on('click', () => addProductGroup()); addProductGroup(); },
+                    onEdit: data => { setProductGroupCount((data.appDetails && data.appDetails.length) || 1); }
+                }
+            };
+
+            const config = entities[page];
+            if (config && config.onPageLoad) config.onPageLoad();
 
             async function loadData() {
-                const path = location.pathname;
-                let url = null;
-                let headers = {};
-                let buildRow = () => '';
-                const enc = obj => encodeURIComponent(JSON.stringify(obj));
-
-                if (path === '/crop') {
-                    url = '/crop/all?page=0&size=20';
-                    buildRow = c => `<tr data-item="${enc(c)}"><td>${c.id}</td><td>${c.alias}</td><td>${c.location}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`;
-                }
-
-                const cropId = localStorage.getItem('cropId');
-                if (['/irrigation', '/production', '/labor', '/nutrition', '/fumigation'].includes(path)) {
-                    if (!cropId) return; // no crop selected
-                    headers['cropId'] = cropId;
-                    const base = path.replace('/', '');
-                    url = `/${base}/all?page=0&size=20`;
-                    if (path === '/irrigation') {
-                        buildRow = i => `<tr data-item="${enc(i)}"><td>${i.id}</td><td>${i.date}</td><td>${i.type}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`;
-                    } else if (path === '/labor') {
-                        buildRow = l => `<tr data-item="${enc(l)}"><td>${l.id}</td><td>${l.laborDate}</td><td>${l.kindLabor}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`;
-                    } else if (path === '/production') {
-                        buildRow = p => `<tr data-item="${enc(p)}"><td>${p.id}</td><td>${p.productionDate}</td><td></td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`;
-                    } else if (path === '/nutrition' || path === '/fumigation') {
-                        buildRow = n => `<tr data-item="${enc(n)}"><td>${n.id}</td><td>${n.applicationType}</td><td>${n.applicationDate}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`;
-                    }
-                }
-
-                if (!url) return;
-                const res = await fetch(url, { headers });
+                if (!config) return;
+                const headers = typeof config.headers === 'function' ? config.headers() : (config.headers || {});
+                if (headers.cropId !== undefined && !headers.cropId) return;
+                const res = await fetch(config.url, { headers });
                 if (!res.ok) return;
                 const data = await res.json();
                 const items = data.content || [];
-                const tbody = document.querySelector('table tbody');
-                tbody.innerHTML = '';
-                items.forEach(item => tbody.insertAdjacentHTML('beforeend', buildRow(item)));
-                tbody.querySelectorAll('button.delete').forEach(btn => {
-                    btn.addEventListener('click', async () => {
-                        const tr = btn.closest('tr');
-                        const id = JSON.parse(decodeURIComponent(tr.dataset.item)).id;
-                        const base = location.pathname.replace('/', '');
-                        const res = await fetch(`/${base}/${id}`, { method: 'DELETE' });
-                        if (res.ok) loadData();
-                    });
+                const $tbody = $('table tbody');
+                $tbody.empty();
+                items.forEach(item => $tbody.append(config.buildRow(item)));
+                $tbody.find('button.delete').on('click', async function () {
+                    const id = JSON.parse(decodeURIComponent($(this).closest('tr').data('item'))).id;
+                    const res = await fetch(`${location.pathname.replace('/', '')}/${id}`, { method: 'DELETE' });
+                    if (res.ok) loadData();
                 });
-                tbody.querySelectorAll('button.edit').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const tr = btn.closest('tr');
-                        const data = JSON.parse(decodeURIComponent(tr.dataset.item));
-                        const form = document.querySelector('form.api');
-                        if (!form) return;
-                        if (location.pathname === '/fumigation') {
-                            const len = (data.appDetails && data.appDetails.length) || 1;
-                            setProductGroupCount(len);
-                        }
-                        fillForm(form, data);
-                        form.action = `${location.pathname}/${data.id}`;
-                        form.dataset.method = 'PUT';
-                    });
+                $tbody.find('button.edit').on('click', function () {
+                    const data = JSON.parse(decodeURIComponent($(this).closest('tr').data('item')));
+                    const $form = $('form.api');
+                    if ($form.length === 0) return;
+                    if (config.onEdit) config.onEdit(data);
+                    fillForm($form[0], data);
+                    $form.attr('action', `${location.pathname}/${data.id}`);
+                    $form[0].dataset.method = 'PUT';
                 });
-
-                if (path === '/crop' && !cropId && items.length > 0) {
-                    localStorage.setItem('cropId', items[0].id);
-                }
+                if (config.afterLoad) config.afterLoad(items);
             }
 
             loadData();
