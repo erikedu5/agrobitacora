@@ -19,6 +19,17 @@
                 return originalFetch(input, init);
             };
 
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (localStorage.getItem('token')) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('token'));
+                    }
+                    if (localStorage.getItem('role') === 'Productor' && localStorage.getItem('cropId')) {
+                        xhr.setRequestHeader('cropId', localStorage.getItem('cropId'));
+                    }
+                }
+            });
+
             async function ensureRole() {
                 if (!localStorage.getItem('role') && localStorage.getItem('token')) {
                     const res = await fetch('/auth/verify', { method: 'POST' });

@@ -16,4 +16,6 @@ Las páginas de gestión ahora muestran automáticamente los registros existente
 Se obtiene la lista con solicitudes `fetch` que incluyen el token almacenado y se
 puebla la tabla de cada vista. Al visitar la sección de cultivos, el primer
 registro disponible se guarda como `cropId` en `localStorage`, lo cual se usa
-para consultar la información asociada en las demás páginas.
+para consultar la información asociada en las demás páginas. Si el usuario es
+Productor, ese `cropId` también se envía como cabecera HTTP en todas las
+peticiones para que el servidor pueda identificar el cultivo seleccionado.
