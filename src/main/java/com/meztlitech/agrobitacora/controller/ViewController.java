@@ -55,4 +55,9 @@ public class ViewController {
     public String production() {
         return "production";
     }
+
+    @GetMapping("/admin")
+    public String admin() {
+        return "admin";
+    }
 }
