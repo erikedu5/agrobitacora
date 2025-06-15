@@ -243,7 +243,8 @@
                         if (info.role && info.role.name) {
                             localStorage.setItem('role', info.role.name);
                         }
-                        location.href = '/';
+                        const target = info.role && info.role.name === 'Administrador' ? '/admin' : '/';
+                        location.href = target;
                     } else {
                         location.reload();
                     }
