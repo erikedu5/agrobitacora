@@ -63,9 +63,12 @@
                 });
             }
 
-            function showAdminMenu() {
+           function showAdminMenu() {
                 if (localStorage.getItem('role') === 'Administrador') {
                     $('#admin-menu').removeClass('d-none');
+                    if (location.pathname === '/' || location.pathname === '/home') {
+                        location.href = '/admin';
+                    }
                 }
             }
 
