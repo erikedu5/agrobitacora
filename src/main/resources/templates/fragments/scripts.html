@@ -253,7 +253,9 @@
                         if (info.role && info.role.name) {
                             localStorage.setItem('role', info.role.name);
                         }
-            const page = location.pathname.replace(/\//g, '');
+                $btnLogout.on('click', async function (e) {
+                    e.preventDefault();
+                    localStorage.removeItem('role');
                 adminusers: {
                     const url = config.deleteUrl ? config.deleteUrl(id) : `/${page}/${id}`;
                         location.reload();
@@ -318,7 +320,11 @@
                     url: '/api/admin/users',
                     deleteUrl: id => `/api/admin/users/${id}`,
                             fetch(`/api/admin/users/${data.id}/limit`, {
-                    deleteUrl: id => `/admin/users/${id}`,
+            if (config && config.onPageLoad) {
+                config.onPageLoad();
+            } else {
+                loadAdminCounts();
+            }
                     skipFormEdit: true,
                     onEdit: data => {
                         const limit = prompt('Límite de cultivos', data.maxCrops || '');

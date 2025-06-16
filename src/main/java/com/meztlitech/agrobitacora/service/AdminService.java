@@ -4,8 +4,6 @@ import com.meztlitech.agrobitacora.dto.UserDto;
 import com.meztlitech.agrobitacora.dto.UserResponse;
 import com.meztlitech.agrobitacora.dto.admin.AdminCountsDto;
 import com.meztlitech.agrobitacora.dto.ActionStatusResponse;
-import com.meztlitech.agrobitacora.dto.CropDto;
-import com.meztlitech.agrobitacora.entity.CropEntity;
 import com.meztlitech.agrobitacora.entity.UserEntity;
 import com.meztlitech.agrobitacora.repository.CropRepository;
 import com.meztlitech.agrobitacora.repository.UserRepository;
@@ -26,23 +24,6 @@ public class AdminService {
     private final RoleRepository roleRepository;
     private final AuthenticationService authenticationService;
 
-    public CropEntity createCropForUser(Long userId, CropDto cropDto) {
-        UserEntity user = userRepository.findById(userId).orElseThrow();
-        if (user.getMaxCrops() != null && user.getMaxCrops() > 0 &&
-                cropRepository.countByUserId(userId) >= user.getMaxCrops()) {
-            throw new IllegalStateException("Crop limit reached");
-        }
-        CropEntity crop = new CropEntity();
-        crop.setAlias(cropDto.getAlias());
-        crop.setLatitud(cropDto.getLatitud());
-        crop.setLongitud(cropDto.getLongitud());
-        crop.setLocation(cropDto.getLocation());
-        crop.setArea(cropDto.getArea());
-        crop.setFlowerName(cropDto.getFlowerName());
-        crop.setNumberPlants(cropDto.getNumberPlants());
-        crop.setUser(user);
-        return cropRepository.save(crop);
-    }
 
     public List<UserEntity> getUsers() {
         return userRepository.findAll();

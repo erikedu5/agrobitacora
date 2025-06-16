@@ -66,8 +66,8 @@ public class ViewController {
         return "admin-users";
     }
 
-    @GetMapping("/admin/crops")
-    public String adminCrops() {
-        return "admin-crops";
+    @GetMapping("/admin/engineers")
+    public String adminEngineers() {
+        return "admin-engineers";
     }
 }
