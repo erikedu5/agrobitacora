@@ -28,7 +28,11 @@ public class AuthenticationController {
         UserResponse response = authenticationService.signIn(request);
         if (response != null && response.getToken() != null) {
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.LOCATION, "/home");
+            String target = "/home";
+            if (response.getRole() != null && "Administrador".equals(response.getRole().getName())) {
+                target = "/admin";
+            }
+            headers.add(HttpHeaders.LOCATION, target);
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -44,7 +48,11 @@ public class AuthenticationController {
         UserResponse response = authenticationService.create(userDto);
         if (response != null && response.getToken() != null) {
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.LOCATION, "/home");
+            String target = "/home";
+            if (response.getRole() != null && "Administrador".equals(response.getRole().getName())) {
+                target = "/admin";
+            }
+            headers.add(HttpHeaders.LOCATION, target);
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

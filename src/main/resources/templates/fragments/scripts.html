@@ -49,7 +49,7 @@
                 const res = await fetch('/crop/all?page=0&size=20');
                 if (!res.ok) return;
                 const data = await res.json();
-                const items = data.content || [];
+                const items = Array.isArray(data) ? data : (data.content || []);
                 $select.empty();
                 items.forEach(c => $select.append(`<option value="${c.id}">${c.alias}</option>`));
                 if (!localStorage.getItem('cropId') && items.length) {
@@ -63,9 +63,19 @@
                 });
             }
 
+           function showAdminMenu() {
+                if (localStorage.getItem('role') === 'Administrador') {
+                    $('#admin-menu').removeClass('d-none');
+                    if (location.pathname === '/' || location.pathname === '/home') {
+                        location.href = '/admin';
+                    }
+                }
+            }
+
             (async () => {
                 await ensureRole();
                 await loadCropSelect();
+                showAdminMenu();
             })();
             function assign(obj, keys, value) {
                 let current = obj;
@@ -164,6 +174,15 @@
                 renumberProductGroups();
             }
 
+            async function loadAdminCounts() {
+                const $div = $('#admin-counts');
+                if ($div.length === 0) return;
+                const res = await fetch('/admin/counts');
+                if (!res.ok) return;
+                const data = await res.json();
+                $div.text(`Usuarios: ${data.users} | Cultivos: ${data.crops}`);
+            }
+
             let cropMap, cropMarker;
             async function setCropLocation(lat, lng) {
                 const $lat = $('input[name="latitud"]');
@@ -224,7 +243,8 @@
                         if (info.role && info.role.name) {
                             localStorage.setItem('role', info.role.name);
                         }
-                        location.href = '/';
+                        const target = info.role && info.role.name === 'Administrador' ? '/admin' : '/';
+                        location.href = target;
                     } else {
                         location.reload();
                     }
@@ -284,6 +304,11 @@
                     buildRow: f => `<tr data-item="${enc(f)}"><td>${f.id}</td><td>${f.applicationType}</td><td>${f.applicationDate}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
                     onPageLoad: () => { $('#add-product').on('click', () => addProductGroup()); addProductGroup(); },
                     onEdit: data => { setProductGroupCount((data.appDetails && data.appDetails.length) || 1); }
+                },
+                admin: {
+                    url: '/admin/users',
+                    buildRow: u => `<tr data-item="${enc(u)}"><td>${u.id}</td><td>${u.name}</td><td>${u.userName}</td><td>${(u.role && u.role.name) || ''}</td><td><button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
+                    afterLoad: loadAdminCounts
                 }
             };
 
@@ -297,7 +322,7 @@
                 const res = await fetch(config.url, { headers });
                 if (!res.ok) return;
                 const data = await res.json();
-                const items = data.content || [];
+                const items = Array.isArray(data) ? data : (data.content || []);
                 const $tbody = $('table tbody');
                 $tbody.empty();
                 items.forEach(item => $tbody.append(config.buildRow(item)));

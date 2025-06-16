@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(#{admin.title})}"></head>
+<body>
+<nav th:replace="~{fragments/nav :: nav}"></nav>
+<div class="container mt-4">
+  <h1 class="mb-4" th:text="#{admin.title}">Admin</h1>
+  <div id="admin-counts" class="mb-4"></div>
+  <form id="admin-user-form" class="api mb-4" method="post" action="/admin/users">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Nombre</label>
+        <input type="text" name="name" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Contraseña</label>
+        <input type="password" name="password" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Role ID</label>
+        <input type="number" name="roleId" class="form-control" required>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Crear</button>
+  </form>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- user rows -->
+    </tbody>
+  </table>
+  <p><a th:href="@{/}" th:text="#{link.home}">Volver al inicio</a></p>
+</div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+</body>
+</html>
