@@ -1,4 +1,4 @@
-window.registerEntity('adminusers', {
+App.registerEntity('adminusers', {
     url: '/api/admin/users?role=Productor',
     buildRow: u => `<tr data-item="${App.enc(u)}"><td>${u.id}</td><td>${u.name}</td><td>${u.userName}</td><td>${u.maxCrops || ''}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
     deleteUrl: id => `/api/admin/users/${id}`,
@@ -13,7 +13,7 @@ window.registerEntity('adminusers', {
     afterLoad: App.loadAdminCounts
 });
 
-window.registerEntity('adminengineers', {
+App.registerEntity('adminengineers', {
     url: '/api/admin/users?role=Ingeniero',
     buildRow: u => `<tr data-item="${App.enc(u)}"><td>${u.id}</td><td>${u.name}</td><td>${u.userName}</td><td>${u.maxCrops || ''}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
     deleteUrl: id => `/api/admin/users/${id}`,
