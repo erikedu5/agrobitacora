@@ -27,6 +27,20 @@
     </div>
     <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Crear</button>
   </form>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Límite</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- engineer rows -->
+    </tbody>
+  </table>
   <p><a th:href="@{/admin}" th:text="#{admin.menu.back}">Volver al inicio</a></p>
 </div>
 <div th:replace="~{fragments/scripts :: scripts}"></div>

@@ -120,6 +120,37 @@ public class AuthenticationService {
         return actionStatusResponse;
     }
 
+    public ActionStatusResponse update(long id, UserDto userDto) {
+        ActionStatusResponse actionStatusResponse = new ActionStatusResponse();
+        try {
+            UserEntity user = userRepository.findById(id).orElseThrow();
+            if (StringUtils.isNotBlank(userDto.getName())) {
+                user.setName(userDto.getName());
+            }
+            if (StringUtils.isNotBlank(userDto.getEmail())) {
+                user.setUserName(userDto.getEmail());
+            }
+            if (StringUtils.isNotBlank(userDto.getPassword())) {
+                user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            }
+            if (userDto.getRoleId() != null) {
+                user.setRole(roleRepository.findById(userDto.getRoleId()).orElseThrow());
+            }
+            if (userDto.getMaxCrops() != null) {
+                user.setMaxCrops(userDto.getMaxCrops());
+            }
+            userRepository.save(user);
+            actionStatusResponse.setId(user.getId());
+            actionStatusResponse.setStatus(HttpStatus.OK);
+            actionStatusResponse.setDescription("Actualizado correctamente");
+        } catch (Exception ex) {
+            Map<HttpStatus, String> errors = new HashMap<>();
+            errors.put(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+            actionStatusResponse.setErrors(errors);
+        }
+        return actionStatusResponse;
+    }
+
     public UserResponse verify(String token) {
         Claims claims = jwtService.decodeToken(token);
 

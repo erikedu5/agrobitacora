@@ -25,7 +25,10 @@ public class AdminService {
     private final AuthenticationService authenticationService;
 
 
-    public List<UserEntity> getUsers() {
+    public List<UserEntity> getUsers(String role) {
+        if (role != null) {
+            return userRepository.findByRoleName(role);
+        }
         return userRepository.findAll();
     }
 
@@ -39,6 +42,10 @@ public class AdminService {
 
     public ActionStatusResponse deleteUser(Long id) {
         return authenticationService.delete(id);
+    }
+
+    public ActionStatusResponse updateUser(Long id, UserDto userDto) {
+        return authenticationService.update(id, userDto);
     }
 
     public ActionStatusResponse setCropLimit(Long userId, Integer maxCrops) {

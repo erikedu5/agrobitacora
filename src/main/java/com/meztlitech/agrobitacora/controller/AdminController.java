@@ -42,9 +42,10 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserEntity>> users(@RequestHeader(value = "Authorization") String token) {
+    public ResponseEntity<List<UserEntity>> users(@RequestHeader(value = "Authorization") String token,
+                                                  @RequestParam(required = false) String role) {
         validateAdmin(token);
-        return ResponseEntity.ok(adminService.getUsers());
+        return ResponseEntity.ok(adminService.getUsers(role));
     }
 
     @PostMapping("/users")
@@ -74,6 +75,14 @@ public class AdminController {
                                                            @RequestHeader(value = "Authorization") String token) {
         validateAdmin(token);
         return ResponseEntity.ok(adminService.deleteUser(id));
+    }
+
+    @PutMapping("/users/{id}")
+    public ResponseEntity<ActionStatusResponse> updateUser(@PathVariable Long id,
+                                                           @RequestBody UserDto userDto,
+                                                           @RequestHeader(value = "Authorization") String token) {
+        validateAdmin(token);
+        return ResponseEntity.ok(adminService.updateUser(id, userDto));
     }
 
     @PutMapping("/users/{id}/limit")

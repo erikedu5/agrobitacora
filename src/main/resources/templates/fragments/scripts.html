@@ -317,16 +317,27 @@
                     onPageLoad: () => { $('#add-product').on('click', () => addProductGroup()); addProductGroup(); },
                     onEdit: data => { setProductGroupCount((data.appDetails && data.appDetails.length) || 1); }
                 },
-                    url: '/api/admin/users',
+                    url: '/api/admin/users?role=Productor',
                     deleteUrl: id => `/api/admin/users/${id}`,
-                            fetch(`/api/admin/users/${data.id}/limit`, {
-            if (config && config.onPageLoad) {
-                config.onPageLoad();
-            } else {
-                loadAdminCounts();
-            }
-                    skipFormEdit: true,
+                        const $form = $('#admin-user-form');
+                        if ($form.length) {
+                            fillForm($form[0], data);
+                            $form.attr('action', `/api/admin/users/${data.id}`);
+                            $form[0].dataset.method = 'PUT';
+                        }
+                    },
+                    afterLoad: loadAdminCounts
+                },
+                adminengineers: {
+                    url: '/api/admin/users?role=Ingeniero',
+                    buildRow: u => `<tr data-item="${enc(u)}"><td>${u.id}</td><td>${u.name}</td><td>${u.userName}</td><td>${u.maxCrops || ''}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
+                    deleteUrl: id => `/api/admin/users/${id}`,
                     onEdit: data => {
+                        const $form = $('#admin-engineer-form');
+                        if ($form.length) {
+                            fillForm($form[0], data);
+                            $form.attr('action', `/api/admin/users/${data.id}`);
+                            $form[0].dataset.method = 'PUT';
                         const limit = prompt('Límite de cultivos', data.maxCrops || '');
                         if (limit !== null) {
                             fetch(`/admin/users/${data.id}/limit`, {
