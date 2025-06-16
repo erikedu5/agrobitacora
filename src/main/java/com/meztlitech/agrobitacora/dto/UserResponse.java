@@ -13,4 +13,5 @@ public class UserResponse {
     private String email;
     private Long id;
     private String token;
+    private Integer maxCrops;
 }

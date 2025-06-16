@@ -41,6 +41,9 @@ public class UserEntity implements UserDetails {
     @Column(name = "active")
     private boolean active;
 
+    @Column(name = "max_crops")
+    private Integer maxCrops;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "role_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

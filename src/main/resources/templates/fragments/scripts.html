@@ -317,7 +317,19 @@
                 },
                 admin: {
                     url: '/admin/users',
-                    buildRow: u => `<tr data-item="${enc(u)}"><td>${u.id}</td><td>${u.name}</td><td>${u.userName}</td><td>${(u.role && u.role.name) || ''}</td><td><button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
+                    buildRow: u => `<tr data-item="${enc(u)}"><td>${u.id}</td><td>${u.name}</td><td>${u.userName}</td><td>${(u.role && u.role.name) || ''}</td><td>${u.maxCrops || ''}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
+                    deleteUrl: id => `/admin/users/${id}`,
+                    skipFormEdit: true,
+                    onEdit: data => {
+                        const limit = prompt('Límite de cultivos', data.maxCrops || '');
+                        if (limit !== null) {
+                            fetch(`/admin/users/${data.id}/limit`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ maxCrops: parseInt(limit) })
+                            }).then(() => loadData());
+                        }
+                    },
                     afterLoad: loadAdminCounts
                 }
             };
@@ -338,14 +350,15 @@
                 items.forEach(item => $tbody.append(config.buildRow(item)));
                 $tbody.find('button.delete').on('click', async function () {
                     const id = JSON.parse(decodeURIComponent($(this).closest('tr').data('item'))).id;
-                    const res = await fetch(`${location.pathname.replace('/', '')}/${id}`, { method: 'DELETE' });
+                    const url = config.deleteUrl ? config.deleteUrl(id) : `${location.pathname.replace('/', '')}/${id}`;
+                    const res = await fetch(url, { method: 'DELETE' });
                     if (res.ok) loadData();
                 });
                 $tbody.find('button.edit').on('click', function () {
                     const data = JSON.parse(decodeURIComponent($(this).closest('tr').data('item')));
-                    const $form = $('form.api');
-                    if ($form.length === 0) return;
                     if (config.onEdit) config.onEdit(data);
+                    const $form = $('form.api');
+                    if ($form.length === 0 || config.skipFormEdit) return;
                     fillForm($form[0], data);
                     $form.attr('action', `${location.pathname}/${data.id}`);
                     $form[0].dataset.method = 'PUT';

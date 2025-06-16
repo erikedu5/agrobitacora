@@ -51,6 +51,7 @@ public class AuthenticationService {
             userDto.setFullName(user.getName());
             userDto.setRole(user.getRole());
             userDto.setToken(JwtAuthenticationResponse.builder().token(jwt).build().getToken());
+            userDto.setMaxCrops(user.getMaxCrops());
             return userDto;
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -70,6 +71,7 @@ public class AuthenticationService {
             user.setName(request.getName());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setActive(true);
+            user.setMaxCrops(request.getMaxCrops());
             userRepository.save(user);
 
             return this.signIn(new SignInRequest(request.getEmail(), request.getPassword()));
@@ -130,6 +132,7 @@ public class AuthenticationService {
         userDto.setFullName(user.getName());
         userDto.setRole(user.getRole());
         userDto.setToken(token);
+        userDto.setMaxCrops(user.getMaxCrops());
 
         return userDto;
     }
@@ -147,6 +150,7 @@ public class AuthenticationService {
         userDto.setFullName(user.getName());
         userDto.setRole(user.getRole());
         userDto.setToken(newToken);
+        userDto.setMaxCrops(user.getMaxCrops());
 
         return userDto;
     }

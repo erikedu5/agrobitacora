@@ -62,6 +62,13 @@ public class AdminController {
         return ResponseEntity.ok(adminService.createUser(userDto));
     }
 
+    @PostMapping("/engineers")
+    public ResponseEntity<UserResponse> createEngineer(@Valid @RequestBody UserDto userDto,
+                                                       @RequestHeader(value = "Authorization") String token) {
+        validateAdmin(token);
+        return ResponseEntity.ok(adminService.createEngineer(userDto));
+    }
+
     @PutMapping("/users/{id}/password")
     public ResponseEntity<ActionStatusResponse> changePassword(@PathVariable Long id,
                                                                @RequestBody UserDto userDto,
@@ -75,6 +82,14 @@ public class AdminController {
                                                            @RequestHeader(value = "Authorization") String token) {
         validateAdmin(token);
         return ResponseEntity.ok(adminService.deleteUser(id));
+    }
+
+    @PutMapping("/users/{id}/limit")
+    public ResponseEntity<ActionStatusResponse> setCropLimit(@PathVariable Long id,
+                                                             @RequestBody UserDto userDto,
+                                                             @RequestHeader(value = "Authorization") String token) {
+        validateAdmin(token);
+        return ResponseEntity.ok(adminService.setCropLimit(id, userDto.getMaxCrops()));
     }
 
     @GetMapping("/counts")

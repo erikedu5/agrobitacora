@@ -9,6 +9,7 @@ import com.meztlitech.agrobitacora.entity.CropEntity;
 import com.meztlitech.agrobitacora.entity.UserEntity;
 import com.meztlitech.agrobitacora.repository.CropRepository;
 import com.meztlitech.agrobitacora.repository.UserRepository;
+import com.meztlitech.agrobitacora.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -22,10 +23,15 @@ public class AdminService {
 
     private final CropRepository cropRepository;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final AuthenticationService authenticationService;
 
     public CropEntity createCropForUser(Long userId, CropDto cropDto) {
         UserEntity user = userRepository.findById(userId).orElseThrow();
+        if (user.getMaxCrops() != null && user.getMaxCrops() > 0 &&
+                cropRepository.countByUserId(userId) >= user.getMaxCrops()) {
+            throw new IllegalStateException("Crop limit reached");
+        }
         CropEntity crop = new CropEntity();
         crop.setAlias(cropDto.getAlias());
         crop.setLatitud(cropDto.getLatitud());
@@ -52,6 +58,22 @@ public class AdminService {
 
     public ActionStatusResponse deleteUser(Long id) {
         return authenticationService.delete(id);
+    }
+
+    public ActionStatusResponse setCropLimit(Long userId, Integer maxCrops) {
+        ActionStatusResponse resp = new ActionStatusResponse();
+        UserEntity user = userRepository.findById(userId).orElseThrow();
+        user.setMaxCrops(maxCrops);
+        userRepository.save(user);
+        resp.setId(user.getId());
+        resp.setStatus(org.springframework.http.HttpStatus.OK);
+        resp.setDescription("Actualizado correctamente");
+        return resp;
+    }
+
+    public UserResponse createEngineer(UserDto userDto) {
+        userDto.setRoleId(roleRepository.findByName("Ingeniero").getId());
+        return authenticationService.create(userDto);
     }
 
     public AdminCountsDto getCounts() {

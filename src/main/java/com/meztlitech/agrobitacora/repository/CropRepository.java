@@ -16,4 +16,7 @@ public interface CropRepository extends JpaRepository<CropEntity, Long> {
     Optional<CropEntity> findByIdAndUserId(Long cropId, Long userId);
     @Query("FROM CropEntity c WHERE c.user.id = :userId")
     Page<CropEntity> findAllByUserId(Long userId, Pageable paging);
+
+    @Query("SELECT count(c) FROM CropEntity c WHERE c.user.id = :userId")
+    long countByUserId(Long userId);
 }
