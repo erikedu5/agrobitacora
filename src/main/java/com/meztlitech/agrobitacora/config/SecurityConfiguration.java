@@ -59,7 +59,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,
                                 "/bill", "/crop", "/fumigation",
                                 "/irrigation", "/labor", "/nutrition",
-                                "/production").permitAll()
+                                "/production", "/admin").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
