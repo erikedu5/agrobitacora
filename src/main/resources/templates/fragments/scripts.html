@@ -63,19 +63,29 @@
                 });
             }
 
-           function showAdminMenu() {
-                if (localStorage.getItem('role') === 'Administrador') {
+           function showMenus() {
+                const role = localStorage.getItem('role');
+                const all = ['#menu-bill','#menu-crop','#menu-fumigation','#menu-irrigation','#menu-labor','#menu-nutrition','#menu-production'];
+                all.forEach(sel => $(sel).addClass('d-none'));
+                $('#admin-menu').addClass('d-none');
+                if (role === 'Administrador') {
                     $('#admin-menu').removeClass('d-none');
                     if (location.pathname === '/' || location.pathname === '/home') {
                         location.href = '/admin';
                     }
+                    return;
                 }
+                let allow = all;
+                if (role === 'Ingeniero') {
+                    allow = ['#menu-fumigation','#menu-nutrition'];
+                }
+                allow.forEach(sel => $(sel).removeClass('d-none'));
             }
 
             (async () => {
                 await ensureRole();
                 await loadCropSelect();
-                showAdminMenu();
+                showMenus();
             })();
             function assign(obj, keys, value) {
                 let current = obj;
