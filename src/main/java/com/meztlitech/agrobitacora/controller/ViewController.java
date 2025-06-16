@@ -60,4 +60,14 @@ public class ViewController {
     public String admin() {
         return "admin";
     }
+
+    @GetMapping("/admin/users")
+    public String adminUsers() {
+        return "admin-users";
+    }
+
+    @GetMapping("/admin/crops")
+    public String adminCrops() {
+        return "admin-crops";
+    }
 }

@@ -253,9 +253,9 @@
                         if (info.role && info.role.name) {
                             localStorage.setItem('role', info.role.name);
                         }
-                        const target = info.role && info.role.name === 'Admin' ? '/admin' : '/';
-                        location.href = target;
-                    } else {
+            const page = location.pathname.replace(/\//g, '');
+                adminusers: {
+                    const url = config.deleteUrl ? config.deleteUrl(id) : `/${page}/${id}`;
                         location.reload();
                     }
                 } else if (res.status === 401) {
