@@ -47,6 +47,7 @@ public class AuthenticationService {
 
             UserResponse userDto = new UserResponse();
             userDto.setEmail(user.getUsername());
+            userDto.setWhatsapp(user.getWhatsapp());
             userDto.setId(user.getId());
             userDto.setFullName(user.getName());
             userDto.setRole(user.getRole());
@@ -71,6 +72,7 @@ public class AuthenticationService {
             user.setName(request.getName());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setActive(true);
+            user.setWhatsapp(request.getWhatsapp());
             user.setMaxCrops(request.getMaxCrops());
             userRepository.save(user);
 
@@ -133,6 +135,9 @@ public class AuthenticationService {
             if (StringUtils.isNotBlank(userDto.getPassword())) {
                 user.setPassword(passwordEncoder.encode(userDto.getPassword()));
             }
+            if (StringUtils.isNotBlank(userDto.getWhatsapp())) {
+                user.setWhatsapp(userDto.getWhatsapp());
+            }
             if (userDto.getRoleId() != null) {
                 user.setRole(roleRepository.findById(userDto.getRoleId()).orElseThrow());
             }
@@ -159,6 +164,7 @@ public class AuthenticationService {
 
         UserResponse userDto = new UserResponse();
         userDto.setEmail(user.getUsername());
+        userDto.setWhatsapp(user.getWhatsapp());
         userDto.setId(user.getId());
         userDto.setFullName(user.getName());
         userDto.setRole(user.getRole());
@@ -177,6 +183,7 @@ public class AuthenticationService {
 
         UserResponse userDto = new UserResponse();
         userDto.setEmail(user.getUsername());
+        userDto.setWhatsapp(user.getWhatsapp());
         userDto.setId(user.getId());
         userDto.setFullName(user.getName());
         userDto.setRole(user.getRole());

@@ -31,7 +31,7 @@ public class AdminController {
     private final AdminService adminService;
     private final JwtService jwtService;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private static final String ROLE_ADMIN = "Administrador";
+    private static final String ROLE_ADMIN = "Admin";
 
     private void validateAdmin(String token) {
         Claims claims = jwtService.decodeToken(token);

@@ -13,8 +13,12 @@
         <input type="text" name="name" class="form-control" required>
       </div>
       <div class="col-md-4">
-        <label class="form-label">Email</label>
-        <input type="email" name="email" class="form-control" required>
+        <label class="form-label">Usuario</label>
+        <input type="text" name="email" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Whatsapp</label>
+        <input type="text" name="whatsapp" class="form-control">
       </div>
       <div class="col-md-4">
         <label class="form-label">Contraseña</label>
@@ -32,7 +36,8 @@
       <tr>
         <th>ID</th>
         <th>Nombre</th>
-        <th>Email</th>
+        <th>Usuario</th>
+        <th>Whatsapp</th>
         <th>Límite</th>
         <th></th>
       </tr>
@@ -43,6 +48,6 @@
   </table>
   <p><a th:href="@{/admin}" th:text="#{admin.menu.back}">Volver al inicio</a></p>
 </div>
-<div th:replace="~{fragments/scripts :: scripts}"></div>
+<div th:replace="~{fragments/scripts :: admin-scripts}"></div>
 </body>
 </html>
