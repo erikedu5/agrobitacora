@@ -35,6 +35,9 @@ public class UserEntity implements UserDetails {
     @Column(name = "user_name")
     private String userName;
 
+    @Column(name = "whatsapp")
+    private String whatsapp;
+
     @Column(name = "password")
     private String password;
 

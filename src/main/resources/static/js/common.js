@@ -152,7 +152,7 @@
         const res = await fetch('/api/admin/counts');
         if (!res.ok) return;
         const data = await res.json();
-        $div.text(`Usuarios: ${data.users} | Cultivos: ${data.crops}`);
+        $div.text(`Productores: ${data.producers} | Ingenieros: ${data.engineers} | Admins: ${data.admins}`);
     };
 
     App.loadData = async function (page) {

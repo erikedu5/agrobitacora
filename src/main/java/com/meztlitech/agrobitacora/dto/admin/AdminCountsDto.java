@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class AdminCountsDto {
-    private long users;
-    private long crops;
+    private long producers;
+    private long engineers;
+    private long admins;
 }

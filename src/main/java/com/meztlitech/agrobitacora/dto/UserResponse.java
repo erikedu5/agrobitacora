@@ -11,6 +11,7 @@ public class UserResponse {
     private String fullName;
     private RoleEntity role;
     private String email;
+    private String whatsapp;
     private Long id;
     private String token;
     private Integer maxCrops;

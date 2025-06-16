@@ -1,6 +1,6 @@
 App.registerEntity('adminusers', {
     url: '/api/admin/users?role=Productor',
-    buildRow: u => `<tr data-item="${App.enc(u)}"><td>${u.id}</td><td>${u.name}</td><td>${u.username}</td><td>${u.maxCrops || ''}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
+    buildRow: u => `<tr data-item="${App.enc(u)}"><td>${u.id}</td><td>${u.name}</td><td>${u.userName}</td><td>${u.whatsapp || ''}</td><td>${u.maxCrops || ''}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
     deleteUrl: id => `/api/admin/users/${id}`,
     onEdit: data => {
         const $form = $('#admin-user-form');
@@ -15,7 +15,7 @@ App.registerEntity('adminusers', {
 
 App.registerEntity('adminengineers', {
     url: '/api/admin/users?role=Ingeniero',
-    buildRow: u => `<tr data-item="${App.enc(u)}"><td>${u.id}</td><td>${u.name}</td><td>${u.userName}</td><td>${u.maxCrops || ''}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
+    buildRow: u => `<tr data-item="${App.enc(u)}"><td>${u.id}</td><td>${u.name}</td><td>${u.userName}</td><td>${u.whatsapp || ''}</td><td>${u.maxCrops || ''}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
     deleteUrl: id => `/api/admin/users/${id}`,
     onEdit: data => {
         const $form = $('#admin-engineer-form');
