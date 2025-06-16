@@ -31,15 +31,14 @@ public class AdminController {
     private final AdminService adminService;
     private final JwtService jwtService;
     private final ObjectMapper objectMapper = new ObjectMapper();
-        }
-    }
+    private static final String ROLE_ADMIN = "Administrador";
 
-    @PostMapping("/users/{userId}/crops")
-    public ResponseEntity<CropEntity> createCrop(@PathVariable Long userId,
-                                                 @Valid @RequestBody CropDto cropDto,
-                                                 @RequestHeader(value = "Authorization") String token) {
-        validateAdmin(token);
-        return ResponseEntity.ok(adminService.createCropForUser(userId, cropDto));
+    private void validateAdmin(String token) {
+        Claims claims = jwtService.decodeToken(token);
+        RoleEntity role = objectMapper.convertValue(claims.get("role"), RoleEntity.class);
+        if (!ROLE_ADMIN.equals(role.getName())) {
+            throw new HttpServerErrorException(HttpStatus.FORBIDDEN, "Access denied");
+        }
     }
 
     @GetMapping("/users")

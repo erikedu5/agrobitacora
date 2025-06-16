@@ -48,6 +48,7 @@ public class SecurityConfiguration {
             "/v2/api-docs/**",
             "/swagger-resources/**",
             "/auth/**",
+            "/favicon.ico",
             "/"
     };
 
