@@ -68,7 +68,7 @@
                 const all = ['#menu-bill','#menu-crop','#menu-fumigation','#menu-irrigation','#menu-labor','#menu-nutrition','#menu-production'];
                 all.forEach(sel => $(sel).addClass('d-none'));
                 $('#admin-menu').addClass('d-none');
-                if (role === 'Administrador') {
+                if (role === 'Admin') {
                     $('#admin-menu').removeClass('d-none');
                     if (location.pathname === '/' || location.pathname === '/home') {
                         location.href = '/admin';
@@ -253,7 +253,7 @@
                         if (info.role && info.role.name) {
                             localStorage.setItem('role', info.role.name);
                         }
-                        const target = info.role && info.role.name === 'Administrador' ? '/admin' : '/';
+                        const target = info.role && info.role.name === 'Admin' ? '/admin' : '/';
                         location.href = target;
                     } else {
                         location.reload();

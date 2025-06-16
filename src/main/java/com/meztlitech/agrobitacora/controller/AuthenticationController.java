@@ -29,7 +29,7 @@ public class AuthenticationController {
         if (response != null && response.getToken() != null) {
             HttpHeaders headers = new HttpHeaders();
             String target = "/home";
-            if (response.getRole() != null && "Administrador".equals(response.getRole().getName())) {
+            if (response.getRole() != null && "Admin".equals(response.getRole().getName())) {
                 target = "/admin";
             }
             headers.add(HttpHeaders.LOCATION, target);
@@ -49,7 +49,7 @@ public class AuthenticationController {
         if (response != null && response.getToken() != null) {
             HttpHeaders headers = new HttpHeaders();
             String target = "/home";
-            if (response.getRole() != null && "Administrador".equals(response.getRole().getName())) {
+            if (response.getRole() != null && "Admin".equals(response.getRole().getName())) {
                 target = "/admin";
             }
             headers.add(HttpHeaders.LOCATION, target);
