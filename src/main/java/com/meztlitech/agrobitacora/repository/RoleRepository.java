@@ -11,4 +11,6 @@ public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
 
     @Query("FROM RoleEntity u WHERE u.forOmission = :isDefault")
     RoleEntity findByIsDefault(boolean isDefault);
+
+    RoleEntity findByName(String name);
 }

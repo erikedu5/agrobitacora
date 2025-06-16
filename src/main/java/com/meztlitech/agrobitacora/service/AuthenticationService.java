@@ -51,6 +51,7 @@ public class AuthenticationService {
             userDto.setFullName(user.getName());
             userDto.setRole(user.getRole());
             userDto.setToken(JwtAuthenticationResponse.builder().token(jwt).build().getToken());
+            userDto.setMaxCrops(user.getMaxCrops());
             return userDto;
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -70,6 +71,7 @@ public class AuthenticationService {
             user.setName(request.getName());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setActive(true);
+            user.setMaxCrops(request.getMaxCrops());
             userRepository.save(user);
 
             return this.signIn(new SignInRequest(request.getEmail(), request.getPassword()));
@@ -118,6 +120,37 @@ public class AuthenticationService {
         return actionStatusResponse;
     }
 
+    public ActionStatusResponse update(long id, UserDto userDto) {
+        ActionStatusResponse actionStatusResponse = new ActionStatusResponse();
+        try {
+            UserEntity user = userRepository.findById(id).orElseThrow();
+            if (StringUtils.isNotBlank(userDto.getName())) {
+                user.setName(userDto.getName());
+            }
+            if (StringUtils.isNotBlank(userDto.getEmail())) {
+                user.setUserName(userDto.getEmail());
+            }
+            if (StringUtils.isNotBlank(userDto.getPassword())) {
+                user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            }
+            if (userDto.getRoleId() != null) {
+                user.setRole(roleRepository.findById(userDto.getRoleId()).orElseThrow());
+            }
+            if (userDto.getMaxCrops() != null) {
+                user.setMaxCrops(userDto.getMaxCrops());
+            }
+            userRepository.save(user);
+            actionStatusResponse.setId(user.getId());
+            actionStatusResponse.setStatus(HttpStatus.OK);
+            actionStatusResponse.setDescription("Actualizado correctamente");
+        } catch (Exception ex) {
+            Map<HttpStatus, String> errors = new HashMap<>();
+            errors.put(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+            actionStatusResponse.setErrors(errors);
+        }
+        return actionStatusResponse;
+    }
+
     public UserResponse verify(String token) {
         Claims claims = jwtService.decodeToken(token);
 
@@ -130,6 +163,7 @@ public class AuthenticationService {
         userDto.setFullName(user.getName());
         userDto.setRole(user.getRole());
         userDto.setToken(token);
+        userDto.setMaxCrops(user.getMaxCrops());
 
         return userDto;
     }
@@ -147,6 +181,7 @@ public class AuthenticationService {
         userDto.setFullName(user.getName());
         userDto.setRole(user.getRole());
         userDto.setToken(newToken);
+        userDto.setMaxCrops(user.getMaxCrops());
 
         return userDto;
     }

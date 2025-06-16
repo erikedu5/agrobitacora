@@ -63,19 +63,29 @@
                 });
             }
 
-           function showAdminMenu() {
-                if (localStorage.getItem('role') === 'Administrador') {
+           function showMenus() {
+                const role = localStorage.getItem('role');
+                const all = ['#menu-bill','#menu-crop','#menu-fumigation','#menu-irrigation','#menu-labor','#menu-nutrition','#menu-production'];
+                all.forEach(sel => $(sel).addClass('d-none'));
+                $('#admin-menu').addClass('d-none');
+                if (role === 'Admin') {
                     $('#admin-menu').removeClass('d-none');
                     if (location.pathname === '/' || location.pathname === '/home') {
                         location.href = '/admin';
                     }
+                    return;
                 }
+                let allow = all;
+                if (role === 'Ingeniero') {
+                    allow = ['#menu-fumigation','#menu-nutrition'];
+                }
+                allow.forEach(sel => $(sel).removeClass('d-none'));
             }
 
             (async () => {
                 await ensureRole();
                 await loadCropSelect();
-                showAdminMenu();
+                showMenus();
             })();
             function assign(obj, keys, value) {
                 let current = obj;
@@ -177,7 +187,7 @@
             async function loadAdminCounts() {
                 const $div = $('#admin-counts');
                 if ($div.length === 0) return;
-                const res = await fetch('/admin/counts');
+                const res = await fetch('/api/admin/counts');
                 if (!res.ok) return;
                 const data = await res.json();
                 $div.text(`Usuarios: ${data.users} | Cultivos: ${data.crops}`);
@@ -243,9 +253,11 @@
                         if (info.role && info.role.name) {
                             localStorage.setItem('role', info.role.name);
                         }
-                        const target = info.role && info.role.name === 'Administrador' ? '/admin' : '/';
-                        location.href = target;
-                    } else {
+                $btnLogout.on('click', async function (e) {
+                    e.preventDefault();
+                    localStorage.removeItem('role');
+                adminusers: {
+                    const url = config.deleteUrl ? config.deleteUrl(id) : `/${page}/${id}`;
                         location.reload();
                     }
                 } else if (res.status === 401) {
@@ -305,9 +317,36 @@
                     onPageLoad: () => { $('#add-product').on('click', () => addProductGroup()); addProductGroup(); },
                     onEdit: data => { setProductGroupCount((data.appDetails && data.appDetails.length) || 1); }
                 },
-                admin: {
-                    url: '/admin/users',
-                    buildRow: u => `<tr data-item="${enc(u)}"><td>${u.id}</td><td>${u.name}</td><td>${u.userName}</td><td>${(u.role && u.role.name) || ''}</td><td><button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
+                    url: '/api/admin/users?role=Productor',
+                    deleteUrl: id => `/api/admin/users/${id}`,
+                        const $form = $('#admin-user-form');
+                        if ($form.length) {
+                            fillForm($form[0], data);
+                            $form.attr('action', `/api/admin/users/${data.id}`);
+                            $form[0].dataset.method = 'PUT';
+                        }
+                    },
+                    afterLoad: loadAdminCounts
+                },
+                adminengineers: {
+                    url: '/api/admin/users?role=Ingeniero',
+                    buildRow: u => `<tr data-item="${enc(u)}"><td>${u.id}</td><td>${u.name}</td><td>${u.userName}</td><td>${u.maxCrops || ''}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
+                    deleteUrl: id => `/api/admin/users/${id}`,
+                    onEdit: data => {
+                        const $form = $('#admin-engineer-form');
+                        if ($form.length) {
+                            fillForm($form[0], data);
+                            $form.attr('action', `/api/admin/users/${data.id}`);
+                            $form[0].dataset.method = 'PUT';
+                        const limit = prompt('Límite de cultivos', data.maxCrops || '');
+                        if (limit !== null) {
+                            fetch(`/admin/users/${data.id}/limit`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ maxCrops: parseInt(limit) })
+                            }).then(() => loadData());
+                        }
+                    },
                     afterLoad: loadAdminCounts
                 }
             };
@@ -328,14 +367,15 @@
                 items.forEach(item => $tbody.append(config.buildRow(item)));
                 $tbody.find('button.delete').on('click', async function () {
                     const id = JSON.parse(decodeURIComponent($(this).closest('tr').data('item'))).id;
-                    const res = await fetch(`${location.pathname.replace('/', '')}/${id}`, { method: 'DELETE' });
+                    const url = config.deleteUrl ? config.deleteUrl(id) : `${location.pathname.replace('/', '')}/${id}`;
+                    const res = await fetch(url, { method: 'DELETE' });
                     if (res.ok) loadData();
                 });
                 $tbody.find('button.edit').on('click', function () {
                     const data = JSON.parse(decodeURIComponent($(this).closest('tr').data('item')));
-                    const $form = $('form.api');
-                    if ($form.length === 0) return;
                     if (config.onEdit) config.onEdit(data);
+                    const $form = $('form.api');
+                    if ($form.length === 0 || config.skipFormEdit) return;
                     fillForm($form[0], data);
                     $form.attr('action', `${location.pathname}/${data.id}`);
                     $form[0].dataset.method = 'PUT';

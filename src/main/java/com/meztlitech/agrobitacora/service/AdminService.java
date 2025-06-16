@@ -4,11 +4,10 @@ import com.meztlitech.agrobitacora.dto.UserDto;
 import com.meztlitech.agrobitacora.dto.UserResponse;
 import com.meztlitech.agrobitacora.dto.admin.AdminCountsDto;
 import com.meztlitech.agrobitacora.dto.ActionStatusResponse;
-import com.meztlitech.agrobitacora.dto.CropDto;
-import com.meztlitech.agrobitacora.entity.CropEntity;
 import com.meztlitech.agrobitacora.entity.UserEntity;
 import com.meztlitech.agrobitacora.repository.CropRepository;
 import com.meztlitech.agrobitacora.repository.UserRepository;
+import com.meztlitech.agrobitacora.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -22,23 +21,14 @@ public class AdminService {
 
     private final CropRepository cropRepository;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final AuthenticationService authenticationService;
 
-    public CropEntity createCropForUser(Long userId, CropDto cropDto) {
-        UserEntity user = userRepository.findById(userId).orElseThrow();
-        CropEntity crop = new CropEntity();
-        crop.setAlias(cropDto.getAlias());
-        crop.setLatitud(cropDto.getLatitud());
-        crop.setLongitud(cropDto.getLongitud());
-        crop.setLocation(cropDto.getLocation());
-        crop.setArea(cropDto.getArea());
-        crop.setFlowerName(cropDto.getFlowerName());
-        crop.setNumberPlants(cropDto.getNumberPlants());
-        crop.setUser(user);
-        return cropRepository.save(crop);
-    }
 
-    public List<UserEntity> getUsers() {
+    public List<UserEntity> getUsers(String role) {
+        if (role != null) {
+            return userRepository.findByRoleName(role);
+        }
         return userRepository.findAll();
     }
 
@@ -52,6 +42,26 @@ public class AdminService {
 
     public ActionStatusResponse deleteUser(Long id) {
         return authenticationService.delete(id);
+    }
+
+    public ActionStatusResponse updateUser(Long id, UserDto userDto) {
+        return authenticationService.update(id, userDto);
+    }
+
+    public ActionStatusResponse setCropLimit(Long userId, Integer maxCrops) {
+        ActionStatusResponse resp = new ActionStatusResponse();
+        UserEntity user = userRepository.findById(userId).orElseThrow();
+        user.setMaxCrops(maxCrops);
+        userRepository.save(user);
+        resp.setId(user.getId());
+        resp.setStatus(org.springframework.http.HttpStatus.OK);
+        resp.setDescription("Actualizado correctamente");
+        return resp;
+    }
+
+    public UserResponse createEngineer(UserDto userDto) {
+        userDto.setRoleId(roleRepository.findByName("Ingeniero").getId());
+        return authenticationService.create(userDto);
     }
 
     public AdminCountsDto getCounts() {

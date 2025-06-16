@@ -48,6 +48,7 @@ public class SecurityConfiguration {
             "/v2/api-docs/**",
             "/swagger-resources/**",
             "/auth/**",
+            "/favicon.ico",
             "/"
     };
 
@@ -59,7 +60,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,
                                 "/bill", "/crop", "/fumigation",
                                 "/irrigation", "/labor", "/nutrition",
-                                "/production").permitAll()
+                                "/production", "/admin", "/admin/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(

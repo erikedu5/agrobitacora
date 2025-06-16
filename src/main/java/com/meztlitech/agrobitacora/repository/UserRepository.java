@@ -12,4 +12,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Query("FROM UserEntity u WHERE u.userName = :username")
     Optional<UserEntity> findByUserName(String username);
+
+    @Query("FROM UserEntity u WHERE u.role.name = :roleName AND u.active = true")
+    java.util.List<UserEntity> findByRoleName(String roleName);
 }

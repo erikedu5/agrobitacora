@@ -23,7 +23,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Log4j2
 public class AdminController {
@@ -41,18 +41,11 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/users/{userId}/crops")
-    public ResponseEntity<CropEntity> createCrop(@PathVariable Long userId,
-                                                 @Valid @RequestBody CropDto cropDto,
-                                                 @RequestHeader(value = "Authorization") String token) {
-        validateAdmin(token);
-        return ResponseEntity.ok(adminService.createCropForUser(userId, cropDto));
-    }
-
     @GetMapping("/users")
-    public ResponseEntity<List<UserEntity>> users(@RequestHeader(value = "Authorization") String token) {
+    public ResponseEntity<List<UserEntity>> users(@RequestHeader(value = "Authorization") String token,
+                                                  @RequestParam(required = false) String role) {
         validateAdmin(token);
-        return ResponseEntity.ok(adminService.getUsers());
+        return ResponseEntity.ok(adminService.getUsers(role));
     }
 
     @PostMapping("/users")
@@ -60,6 +53,13 @@ public class AdminController {
                                                    @RequestHeader(value = "Authorization") String token) {
         validateAdmin(token);
         return ResponseEntity.ok(adminService.createUser(userDto));
+    }
+
+    @PostMapping("/engineers")
+    public ResponseEntity<UserResponse> createEngineer(@Valid @RequestBody UserDto userDto,
+                                                       @RequestHeader(value = "Authorization") String token) {
+        validateAdmin(token);
+        return ResponseEntity.ok(adminService.createEngineer(userDto));
     }
 
     @PutMapping("/users/{id}/password")
@@ -75,6 +75,22 @@ public class AdminController {
                                                            @RequestHeader(value = "Authorization") String token) {
         validateAdmin(token);
         return ResponseEntity.ok(adminService.deleteUser(id));
+    }
+
+    @PutMapping("/users/{id}")
+    public ResponseEntity<ActionStatusResponse> updateUser(@PathVariable Long id,
+                                                           @RequestBody UserDto userDto,
+                                                           @RequestHeader(value = "Authorization") String token) {
+        validateAdmin(token);
+        return ResponseEntity.ok(adminService.updateUser(id, userDto));
+    }
+
+    @PutMapping("/users/{id}/limit")
+    public ResponseEntity<ActionStatusResponse> setCropLimit(@PathVariable Long id,
+                                                             @RequestBody UserDto userDto,
+                                                             @RequestHeader(value = "Authorization") String token) {
+        validateAdmin(token);
+        return ResponseEntity.ok(adminService.setCropLimit(id, userDto.getMaxCrops()));
     }
 
     @GetMapping("/counts")
