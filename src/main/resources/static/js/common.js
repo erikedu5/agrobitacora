@@ -215,7 +215,7 @@
 
         async function ensureRole() {
             if (!localStorage.getItem('role') && localStorage.getItem('token')) {
-                const res = await fetch('/auth/verify', { method: 'POST' });
+                const res = await fetch('/auth/verifySession', { method: 'POST' });
                 if (res.ok) {
                     const info = await res.json();
                     if (info.role && info.role.name) {
