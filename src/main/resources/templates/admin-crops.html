@@ -52,7 +52,7 @@
 <script th:inline="javascript">
 $(function(){
     async function loadUsers(){
-        const res = await fetch('/admin/users');
+        const res = await fetch('/api/admin/users');
         if(!res.ok) return;
         const data = await res.json();
         const $sel = $('#user-select');
@@ -61,7 +61,7 @@ $(function(){
     }
     function updateAction(){
         const id = $('#user-select').val();
-        $('#admin-crop-form').attr('action', `/admin/users/${id}/crops`);
+        $('#admin-crop-form').attr('action', `/api/admin/users/${id}/crops`);
     }
     $('#user-select').on('change', updateAction);
     loadUsers();

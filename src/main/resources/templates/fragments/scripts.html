@@ -187,7 +187,7 @@
             async function loadAdminCounts() {
                 const $div = $('#admin-counts');
                 if ($div.length === 0) return;
-                const res = await fetch('/admin/counts');
+                const res = await fetch('/api/admin/counts');
                 if (!res.ok) return;
                 const data = await res.json();
                 $div.text(`Usuarios: ${data.users} | Cultivos: ${data.crops}`);
@@ -315,9 +315,9 @@
                     onPageLoad: () => { $('#add-product').on('click', () => addProductGroup()); addProductGroup(); },
                     onEdit: data => { setProductGroupCount((data.appDetails && data.appDetails.length) || 1); }
                 },
-                admin: {
-                    url: '/admin/users',
-                    buildRow: u => `<tr data-item="${enc(u)}"><td>${u.id}</td><td>${u.name}</td><td>${u.userName}</td><td>${(u.role && u.role.name) || ''}</td><td>${u.maxCrops || ''}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
+                    url: '/api/admin/users',
+                    deleteUrl: id => `/api/admin/users/${id}`,
+                            fetch(`/api/admin/users/${data.id}/limit`, {
                     deleteUrl: id => `/admin/users/${id}`,
                     skipFormEdit: true,
                     onEdit: data => {

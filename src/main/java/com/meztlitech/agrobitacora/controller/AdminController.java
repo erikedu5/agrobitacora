@@ -23,7 +23,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Log4j2
 public class AdminController {
