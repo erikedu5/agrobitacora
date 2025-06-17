@@ -19,3 +19,10 @@ registro disponible se guarda como `cropId` en `localStorage`, lo cual se usa
 para consultar la información asociada en las demás páginas. Si el usuario es
 Productor, ese `cropId` también se envía como cabecera HTTP en todas las
 peticiones para que el servidor pueda identificar el cultivo seleccionado.
+
+## Integración con WhatsApp
+
+Se añadió un nuevo servicio y controlador para enviar mensajes mediante la API de WhatsApp Business. Para habilitarlo es necesario definir las variables de entorno `WHATSAPP_TOKEN` y `WHATSAPP_PHONE_NUMBER_ID` o establecer los valores correspondientes en `application.properties`.
+
+El endpoint `/whatsapp/send` permite enviar un mensaje simple especificando los parámetros `to` (número de destino) y `message`.
+
