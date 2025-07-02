@@ -223,7 +223,10 @@
             init.headers = {
                 ...(init.headers || {}),
                 ...(localStorage.getItem('token') ? { 'Authorization': 'Bearer ' + localStorage.getItem('token') } : {}),
-                ...(localStorage.getItem('role') === 'Productor' && localStorage.getItem('cropId') ? { cropId: localStorage.getItem('cropId') } : {})
+                ...(localStorage.getItem('cropId') &&
+                    ['Productor', 'Ingeniero'].includes(localStorage.getItem('role'))
+                    ? { cropId: localStorage.getItem('cropId') }
+                    : {})
             };
             return originalFetch(input, init);
         };
@@ -233,7 +236,7 @@
                 if (localStorage.getItem('token')) {
                     xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('token'));
                 }
-                if (localStorage.getItem('role') === 'Productor' && localStorage.getItem('cropId')) {
+                if (['Productor', 'Ingeniero'].includes(localStorage.getItem('role')) && localStorage.getItem('cropId')) {
                     xhr.setRequestHeader('cropId', localStorage.getItem('cropId'));
                 }
             }
@@ -252,24 +255,65 @@
         }
 
         async function loadCropSelect() {
-            if (localStorage.getItem('role') !== 'Productor') return;
-            const $select = $('#crop-select');
-            if ($select.length === 0) return;
-            const res = await fetch('/crop/all?page=0&size=20');
-            if (!res.ok) return;
-            const data = await res.json();
-            const items = Array.isArray(data) ? data : (data.content || []);
-            $select.empty();
-            items.forEach(c => $select.append(`<option value="${c.id}">${c.alias}</option>`));
-            if (!localStorage.getItem('cropId') && items.length) {
-                localStorage.setItem('cropId', items[0].id);
+            const role = localStorage.getItem('role');
+            const $cropSelect = $('#crop-select');
+            if ($cropSelect.length === 0) return;
+            if (role === 'Productor') {
+                const res = await fetch('/crop/all?page=0&size=20');
+                if (!res.ok) return;
+                const data = await res.json();
+                const items = Array.isArray(data) ? data : (data.content || []);
+                $cropSelect.empty();
+                items.forEach(c => $cropSelect.append(`<option value="${c.id}">${c.alias}</option>`));
+                if (!localStorage.getItem('cropId') && items.length) {
+                    localStorage.setItem('cropId', items[0].id);
+                }
+                $cropSelect.val(localStorage.getItem('cropId'));
+                $cropSelect.removeClass('d-none');
+                $cropSelect.on('change', function () {
+                    localStorage.setItem('cropId', this.value);
+                    location.reload();
+                });
+            } else if (role === 'Ingeniero') {
+                const $producerSelect = $('#producer-select');
+                if ($producerSelect.length === 0) return;
+                const resProd = await fetch('/engineer/producers');
+                if (!resProd.ok) return;
+                const producers = await resProd.json();
+                $producerSelect.empty();
+                producers.forEach(p => $producerSelect.append(`<option value="${p.id}">${p.name}</option>`));
+                let producerId = localStorage.getItem('producerId');
+                if (!producerId && producers.length) {
+                    producerId = producers[0].id;
+                    localStorage.setItem('producerId', producerId);
+                }
+                $producerSelect.val(producerId);
+                async function loadCrops(pid) {
+                    const res = await fetch(`/engineer/crops?producerId=${pid}&page=0&size=20`);
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const items = Array.isArray(data) ? data : (data.content || []);
+                    $cropSelect.empty();
+                    items.forEach(c => $cropSelect.append(`<option value="${c.id}">${c.alias}</option>`));
+                    if (!localStorage.getItem('cropId') && items.length) {
+                        localStorage.setItem('cropId', items[0].id);
+                    }
+                    $cropSelect.val(localStorage.getItem('cropId'));
+                    $cropSelect.removeClass('d-none');
+                    $cropSelect.on('change', function () {
+                        localStorage.setItem('cropId', this.value);
+                        App.loadData(window.page);
+                    });
+                }
+                if (producerId) {
+                    await loadCrops(producerId);
+                }
+                $producerSelect.removeClass('d-none');
+                $producerSelect.on('change', async function () {
+                    localStorage.setItem('producerId', this.value);
+                    await loadCrops(this.value);
+                });
             }
-            $select.val(localStorage.getItem('cropId'));
-            $select.removeClass('d-none');
-            $select.on('change', function () {
-                localStorage.setItem('cropId', this.value);
-                location.reload();
-            });
         }
 
         function showMenus() {
@@ -291,10 +335,15 @@
             allow.forEach(sel => $(sel).removeClass('d-none'));
         }
 
-        $('form.api').on('submit', async function (e) {
-            e.preventDefault();
-            const data = App.formDataToObject(this);
-            const method = this.dataset.method || $(this).attr('method') || this.method;
+       $('form.api').on('submit', async function (e) {
+           e.preventDefault();
+            const role = localStorage.getItem('role');
+            if (role === 'Ingeniero' && this.action.includes('/fumigation') && !localStorage.getItem('cropId')) {
+                App.notify('Debe seleccionar un cultivo', 'danger');
+                return;
+            }
+           const data = App.formDataToObject(this);
+           const method = this.dataset.method || $(this).attr('method') || this.method;
             const res = await fetch(this.action, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
