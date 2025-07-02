@@ -223,7 +223,10 @@
             init.headers = {
                 ...(init.headers || {}),
                 ...(localStorage.getItem('token') ? { 'Authorization': 'Bearer ' + localStorage.getItem('token') } : {}),
-                ...(localStorage.getItem('role') === 'Productor' && localStorage.getItem('cropId') ? { cropId: localStorage.getItem('cropId') } : {})
+                ...(localStorage.getItem('cropId') &&
+                    ['Productor', 'Ingeniero'].includes(localStorage.getItem('role'))
+                    ? { cropId: localStorage.getItem('cropId') }
+                    : {})
             };
             return originalFetch(input, init);
         };
@@ -233,7 +236,7 @@
                 if (localStorage.getItem('token')) {
                     xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('token'));
                 }
-                if (localStorage.getItem('role') === 'Productor' && localStorage.getItem('cropId')) {
+                if (['Productor', 'Ingeniero'].includes(localStorage.getItem('role')) && localStorage.getItem('cropId')) {
                     xhr.setRequestHeader('cropId', localStorage.getItem('cropId'));
                 }
             }
@@ -332,10 +335,15 @@
             allow.forEach(sel => $(sel).removeClass('d-none'));
         }
 
-        $('form.api').on('submit', async function (e) {
-            e.preventDefault();
-            const data = App.formDataToObject(this);
-            const method = this.dataset.method || $(this).attr('method') || this.method;
+       $('form.api').on('submit', async function (e) {
+           e.preventDefault();
+            const role = localStorage.getItem('role');
+            if (role === 'Ingeniero' && this.action.includes('/fumigation') && !localStorage.getItem('cropId')) {
+                App.notify('Debe seleccionar un cultivo', 'danger');
+                return;
+            }
+           const data = App.formDataToObject(this);
+           const method = this.dataset.method || $(this).attr('method') || this.method;
             const res = await fetch(this.action, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
