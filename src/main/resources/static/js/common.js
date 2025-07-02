@@ -5,6 +5,23 @@
     App.registerEntity = (name, cfg) => entities[name] = cfg;
     App.enc = obj => encodeURIComponent(JSON.stringify(obj));
 
+    App.notify = function (message, type = 'success') {
+        const $container = $('#toast-container');
+        if ($container.length === 0) return;
+        const id = `toast-${Date.now()}`;
+        const $toast = $(
+            `<div id="${id}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">` +
+            '<div class="d-flex">' +
+            `<div class="toast-body">${message}</div>` +
+            '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>' +
+            '</div></div>'
+        );
+        $container.append($toast);
+        const toast = new bootstrap.Toast($toast[0], { delay: 3000 });
+        toast.show();
+        $toast.on('hidden.bs.toast', () => $toast.remove());
+    };
+
     App.fillForm = function (form, data, prefix = '') {
         Object.entries(data).forEach(([k, v]) => {
             const name = prefix ? `${prefix}.${k}` : k;
@@ -172,7 +189,16 @@
             const id = JSON.parse(decodeURIComponent($(this).closest('tr').data('item'))).id;
             const url = config.deleteUrl ? config.deleteUrl(id) : `/${page}/${id}`;
             const resp = await fetch(url, { method: 'DELETE' });
-            if (resp.ok) App.loadData(page);
+            if (resp.ok) {
+                App.notify('Eliminado correctamente', 'success');
+                App.loadData(page);
+            } else {
+                App.notify('Error al eliminar', 'danger');
+                if (resp.status === 401) {
+                    localStorage.removeItem('token');
+                    location.href = '/auth';
+                }
+            }
         });
         $tbody.find('button.edit').on('click', function () {
             const item = JSON.parse(decodeURIComponent($(this).closest('tr').data('item')));
@@ -274,21 +300,31 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
+            let info = null;
+            try { info = await res.json(); } catch (e) {}
             if (res.ok) {
                 if (this.id === 'sign-in-form' || this.id === 'sign-up-form') {
-                    const info = await res.json();
-                    localStorage.setItem('token', info.token);
-                    if (info.role && info.role.name) {
-                        localStorage.setItem('role', info.role.name);
+                    if (info && info.token) {
+                        localStorage.setItem('token', info.token);
+                        if (info.role && info.role.name) {
+                            localStorage.setItem('role', info.role.name);
+                        }
+                        App.notify('Autenticado correctamente', 'success');
+                        setTimeout(() => location.href = '/', 1000);
+                    } else {
+                        App.notify('Credenciales inválidas', 'danger');
                     }
-                    location.href = '/';
                     return;
                 }
+                App.notify('Guardado correctamente', 'success');
                 App.loadData(page);
                 this.reset();
-            } else if (res.status === 401) {
-                localStorage.removeItem('token');
-                location.href = '/auth';
+            } else {
+                App.notify((info && (info.description || info.message)) || 'Error', 'danger');
+                if (res.status === 401) {
+                    localStorage.removeItem('token');
+                    location.href = '/auth';
+                }
             }
         });
 
