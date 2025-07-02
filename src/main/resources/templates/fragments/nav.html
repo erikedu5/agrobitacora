@@ -2,6 +2,7 @@
   <div class="container-fluid">
     <a class="navbar-brand" th:href="@{/}" th:text="#{nav.title}">Agro Bitácora</a>
     <div class="d-flex ms-auto align-items-center">
+      <select id="producer-select" class="form-select form-select-sm me-2 d-none"></select>
       <select id="crop-select" class="form-select form-select-sm me-2 d-none"></select>
       <div class="navbar-nav">
         <a class="nav-link" th:href="@{?lang=es}">ES</a>
