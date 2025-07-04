@@ -30,3 +30,11 @@ El endpoint `/whatsapp/send` permite enviar un mensaje simple especificando los 
 
 La aplicación incluye soporte básico como [Progressive Web App](https://developer.mozilla.org/es/docs/Web/Progressive_web_apps). Se proporciona un `manifest.webmanifest` (con los iconos en formato base64) y se registra un *service worker* para almacenar en caché los recursos estáticos principales y permitir su uso sin conexión.
 
+## Ejecución local
+
+1. Instala JDK 17 (o superior) y clona este repositorio.
+2. Desde la raíz ejecuta `./mvnw spring-boot:run` para iniciar la aplicación. La primera vez se descargarán las dependencias de Maven.
+3. La aplicación quedará disponible en [http://localhost:8081](http://localhost:8081).
+4. Si deseas probar la integración con WhatsApp define las variables de entorno `WHATSAPP_TOKEN` y `WHATSAPP_PHONE_NUMBER_ID` antes de iniciar.
+5. Al abrir la página principal tu navegador ofrecerá la opción de instalar la aplicación como PWA.
+
