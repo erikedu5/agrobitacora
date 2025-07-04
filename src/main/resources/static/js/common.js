@@ -163,6 +163,61 @@
         App.renumberProductGroups();
     };
 
+    function saveLocalData(type, items) {
+        console.log(`saveLocalData: storing ${items.length} ${type}s`);
+        localStorage.setItem(`${type}s`, JSON.stringify(items));
+    }
+
+    function getLocalData(type) {
+        const data = JSON.parse(localStorage.getItem(`${type}s`) || '[]');
+        console.log(`getLocalData: loaded ${data.length} ${type}s`);
+        return data;
+    }
+
+    function addPending(type, item) {
+        const key = `pending-${type}`;
+        const arr = JSON.parse(localStorage.getItem(key) || '[]');
+        arr.push(item);
+        console.log('addPending:', type, item);
+        localStorage.setItem(key, JSON.stringify(arr));
+    }
+
+    async function syncPending() {
+        if (!navigator.onLine) return;
+        console.log('syncPending: online, start syncing');
+        for (const type of ['fumigation', 'nutrition']) {
+            const key = `pending-${type}`;
+            let pending = JSON.parse(localStorage.getItem(key) || '[]');
+            console.log(`syncPending: ${pending.length} pending ${type}(s)`);
+            for (let i = 0; i < pending.length; i++) {
+                try {
+                    const res = await fetch(`/${type}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(pending[i])
+                    });
+                    if (res.ok) {
+                        console.log(`syncPending: sent one ${type}`);
+                        pending.splice(i, 1);
+                        i--;
+                    }
+                } catch (e) {
+                    break;
+                }
+            }
+            if (pending.length) {
+                localStorage.setItem(key, JSON.stringify(pending));
+            } else {
+                localStorage.removeItem(key);
+            }
+        }
+        if (['fumigation', 'nutrition'].includes(window.page)) {
+            App.loadData(window.page);
+        }
+    }
+
+    window.addEventListener('online', syncPending);
+
     App.loadAdminCounts = async function () {
         const $div = $('#admin-counts');
         if ($div.length === 0) return;
@@ -178,10 +233,29 @@
         if (typeof config.onPageLoad === 'function') config.onPageLoad();
         const headers = typeof config.headers === 'function' ? config.headers() : (config.headers || {});
         if (headers.cropId !== undefined && !headers.cropId) return;
-        const res = await fetch(config.url, { headers });
-        if (!res.ok) return;
-        const data = await res.json();
-        const items = Array.isArray(data) ? data : (data.content || []);
+        let res;
+        try {
+            res = await fetch(config.url, { headers });
+        } catch (e) {
+            console.log('loadData: offline when fetching', page);
+            res = { ok: false, offline: true };
+        }
+        let items = [];
+        if (res.ok) {
+            const data = await res.json();
+            items = Array.isArray(data) ? data : (data.content || []);
+            if (page === 'fumigation' || page === 'nutrition') {
+                saveLocalData(page, items);
+            }
+            console.log('loadData: loaded from network', page, items.length);
+        } else if (!navigator.onLine || res.offline) {
+            if (page === 'fumigation' || page === 'nutrition') {
+                items = getLocalData(page);
+            }
+            console.log('loadData: using local data', page, items.length);
+        } else {
+            return;
+        }
         const $tbody = $('table tbody');
         $tbody.empty();
         items.forEach(item => $tbody.append(config.buildRow(item)));
@@ -344,14 +418,20 @@
             }
            const data = App.formDataToObject(this);
            const method = this.dataset.method || $(this).attr('method') || this.method;
-            const res = await fetch(this.action, {
+        let res;
+        try {
+            res = await fetch(this.action, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-            let info = null;
-            try { info = await res.json(); } catch (e) {}
-            if (res.ok) {
+        } catch (e) {
+            console.log('form submit offline, will store locally', this.action);
+            res = { ok: false, offline: true };
+        }
+        let info = null;
+        try { info = await res.json(); } catch (e) {}
+        if (res.ok) {
                 if (this.id === 'sign-in-form' || this.id === 'sign-up-form') {
                     if (info && info.token) {
                         localStorage.setItem('token', info.token);
@@ -369,12 +449,27 @@
                 App.loadData(page);
                 this.reset();
             } else {
-                App.notify((info && (info.description || info.message)) || 'Error', 'danger');
-                if (res.status === 401) {
-                    localStorage.removeItem('token');
-                    location.href = '/auth';
+            if (!navigator.onLine || res.offline) {
+                const type = this.action.includes('/fumigation') ? 'fumigation' :
+                              (this.action.includes('/nutrition') ? 'nutrition' : null);
+                if (type) {
+                    addPending(type, data);
+                    console.log('stored offline entry', type, data);
+                    const list = getLocalData(type);
+                    list.push(Object.assign({ id: Date.now() }, data));
+                    saveLocalData(type, list);
+                    App.notify('Guardado localmente. Se enviará cuando haya conexión.', 'warning');
+                    App.loadData(type);
+                    this.reset();
+                    return;
                 }
             }
+            App.notify((info && (info.description || info.message)) || 'Error', 'danger');
+            if (res.status === 401) {
+                localStorage.removeItem('token');
+                location.href = '/auth';
+            }
+        }
         });
 
         const $btnLogout = $('#logout');
@@ -392,6 +487,8 @@
             showMenus();
             const page = location.pathname.substring(1).replace(/\//g, '');
             window.page = page;
+            console.log('initial syncPending');
+            await syncPending();
             App.loadData(page);
         })();
     });
