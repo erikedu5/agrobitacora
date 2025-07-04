@@ -49,6 +49,9 @@ public class SecurityConfiguration {
             "/swagger-resources/**",
             "/auth/**",
             "/favicon.ico",
+            "/sw.js",
+            "/manifest.webmanifest",
+            "/icons/**",
             "/"
     };
 

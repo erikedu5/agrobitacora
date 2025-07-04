@@ -1,6 +1,9 @@
 <head th:fragment="head(title)">
     <meta charset="UTF-8">
     <title th:text="${title}">Agro Bitácora</title>
+    <link rel="manifest" th:href="@{/manifest.webmanifest}" type="application/manifest+json">
+    <meta name="theme-color" content="#0275d8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/flatly/bootstrap.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="/js/app.js"></script>
 </head>
