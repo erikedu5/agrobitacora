@@ -37,4 +37,23 @@ La aplicación incluye soporte básico como [Progressive Web App](https://develo
 3. La aplicación quedará disponible en [http://localhost:8081](http://localhost:8081).
 4. Si deseas probar la integración con WhatsApp define las variables de entorno `WHATSAPP_TOKEN` y `WHATSAPP_PHONE_NUMBER_ID` antes de iniciar.
 5. Al abrir la página principal tu navegador ofrecerá la opción de instalar la aplicación como PWA.
+   El *service worker* solo se registra en contextos seguros. `localhost` se
+   considera seguro, por lo que basta con abrir
+   [http://localhost:8081](http://localhost:8081) para probarlo.
+   Si necesitas acceder desde otro dispositivo, genera un certificado
+   autofirmado y habilita HTTPS en Spring Boot:
+
+   ```bash
+   keytool -genkeypair -alias agrobitacora -keyalg RSA -keysize 2048 \
+          -storetype PKCS12 -keystore keystore.p12 -validity 365
+   ```
+
+   Luego agrega en `application.properties` las siguientes líneas y ejecuta la
+   aplicación de nuevo:
+
+   ```properties
+   server.ssl.enabled=true
+   server.ssl.key-store=classpath:keystore.p12
+   server.ssl.key-store-password=<contraseña>
+   ```
 
