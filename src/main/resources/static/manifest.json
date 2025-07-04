@@ -1,0 +1,20 @@
+{
+  "name": "Agro Bitácora",
+  "short_name": "AgroBit",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0275d8",
+  "icons": [
+    {
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADAAQMAAABoEv5EAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAGUExURQJ12P///zrDwB8AAAABYktHRAH/Ai3eAAAAB3RJTUUH6QcCFx43kCPbVAAAABxJREFUWMPtwTEBAAAAwqD1T20ND6AAAAAA4NcAEsAAAQj+n1IAAAAASUVORK5CYII=",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIAAQMAAADOtka5AAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAGUExURQJ12P///zrDwB8AAAABYktHRAH/Ai3eAAAAB3RJTUUH6QcCFx44AJzGxQAAADZJREFUeNrtwQEBAAAAgiD/r25IQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABfBuCAAABY3VQpAAAAABJRU5ErkJggg==",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

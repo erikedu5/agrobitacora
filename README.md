@@ -26,3 +26,7 @@ Se añadió un nuevo servicio y controlador para enviar mensajes mediante la API
 
 El endpoint `/whatsapp/send` permite enviar un mensaje simple especificando los parámetros `to` (número de destino) y `message`.
 
+## PWA
+
+La aplicación incluye soporte básico como [Progressive Web App](https://developer.mozilla.org/es/docs/Web/Progressive_web_apps). Se proporciona un `manifest.json` (con los iconos en formato base64) y se registra un *service worker* para almacenar en caché los recursos estáticos principales y permitir su uso sin conexión.
+
