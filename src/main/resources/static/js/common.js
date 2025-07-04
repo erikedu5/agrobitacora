@@ -164,25 +164,31 @@
     };
 
     function saveLocalData(type, items) {
+        console.log(`saveLocalData: storing ${items.length} ${type}s`);
         localStorage.setItem(`${type}s`, JSON.stringify(items));
     }
 
     function getLocalData(type) {
-        return JSON.parse(localStorage.getItem(`${type}s`) || '[]');
+        const data = JSON.parse(localStorage.getItem(`${type}s`) || '[]');
+        console.log(`getLocalData: loaded ${data.length} ${type}s`);
+        return data;
     }
 
     function addPending(type, item) {
         const key = `pending-${type}`;
         const arr = JSON.parse(localStorage.getItem(key) || '[]');
         arr.push(item);
+        console.log('addPending:', type, item);
         localStorage.setItem(key, JSON.stringify(arr));
     }
 
     async function syncPending() {
         if (!navigator.onLine) return;
+        console.log('syncPending: online, start syncing');
         for (const type of ['fumigation', 'nutrition']) {
             const key = `pending-${type}`;
             let pending = JSON.parse(localStorage.getItem(key) || '[]');
+            console.log(`syncPending: ${pending.length} pending ${type}(s)`);
             for (let i = 0; i < pending.length; i++) {
                 try {
                     const res = await fetch(`/${type}`, {
@@ -191,6 +197,7 @@
                         body: JSON.stringify(pending[i])
                     });
                     if (res.ok) {
+                        console.log(`syncPending: sent one ${type}`);
                         pending.splice(i, 1);
                         i--;
                     }
@@ -230,6 +237,7 @@
         try {
             res = await fetch(config.url, { headers });
         } catch (e) {
+            console.log('loadData: offline when fetching', page);
             res = { ok: false, offline: true };
         }
         let items = [];
@@ -239,10 +247,12 @@
             if (page === 'fumigation' || page === 'nutrition') {
                 saveLocalData(page, items);
             }
+            console.log('loadData: loaded from network', page, items.length);
         } else if (!navigator.onLine || res.offline) {
             if (page === 'fumigation' || page === 'nutrition') {
                 items = getLocalData(page);
             }
+            console.log('loadData: using local data', page, items.length);
         } else {
             return;
         }
@@ -416,6 +426,7 @@
                 body: JSON.stringify(data)
             });
         } catch (e) {
+            console.log('form submit offline, will store locally', this.action);
             res = { ok: false, offline: true };
         }
         let info = null;
@@ -443,6 +454,7 @@
                               (this.action.includes('/nutrition') ? 'nutrition' : null);
                 if (type) {
                     addPending(type, data);
+                    console.log('stored offline entry', type, data);
                     const list = getLocalData(type);
                     list.push(Object.assign({ id: Date.now() }, data));
                     saveLocalData(type, list);
@@ -475,6 +487,7 @@
             showMenus();
             const page = location.pathname.substring(1).replace(/\//g, '');
             window.page = page;
+            console.log('initial syncPending');
             await syncPending();
             App.loadData(page);
         })();
