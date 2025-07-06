@@ -12,7 +12,24 @@ self.addEventListener('install', event => {
 });
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then(resp => resp || fetch(event.request))
+    caches.match(event.request).then(cached => {
+      if (cached) {
+        return cached;
+      }
+      return fetch(event.request)
+        .then(resp => {
+          if (resp && resp.status === 200 && resp.type === 'basic') {
+            const respClone = resp.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, respClone));
+          }
+          return resp;
+        })
+        .catch(() => {
+          if (event.request.mode === 'navigate') {
+            return caches.match('/');
+          }
+        });
+    })
   );
 });
 self.addEventListener('activate', event => {
