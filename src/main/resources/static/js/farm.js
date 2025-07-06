@@ -28,16 +28,30 @@ App.registerEntity('production', {
     buildRow: p => `<tr data-item="${App.enc(p)}"><td>${p.id}</td><td>${p.productionDate}</td><td></td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`
 });
 
+function hideVisitDate() {
+    if (localStorage.getItem('role') === 'Productor') {
+        const $visit = $('input[name="visitDate"]');
+        $visit.closest('.col-md-6').addClass('d-none');
+        $visit.prop('required', false);
+        const appVal = $('input[name="applicationDate"]').val();
+        if (appVal && !$visit.val()) {
+            $visit.val(appVal);
+        }
+    }
+}
+
 App.registerEntity('nutrition', {
     url: '/nutrition/all?page=0&size=20',
     headers: () => ({ cropId: localStorage.getItem('cropId') }),
-    buildRow: n => `<tr data-item="${App.enc(n)}"><td>${n.id}</td><td>${n.applicationDate}</td><td>${n.detail}</td><td><button class='show-detail btn btn-sm btn-info'>Mostrar</button></td></tr>`
+    buildRow: n => `<tr data-item="${App.enc(n)}"><td>${n.id}</td><td>${n.applicationDate}</td><td>${n.detail}</td><td>${(n.appDetails || []).map(d => d.productName).join(', ')}</td><td><button class='show-detail btn btn-sm btn-info'>Mostrar</button></td></tr>`,
+    onPageLoad: () => { hideVisitDate(); $('#add-product').on('click', () => App.addProductGroup()); App.addProductGroup(); },
+    onEdit: data => { hideVisitDate(); App.setProductGroupCount((data.appDetails && data.appDetails.length) || 1); }
 });
 
 App.registerEntity('fumigation', {
     url: '/fumigation/all?page=0&size=20',
     headers: () => ({ cropId: localStorage.getItem('cropId') }),
     buildRow: f => `<tr data-item="${App.enc(f)}"><td>${f.id}</td><td>${f.applicationDate}</td><td>${f.detail}</td><td>${(f.appDetails || []).map(d => d.productName).join(', ')}</td><td><button class='show-detail btn btn-sm btn-info'>Mostrar</button></td></tr>`,
-    onPageLoad: () => { $('#add-product').on('click', () => App.addProductGroup()); App.addProductGroup(); },
-    onEdit: data => { App.setProductGroupCount((data.appDetails && data.appDetails.length) || 1); }
+    onPageLoad: () => { hideVisitDate(); $('#add-product').on('click', () => App.addProductGroup()); App.addProductGroup(); },
+    onEdit: data => { hideVisitDate(); App.setProductGroupCount((data.appDetails && data.appDetails.length) || 1); }
 });
