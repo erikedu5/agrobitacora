@@ -2,6 +2,11 @@ const CACHE_NAME = 'agrobitacora-cache-v1';
 const URLS_TO_CACHE = [
   '/',
   '/manifest.webmanifest',
+  '/js/app.js',
+  '/js/pwa.js',
+  '/js/common.js',
+  '/js/farm.js',
+  '/js/admin.js',
   // icons are embedded in the manifest as data URIs
 ];
 self.addEventListener('install', event => {

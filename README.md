@@ -28,7 +28,7 @@ El endpoint `/whatsapp/send` permite enviar un mensaje simple especificando los 
 
 ## PWA
 
-La aplicación incluye soporte como [Progressive Web App](https://developer.mozilla.org/es/docs/Web/Progressive_web_apps). Se proporciona un `manifest.webmanifest` (con los iconos en formato base64) y se registra un *service worker* que almacena en caché los recursos que se van solicitando, de modo que después de la primera visita puede utilizarse sin conexión.
+La aplicación incluye soporte como [Progressive Web App](https://developer.mozilla.org/es/docs/Web/Progressive_web_apps). Se proporciona un `manifest.webmanifest` (con los iconos en formato base64) y se registra un *service worker*. Ahora se precargan los archivos JavaScript locales para que puedan servirse incluso en la primera visita sin conexión, y los recursos adicionales que se soliciten se almacenan dinámicamente.
 
 ### Modo sin conexión
 
