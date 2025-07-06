@@ -84,7 +84,11 @@
     </div>
     <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Crear</button>
   </form>
-  <p><a th:href="@{/}" th:text="#{link.home}">Volver al inicio</a></p>
+  <p>
+    <a th:href="@{/}" class="btn btn-secondary">
+      &larr; <span th:text="#{link.home}">Volver al inicio</span>
+    </a>
+  </p>
 </div>
 <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">

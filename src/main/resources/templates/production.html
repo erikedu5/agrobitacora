@@ -26,7 +26,11 @@
       <!-- Aquí se mostrarán las producciones -->
     </tbody>
   </table>
-  <p><a th:href="@{/}" th:text="#{link.home}">Volver al inicio</a></p>
+  <p>
+    <a th:href="@{/}" class="btn btn-secondary">
+      &larr; <span th:text="#{link.home}">Volver al inicio</span>
+    </a>
+  </p>
 </div>
 <div th:replace="~{fragments/scripts :: farm-scripts}"></div>
 </body>

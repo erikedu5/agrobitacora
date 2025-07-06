@@ -46,7 +46,11 @@
       <!-- engineer rows -->
     </tbody>
   </table>
-  <p><a th:href="@{/admin}" th:text="#{admin.menu.back}">Volver al inicio</a></p>
+  <p>
+    <a th:href="@{/admin}" class="btn btn-secondary">
+      &larr; <span th:text="#{admin.menu.back}">Volver al inicio</span>
+    </a>
+  </p>
 </div>
 <div th:replace="~{fragments/scripts :: admin-scripts}"></div>
 </body>

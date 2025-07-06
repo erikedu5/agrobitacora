@@ -80,7 +80,11 @@
       <!-- Aquí se mostrarán las aplicaciones nutricionales -->
     </tbody>
   </table>
-  <p><a th:href="@{/}" th:text="#{link.home}">Volver al inicio</a></p>
+  <p>
+    <a th:href="@{/}" class="btn btn-secondary">
+      &larr; <span th:text="#{link.home}">Volver al inicio</span>
+    </a>
+  </p>
 </div>
 <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
