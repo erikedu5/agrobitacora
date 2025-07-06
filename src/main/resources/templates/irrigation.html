@@ -4,7 +4,10 @@
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
-  <h1 class="mb-4" th:text="#{irrigation.title}">Irrigation Management</h1>
+  <h1 class="mb-4">
+    <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
+    <span th:text="#{irrigation.title}"></span>
+  </h1>
   <form class="api mb-4" method="post" action="/irrigation">
     <div class="row g-3">
       <div class="col-md-6">
@@ -40,11 +43,6 @@
       <!-- Aquí se listarán los riegos -->
     </tbody>
   </table>
-  <p>
-    <a th:href="@{/}" class="btn btn-secondary">
-      &larr; <span th:text="#{link.home}">Volver al inicio</span>
-    </a>
-  </p>
 </div>
 <div th:replace="~{fragments/scripts :: farm-scripts}"></div>
 </body>

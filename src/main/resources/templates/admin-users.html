@@ -4,7 +4,10 @@
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
-  <h1 class="mb-4" th:text="#{admin.users.title}">Usuarios</h1>
+  <h1 class="mb-4">
+    <a th:href="@{/admin}" class="btn btn-secondary btn-sm me-2">&larr;</a>
+    <span th:text="#{admin.users.title}"></span>
+  </h1>
   <div id="admin-counts" class="mb-4"></div>
   <form id="admin-user-form" class="api mb-4" method="post" action="/api/admin/users">
     <div class="row g-3">
@@ -47,11 +50,6 @@
       <!-- user rows -->
     </tbody>
   </table>
-  <p>
-    <a th:href="@{/admin}" class="btn btn-secondary">
-      &larr; <span th:text="#{admin.menu.back}">Volver al inicio</span>
-    </a>
-  </p>
 </div>
 <div th:replace="~{fragments/scripts :: admin-scripts}"></div>
 </body>

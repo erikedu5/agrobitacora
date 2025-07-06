@@ -4,7 +4,10 @@
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
-  <h1 class="mb-4" th:text="#{fumigation.title}">Fumigation Management</h1>
+  <h1 class="mb-4">
+    <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
+    <span th:text="#{fumigation.title}"></span>
+  </h1>
 
 
   <table class="table table-striped">
@@ -84,11 +87,6 @@
     </div>
     <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Crear</button>
   </form>
-  <p>
-    <a th:href="@{/}" class="btn btn-secondary">
-      &larr; <span th:text="#{link.home}">Volver al inicio</span>
-    </a>
-  </p>
 </div>
 <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -98,23 +96,3 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p id="app-info"></p>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Ingrediente activo</th>
-              <th>Dosis</th>
-              <th>Unidad</th>
-              <th>Detalles</th>
-            </tr>
-          </thead>
-          <tbody id="detail-table"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-<div th:replace="~{fragments/scripts :: farm-scripts}"></div>
-</body>
-</html>
