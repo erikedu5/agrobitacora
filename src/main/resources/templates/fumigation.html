@@ -4,7 +4,10 @@
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
-  <h1 class="mb-4" th:text="#{fumigation.title}">Fumigation Management</h1>
+  <h1 class="mb-4">
+    <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
+    <span th:text="#{fumigation.title}"></span>
+  </h1>
 
 
   <table class="table table-striped">
@@ -84,7 +87,6 @@
     </div>
     <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Crear</button>
   </form>
-  <p><a th:href="@{/}" th:text="#{link.home}">Volver al inicio</a></p>
 </div>
 <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">

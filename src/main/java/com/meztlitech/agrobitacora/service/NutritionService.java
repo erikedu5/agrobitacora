@@ -53,6 +53,7 @@ public class NutritionService {
         if (role.getName().equals(ROLE_PRODUCTOR)) {
             applicationEntity.setApplicationDate(applicationDto.getApplicationDate());
         } else if (role.getName().equals(ROLE_INGENIERO)){
+            applicationEntity.setApplicationDate(applicationDto.getApplicationDate());
             applicationEntity.setVisitDate(applicationDto.getVisitDate());
         }
         applicationEntity.setUser(userRepository.findById(userId).orElseThrow());

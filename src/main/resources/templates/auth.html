@@ -4,7 +4,9 @@
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
-  <h1 class="mb-4" th:text="#{auth.title}">Auth Management</h1>
+  <h1 class="mb-4">
+    <span th:text="#{auth.title}"></span>
+  </h1>
   <div class="row">
     <div class="col-md-6">
       <h2 th:text="#{sign.in}">Sign In</h2>
@@ -43,7 +45,6 @@
       </form>
     </div>
   </div>
-  <p class="mt-3"><a th:href="@{/}" th:text="#{link.home}">Volver al inicio</a></p>
 </div>
 <div th:replace="~{fragments/scripts :: base-scripts}"></div>
 </body>

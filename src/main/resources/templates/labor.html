@@ -4,7 +4,10 @@
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
-  <h1 class="mb-4" th:text="#{labor.title}">Labor Management</h1>
+  <h1 class="mb-4">
+    <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
+    <span th:text="#{labor.title}"></span>
+  </h1>
   <form class="api mb-4" method="post" action="/labor">
     <div class="row g-3">
       <div class="col-md-6">
@@ -43,7 +46,6 @@
       <!-- Aquí se mostrarán las labores -->
     </tbody>
   </table>
-  <p><a th:href="@{/}" th:text="#{link.home}">Volver al inicio</a></p>
 </div>
 <div th:replace="~{fragments/scripts :: farm-scripts}"></div>
 </body>
