@@ -163,6 +163,19 @@
         App.renumberProductGroups();
     };
 
+    App.showApplicationDetails = function (app) {
+        const $modal = $('#detailModal');
+        if ($modal.length === 0) return;
+        $modal.find('#app-info').text(`${app.applicationDate || ''} - ${app.detail || ''}`);
+        const $tbody = $modal.find('#detail-table');
+        $tbody.empty();
+        (app.appDetails || []).forEach(d => {
+            $tbody.append(`<tr><td>${d.productName}</td><td>${d.activeIngredient}</td><td>${d.dosis}</td><td>${d.unit}</td><td>${(d.condiciones || []).join(', ')}</td></tr>`);
+        });
+        const modal = new bootstrap.Modal($modal[0]);
+        modal.show();
+    };
+
     function saveLocalData(type, items) {
         console.log(`saveLocalData: storing ${items.length} ${type}s`);
         localStorage.setItem(`${type}s`, JSON.stringify(items));
@@ -282,6 +295,10 @@
             App.fillForm($form[0], item);
             $form.attr('action', `${location.pathname}/${item.id}`);
             $form[0].dataset.method = 'PUT';
+        });
+        $tbody.find('button.show-detail').on('click', function () {
+            const item = JSON.parse(decodeURIComponent($(this).closest('tr').data('item')));
+            App.showApplicationDetails(item);
         });
         if (typeof config.afterLoad === 'function') config.afterLoad(items);
     };
