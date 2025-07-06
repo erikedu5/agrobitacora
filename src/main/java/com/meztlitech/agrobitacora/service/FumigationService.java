@@ -79,7 +79,10 @@ public class FumigationService {
         Pageable paging = PageRequest.of(applicationFilter.getPage(), applicationFilter.getSize());
         Page<ApplicationEntity> pageApp = applicationRepository.findAllByApplicationType(ApplicationType.FUMIGACION, cropId, paging);
         List<ApplicationResponse> content = new ArrayList<>();
-        pageApp.get().forEach(nutrition -> content.add(this.mapNutrition(nutrition, new ArrayList<>())));
+        pageApp.get().forEach(app -> {
+            List<ApplicationDetailEntity> details = applicationDetailRepository.findAllByApplicationId(app.getId());
+            content.add(this.mapNutrition(app, details));
+        });
 
         return new PageImpl<>(content, pageApp.getPageable(), pageApp.getTotalElements());
     }
