@@ -31,13 +31,13 @@ App.registerEntity('production', {
 App.registerEntity('nutrition', {
     url: '/nutrition/all?page=0&size=20',
     headers: () => ({ cropId: localStorage.getItem('cropId') }),
-    buildRow: n => `<tr data-item="${App.enc(n)}"><td>${n.id}</td><td>${n.applicationType}</td><td>${n.applicationDate}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`
+    buildRow: n => `<tr data-item="${App.enc(n)}"><td>${n.id}</td><td>${n.applicationDate}</td><td>${n.detail}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`
 });
 
 App.registerEntity('fumigation', {
     url: '/fumigation/all?page=0&size=20',
     headers: () => ({ cropId: localStorage.getItem('cropId') }),
-    buildRow: f => `<tr data-item="${App.enc(f)}"><td>${f.id}</td><td>${f.applicationType}</td><td>${f.applicationDate}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
+    buildRow: f => `<tr data-item="${App.enc(f)}"><td>${f.id}</td><td>${f.applicationDate}</td><td>${f.detail}</td><td>${(f.appDetails || []).map(d => d.productName).join(', ')}</td><td><button class='edit btn btn-sm btn-primary'>Editar</button> <button class='delete btn btn-sm btn-danger'>Eliminar</button></td></tr>`,
     onPageLoad: () => { $('#add-product').on('click', () => App.addProductGroup()); App.addProductGroup(); },
     onEdit: data => { App.setProductGroupCount((data.appDetails && data.appDetails.length) || 1); }
 });
