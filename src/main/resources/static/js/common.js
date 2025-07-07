@@ -233,11 +233,15 @@
 
     App.loadAdminCounts = async function () {
         const $div = $('#admin-counts');
-        if ($div.length === 0) return;
-        const res = await fetch('/api/admin/counts');
-        if (!res.ok) return;
-        const data = await res.json();
-        $div.text(`Productores: ${data.producers} | Ingenieros: ${data.engineers} | Admins: ${data.admins}`);
+        if ($div.length === 0 || !navigator.onLine) return;
+        try {
+            const res = await fetch('/api/admin/counts');
+            if (!res.ok) return;
+            const data = await res.json();
+            $div.text(`Productores: ${data.producers} | Ingenieros: ${data.engineers} | Admins: ${data.admins}`);
+        } catch (e) {
+            console.log('loadAdminCounts: offline');
+        }
     };
 
     App.loadData = async function (page) {
@@ -247,11 +251,15 @@
         const headers = typeof config.headers === 'function' ? config.headers() : (config.headers || {});
         if (headers.cropId !== undefined && !headers.cropId) return;
         let res;
-        try {
-            res = await fetch(config.url, { headers });
-        } catch (e) {
-            console.log('loadData: offline when fetching', page);
+        if (!navigator.onLine) {
             res = { ok: false, offline: true };
+        } else {
+            try {
+                res = await fetch(config.url, { headers });
+            } catch (e) {
+                console.log('loadData: offline when fetching', page);
+                res = { ok: false, offline: true };
+            }
         }
         let items = [];
         if (res.ok) {
@@ -334,7 +342,10 @@
         });
 
         async function ensureRole() {
-            if (!localStorage.getItem('role') && localStorage.getItem('token')) {
+            if (!navigator.onLine || localStorage.getItem('role') || !localStorage.getItem('token')) {
+                return;
+            }
+            try {
                 const res = await fetch('/auth/verifySession', { method: 'POST' });
                 if (res.ok) {
                     const info = await res.json();
@@ -342,15 +353,18 @@
                         localStorage.setItem('role', info.role.name);
                     }
                 }
+            } catch (e) {
+                console.log('ensureRole: offline');
             }
         }
 
         async function loadCropSelect() {
             const role = localStorage.getItem('role');
             const $cropSelect = $('#crop-select');
-            if ($cropSelect.length === 0) return;
+            if ($cropSelect.length === 0 || !navigator.onLine) return;
             if (role === 'Productor') {
-                const res = await fetch('/crop/all?page=0&size=20');
+                let res;
+                try { res = await fetch('/crop/all?page=0&size=20'); } catch (e) { return; }
                 if (!res.ok) return;
                 const data = await res.json();
                 const items = Array.isArray(data) ? data : (data.content || []);
@@ -368,7 +382,8 @@
             } else if (role === 'Ingeniero') {
                 const $producerSelect = $('#producer-select');
                 if ($producerSelect.length === 0) return;
-                const resProd = await fetch('/engineer/producers');
+                let resProd;
+                try { resProd = await fetch('/engineer/producers'); } catch (e) { return; }
                 if (!resProd.ok) return;
                 const producers = await resProd.json();
                 $producerSelect.empty();
@@ -380,7 +395,9 @@
                 }
                 $producerSelect.val(producerId);
                 async function loadCrops(pid) {
-                    const res = await fetch(`/engineer/crops?producerId=${pid}&page=0&size=20`);
+                    if (!navigator.onLine) return;
+                    let res;
+                    try { res = await fetch(`/engineer/crops?producerId=${pid}&page=0&size=20`); } catch (e) { return; }
                     if (!res.ok) return;
                     const data = await res.json();
                     const items = Array.isArray(data) ? data : (data.content || []);
@@ -436,15 +453,20 @@
            const data = App.formDataToObject(this);
            const method = this.dataset.method || $(this).attr('method') || this.method;
         let res;
-        try {
-            res = await fetch(this.action, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-        } catch (e) {
+        if (!navigator.onLine) {
             console.log('form submit offline, will store locally', this.action);
             res = { ok: false, offline: true };
+        } else {
+            try {
+                res = await fetch(this.action, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            } catch (e) {
+                console.log('form submit offline, will store locally', this.action);
+                res = { ok: false, offline: true };
+            }
         }
         let info = null;
         try { info = await res.json(); } catch (e) {}
@@ -492,7 +514,9 @@
         const $btnLogout = $('#logout');
         if ($btnLogout.length) {
             $btnLogout.on('click', async function () {
-                await fetch('/auth/logout', { method: 'POST' });
+                if (navigator.onLine) {
+                    try { await fetch('/auth/logout', { method: 'POST' }); } catch (e) {}
+                }
                 localStorage.removeItem('token');
                 location.href = '/auth';
             });
