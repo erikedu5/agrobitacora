@@ -1,4 +1,4 @@
-const CACHE_NAME = 'agrobitacora-cache-v2';
+const CACHE_NAME = 'agrobitacora-cache-v3';
 const URLS_TO_CACHE = [
   '/',
   '/home',
@@ -32,6 +32,12 @@ self.addEventListener('fetch', event => {
     caches.match(event.request).then(cached => {
       if (cached) {
         return cached;
+      }
+      if (!self.navigator.onLine) {
+        if (event.request.mode === 'navigate') {
+          return caches.match('/');
+        }
+        return;
       }
       return fetch(event.request)
         .then(resp => {
