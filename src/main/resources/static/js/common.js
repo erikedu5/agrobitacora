@@ -195,7 +195,7 @@
         localStorage.setItem(key, JSON.stringify(arr));
     }
 
-    async function syncPending() {
+    async function syncPending(reload = false) {
         if (!navigator.onLine) return;
         console.log('syncPending: online, start syncing');
         for (const type of ['fumigation', 'nutrition']) {
@@ -224,12 +224,12 @@
                 localStorage.removeItem(key);
             }
         }
-        if (['fumigation', 'nutrition'].includes(window.page)) {
+        if (reload && ['fumigation', 'nutrition'].includes(window.page)) {
             App.loadData(window.page);
         }
     }
 
-    window.addEventListener('online', syncPending);
+    window.addEventListener('online', () => syncPending(true));
 
     App.loadAdminCounts = async function () {
         const $div = $('#admin-counts');
