@@ -1,6 +1,18 @@
-const CACHE_NAME = 'agrobitacora-cache-v1';
+const CACHE_NAME = 'agrobitacora-cache-v2';
 const URLS_TO_CACHE = [
   '/',
+  '/home',
+  '/auth',
+  '/bill',
+  '/crop',
+  '/fumigation',
+  '/irrigation',
+  '/labor',
+  '/nutrition',
+  '/production',
+  '/admin',
+  '/admin/users',
+  '/admin/engineers',
   '/manifest.webmanifest',
   '/js/app.js',
   '/js/pwa.js',
@@ -23,7 +35,7 @@ self.addEventListener('fetch', event => {
       }
       return fetch(event.request)
         .then(resp => {
-          if (resp && resp.status === 200 && resp.type === 'basic') {
+          if (resp && resp.status === 200) {
             const respClone = resp.clone();
             caches.open(CACHE_NAME).then(cache => cache.put(event.request, respClone));
           }
