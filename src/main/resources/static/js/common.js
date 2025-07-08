@@ -347,28 +347,24 @@
         });
 
         function attachProductAutoFill() {
-            $(document).off('input.productSearch')
-                .on('input.productSearch', '[data-field="productName"]', function () {
+            $(document).off('blur.productSearch')
+                .on('blur.productSearch', '[data-field="productName"]', async function () {
                     const $input = $(this);
                     const $group = $input.closest('.product-item');
                     const $ingredient = $group.find('[data-field="activeIngredient"]');
                     const $unit = $group.find('[data-field="unit"]');
-                    clearTimeout($input.data('searchTimer'));
                     const val = $input.val().trim();
                     if (!val) return;
-                    const timer = setTimeout(async () => {
-                        try {
-                            const res = await fetch(`/product/search?name=${encodeURIComponent(val)}`);
-                            if (res.ok) {
-                                const data = await res.json();
-                                if ($ingredient.val().trim() === '') $ingredient.val(data.activeIngredient || '');
-                                if ($unit.val().trim() === '') $unit.val(data.unit || '');
-                            }
-                        } catch (e) {
-                            console.log('product search error', e);
+                    try {
+                        const res = await fetch(`/product/search?name=${encodeURIComponent(val)}`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            if ($ingredient.val().trim() === '') $ingredient.val(data.activeIngredient || '');
+                            if ($unit.val().trim() === '') $unit.val(data.unit || '');
                         }
-                    }, 3000);
-                    $input.data('searchTimer', timer);
+                    } catch (e) {
+                        console.log('product search error', e);
+                    }
                 });
         }
 
