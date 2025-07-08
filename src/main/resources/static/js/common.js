@@ -137,6 +137,7 @@
         });
     };
 
+
     App.addProductGroup = function (data = {}) {
         const $template = $('#product-template');
         const $container = $('#products');
@@ -344,6 +345,30 @@
                 }
             }
         });
+
+        App.attachProductAutoFill = function () {
+            $(document).off('blur.productSearch')
+                .on('blur.productSearch', '[data-field="productName"]', async function () {
+                    const $input = $(this);
+                    const $group = $input.closest('.product-item');
+                    const $ingredient = $group.find('[data-field="activeIngredient"]');
+                    const $unit = $group.find('[data-field="unit"]');
+                    const val = $input.val().trim();
+                    if (!val) return;
+                    try {
+                        const res = await fetch(`/product/search?name=${encodeURIComponent(val)}`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            if ($ingredient.val().trim() === '') $ingredient.val(data.activeIngredient || '');
+                            if ($unit.val().trim() === '') $unit.val(data.unit || '');
+                        }
+                    } catch (e) {
+                        console.log('product search error', e);
+                    }
+                });
+        };
+
+        App.attachProductAutoFill();
 
         async function ensureRole() {
             if (isOffline || localStorage.getItem('role') || !localStorage.getItem('token')) {
