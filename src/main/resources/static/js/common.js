@@ -346,7 +346,7 @@
             }
         });
 
-        function attachProductAutoFill() {
+        App.attachProductAutoFill = function () {
             $(document).off('blur.productSearch')
                 .on('blur.productSearch', '[data-field="productName"]', async function () {
                     const $input = $(this);
@@ -366,9 +366,9 @@
                         console.log('product search error', e);
                     }
                 });
-        }
+        };
 
-        attachProductAutoFill();
+        App.attachProductAutoFill();
 
         async function ensureRole() {
             if (isOffline || localStorage.getItem('role') || !localStorage.getItem('token')) {
