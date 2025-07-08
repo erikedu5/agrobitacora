@@ -28,6 +28,28 @@ self.addEventListener('install', event => {
   );
 });
 self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  const dest = event.request.destination;
+
+  if (event.request.mode !== 'navigate' && dest === '') {
+    // network first for API/AJAX requests
+    event.respondWith(
+      fetch(event.request)
+        .then(resp => {
+          if (resp && resp.status === 200) {
+            const clone = resp.clone();
+            caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
+          }
+          return resp;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) {
@@ -42,8 +64,8 @@ self.addEventListener('fetch', event => {
       return fetch(event.request)
         .then(resp => {
           if (resp && resp.status === 200) {
-            const respClone = resp.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, respClone));
+            const clone = resp.clone();
+            caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
           }
           return resp;
         })
