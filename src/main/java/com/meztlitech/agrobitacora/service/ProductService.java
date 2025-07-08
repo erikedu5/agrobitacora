@@ -1,6 +1,6 @@
 package com.meztlitech.agrobitacora.service;
 
-import com.meztlitech.agrobitacora.model.ProductInfo;
+import com.meztlitech.agrobitacora.dto.ProductInfo;
 import com.meztlitech.agrobitacora.repository.ApplicationDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
