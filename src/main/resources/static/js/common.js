@@ -142,9 +142,9 @@
         const $ingredient = $group.find('[data-field="activeIngredient"]');
         const $unit = $group.find('[data-field="unit"]');
         let timer;
-        $name.on('input', function () {
-            clearTimeout(timer);
+        $name.off('input.productSearch').on('input.productSearch', function () {
             const val = this.value.trim();
+            clearTimeout(timer);
             if (!val) return;
             timer = setTimeout(async () => {
                 try {
@@ -183,6 +183,9 @@
         while ($container.find('.product-item').length > count) {
             $container.children().last().remove();
         }
+        $container.find('.product-item').each(function () {
+            attachProductSearch($(this));
+        });
         App.renumberProductGroups();
     };
 
