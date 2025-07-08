@@ -346,26 +346,33 @@
             }
         });
 
-        $(document).on('input.productSearch', '[data-field="productName"]', function () {
-            const $this = $(this);
-            const $group = $this.closest('.product-item');
-            const $ingredient = $group.find('[data-field="activeIngredient"]');
-            const $unit = $group.find('[data-field="unit"]');
-            const val = $this.val().trim();
-            clearTimeout($this.data('searchTimer'));
-            if (!val) return;
-            const timer = setTimeout(async () => {
-                try {
-                    const res = await fetch(`/product/search?name=${encodeURIComponent(val)}`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        if ($ingredient.val().trim() === '') $ingredient.val(data.activeIngredient || '');
-                        if ($unit.val().trim() === '') $unit.val(data.unit || '');
-                    }
-                } catch (e) { console.log('product search error', e); }
-            }, 3000);
-            $this.data('searchTimer', timer);
-        });
+        function attachProductAutoFill() {
+            $(document).off('input.productSearch')
+                .on('input.productSearch', '[data-field="productName"]', function () {
+                    const $input = $(this);
+                    const $group = $input.closest('.product-item');
+                    const $ingredient = $group.find('[data-field="activeIngredient"]');
+                    const $unit = $group.find('[data-field="unit"]');
+                    clearTimeout($input.data('searchTimer'));
+                    const val = $input.val().trim();
+                    if (!val) return;
+                    const timer = setTimeout(async () => {
+                        try {
+                            const res = await fetch(`/product/search?name=${encodeURIComponent(val)}`);
+                            if (res.ok) {
+                                const data = await res.json();
+                                if ($ingredient.val().trim() === '') $ingredient.val(data.activeIngredient || '');
+                                if ($unit.val().trim() === '') $unit.val(data.unit || '');
+                            }
+                        } catch (e) {
+                            console.log('product search error', e);
+                        }
+                    }, 3000);
+                    $input.data('searchTimer', timer);
+                });
+        }
+
+        attachProductAutoFill();
 
         async function ensureRole() {
             if (isOffline || localStorage.getItem('role') || !localStorage.getItem('token')) {
