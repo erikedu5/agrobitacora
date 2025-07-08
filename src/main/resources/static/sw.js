@@ -1,7 +1,24 @@
-const CACHE_NAME = 'agrobitacora-cache-v1';
+const CACHE_NAME = 'agrobitacora-cache-v3';
 const URLS_TO_CACHE = [
   '/',
+  '/home',
+  '/auth',
+  '/bill',
+  '/crop',
+  '/fumigation',
+  '/irrigation',
+  '/labor',
+  '/nutrition',
+  '/production',
+  '/admin',
+  '/admin/users',
+  '/admin/engineers',
   '/manifest.webmanifest',
+  '/js/app.js',
+  '/js/pwa.js',
+  '/js/common.js',
+  '/js/farm.js',
+  '/js/admin.js',
   // icons are embedded in the manifest as data URIs
 ];
 self.addEventListener('install', event => {
@@ -11,8 +28,53 @@ self.addEventListener('install', event => {
   );
 });
 self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  const dest = event.request.destination;
+
+  if (event.request.mode !== 'navigate' && dest === '') {
+    // network first for API/AJAX requests
+    event.respondWith(
+      fetch(event.request)
+        .then(resp => {
+          if (resp && resp.status === 200) {
+            const clone = resp.clone();
+            caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
+          }
+          return resp;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then(resp => resp || fetch(event.request))
+    caches.match(event.request).then(cached => {
+      if (cached) {
+        return cached;
+      }
+      if (!self.navigator.onLine) {
+        if (event.request.mode === 'navigate') {
+          return caches.match('/');
+        }
+        return;
+      }
+      return fetch(event.request)
+        .then(resp => {
+          if (resp && resp.status === 200) {
+            const clone = resp.clone();
+            caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
+          }
+          return resp;
+        })
+        .catch(() => {
+          if (event.request.mode === 'navigate') {
+            return caches.match('/');
+          }
+        });
+    })
   );
 });
 self.addEventListener('activate', event => {
