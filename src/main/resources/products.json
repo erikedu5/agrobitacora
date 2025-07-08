@@ -1,0 +1,5 @@
+[
+  {"name": "Herbicida A", "activeIngredient": "Glifosato", "unit": "L/ha"},
+  {"name": "Fungicida B", "activeIngredient": "Mancozeb", "unit": "kg/ha"},
+  {"name": "Insecticida C", "activeIngredient": "Imidacloprid", "unit": "ml/ha"}
+]

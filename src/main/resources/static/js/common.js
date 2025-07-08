@@ -137,6 +137,28 @@
         });
     };
 
+    function attachProductSearch($group) {
+        const $name = $group.find('[data-field="productName"]');
+        const $ingredient = $group.find('[data-field="activeIngredient"]');
+        const $unit = $group.find('[data-field="unit"]');
+        let timer;
+        $name.on('input', function () {
+            clearTimeout(timer);
+            const val = this.value.trim();
+            if (!val) return;
+            timer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/product/search?name=${encodeURIComponent(val)}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if ($ingredient.val().trim() === '') $ingredient.val(data.activeIngredient || '');
+                        if ($unit.val().trim() === '') $unit.val(data.unit || '');
+                    }
+                } catch (e) { console.log('product search error', e); }
+            }, 3000);
+        });
+    }
+
     App.addProductGroup = function (data = {}) {
         const $template = $('#product-template');
         const $container = $('#products');
@@ -147,6 +169,7 @@
             $node.remove();
             App.renumberProductGroups();
         });
+        attachProductSearch($node);
         App.renumberProductGroups();
         App.fillForm($node[0], data);
     };
