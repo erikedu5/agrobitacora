@@ -1,6 +1,6 @@
 package com.meztlitech.agrobitacora.controller;
 
-import com.meztlitech.agrobitacora.model.ProductInfo;
+import com.meztlitech.agrobitacora.dto.ProductInfo;
 import com.meztlitech.agrobitacora.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

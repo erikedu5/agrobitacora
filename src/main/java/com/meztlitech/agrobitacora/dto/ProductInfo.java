@@ -1,4 +1,4 @@
-package com.meztlitech.agrobitacora.model;
+package com.meztlitech.agrobitacora.dto;
 
 import lombok.Data;
 
