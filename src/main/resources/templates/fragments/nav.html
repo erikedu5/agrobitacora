@@ -1,6 +1,9 @@
 <nav th:fragment="nav" class="navbar navbar-expand-lg navbar-dark bg-primary">
   <div class="container-fluid">
-    <a class="navbar-brand" th:href="@{/}" th:text="#{nav.title}">Agro Bitácora</a>
+    <a class="navbar-brand" th:href="@{/}">
+      <img src="data:image/webp;base64,UklGRvB5AQBXRUJQVlA4IFSQAADwugKdASoABAAEPjEYh0OiIYnkbBABglpbtzVvL3+uZ7B3/5O2zyz/x+o3+C/3f1Js8K7b/f+5nz9PL7srLPnf+73RcXgP/o+Md61fDxyLz3uyhG/XSzfsfpN981xO+b/hv3//1fn0/weZ/xn/X9Gt9//y+t/9d+wp0DPM751Xm6b9dvX390ySb4n/7v7n60Pk/8v/gP8P/jv9p/W/cn8g+xfwP5Z/33/u/Xp+tbA/iP6zzL/lH25/Kf2T/Kf73/J/uL96f8z/weIPzB/1f8h+SHyC/iv81/x39t/a3+9ftp9Vn5fbx7N/wvQI90frH+Y/w/7w/4z5Zfv/+j6Y/bH/me4B/TP6x/vP8X+R3tueHN99/6v7U/AD/Of7t/xf8F/i/2A+nL+d/5/+F/zn7le5v8//vv/R/xn+r/bL7C/5b/Vv+D/ev81/7/9j////39x//" alt="logo" width="24" height="24" class="me-2">
+      <span th:text="#{nav.title}">Agro Bitácora</span>
+    </a>
     <div class="d-flex ms-auto align-items-center">
       <select id="producer-select" class="form-select form-select-sm me-2 d-none"></select>
       <div class="navbar-nav flex-row align-items-center">
