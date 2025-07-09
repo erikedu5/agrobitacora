@@ -7,7 +7,21 @@
       <div class="navbar-nav flex-row align-items-center">
         <a class="nav-link px-2" th:href="@{?lang=es}">ES</a>
         <a class="nav-link px-2" th:href="@{?lang=en}">EN</a>
-        <a id="logout" class="nav-link px-2" href="#" th:text="#{nav.logout}">Logout</a>
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle px-2" href="#" id="profileMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="#{nav.profile}">Perfil</a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a id="menu-bill" class="dropdown-item d-none" th:href="@{/bill}" th:text="#{home.bills}">Bills</a></li>
+            <li><a id="menu-crop" class="dropdown-item d-none" th:href="@{/crop}" th:text="#{home.crops}">Crops</a></li>
+            <li><a id="menu-fumigation" class="dropdown-item d-none" th:href="@{/fumigation}" th:text="#{home.fumigation}">Fumigation</a></li>
+            <li><a id="menu-irrigation" class="dropdown-item d-none" th:href="@{/irrigation}" th:text="#{home.irrigation}">Irrigation</a></li>
+            <li><a id="menu-labor" class="dropdown-item d-none" th:href="@{/labor}" th:text="#{home.labor}">Labor</a></li>
+            <li><a id="menu-nutrition" class="dropdown-item d-none" th:href="@{/nutrition}" th:text="#{home.nutrition}">Nutrition</a></li>
+            <li><a id="menu-production" class="dropdown-item d-none" th:href="@{/production}" th:text="#{home.production}">Production</a></li>
+            <li><a id="admin-menu" class="dropdown-item d-none" th:href="@{/admin}" th:text="#{admin.title}">Admin</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a id="logout" class="dropdown-item" href="#" th:text="#{nav.logout}">Logout</a></li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
