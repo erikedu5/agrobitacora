@@ -3,11 +3,17 @@
     <a class="navbar-brand" th:href="@{/}" th:text="#{nav.title}">Agro Bitácora</a>
     <div class="d-flex ms-auto align-items-center">
       <select id="producer-select" class="form-select form-select-sm me-2 d-none"></select>
-      <select id="crop-select" class="form-select form-select-sm me-2 d-none"></select>
-      <div class="navbar-nav">
-        <a class="nav-link" th:href="@{?lang=es}">ES</a>
-        <a class="nav-link" th:href="@{?lang=en}">EN</a>
-        <a id="logout" class="nav-link" href="#" th:text="#{nav.logout}">Logout</a>
+      <div class="navbar-nav flex-row align-items-center">
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle px-2" href="#" id="profileMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="#{nav.profile}">Perfil</a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li class="px-3"><select id="crop-select" class="form-select form-select-sm d-none"></select></li>
+            <li><a class="dropdown-item" th:href="@{?lang=es}">ES</a></li>
+            <li><a class="dropdown-item" th:href="@{?lang=en}">EN</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a id="logout" class="dropdown-item" href="#" th:text="#{nav.logout}">Logout</a></li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
