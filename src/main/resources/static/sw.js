@@ -1,4 +1,4 @@
-const CACHE_NAME = 'agrobitacora-cache-v3';
+const CACHE_NAME = 'agrobitacora-cache-v4';
 const URLS_TO_CACHE = [
   '/',
   '/home',
@@ -16,6 +16,7 @@ const URLS_TO_CACHE = [
   '/manifest.webmanifest',
   '/js/app.js',
   '/js/pwa.js',
+  '/js/weather.js',
   '/js/common.js',
   '/js/farm.js',
   '/js/admin.js',
