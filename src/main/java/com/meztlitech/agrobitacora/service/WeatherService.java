@@ -26,7 +26,7 @@ public class WeatherService {
                 if (cwObj instanceof Map<?, ?> cw) {
                     Double temp = toDouble(cw.get("temperature"));
                     Double wind = toDouble(cw.get("windspeed"));
-                    return new WeatherInfo(temp, wind);
+                    return new WeatherInfo(temp, wind, "Unknown");
                 }
             }
         } catch (Exception ex) {
@@ -51,5 +51,6 @@ public class WeatherService {
     public static class WeatherInfo {
         private Double temperature;
         private Double windspeed;
+        private String location = "Unknown";
     }
 }

@@ -31,6 +31,7 @@ public class WeatherController {
         if (info == null) {
             return ResponseEntity.noContent().build();
         }
+        info.setLocation(crop.getLocation());
         return ResponseEntity.ok(info);
     }
 }
