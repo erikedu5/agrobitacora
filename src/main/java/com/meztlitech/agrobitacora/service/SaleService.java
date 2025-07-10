@@ -52,6 +52,9 @@ public class SaleService {
         r.setSaleDate(sale.getSaleDate());
         r.setPackages(sale.getPackages());
         r.setPrice(sale.getPrice());
+        if (sale.getCrop() != null) {
+            r.setFlowerName(sale.getCrop().getFlowerName());
+        }
         return r;
     }
 }

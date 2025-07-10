@@ -10,4 +10,8 @@ public class SaleResponse {
     private LocalDateTime saleDate;
     private Long packages;
     private Double price;
+    /**
+     * Flower name for the crop from which the sale was made.
+     */
+    private String flowerName;
 }

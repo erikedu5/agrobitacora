@@ -11,7 +11,7 @@
         const $tbody = $table.find('tbody');
         $tbody.empty();
         (data.sales || []).forEach(s => {
-            $tbody.append(`<tr><td>${s.id}</td><td>${s.saleDate}</td><td>${s.packages}</td><td>${s.price}</td></tr>`);
+            $tbody.append(`<tr><td>${s.id}</td><td>${s.saleDate}</td><td>${s.packages}</td><td>${s.price}</td><td>${s.flowerName || ''}</td></tr>`);
         });
         $('#sales-total').text(data.total.toFixed(2));
         $table.removeClass('d-none');

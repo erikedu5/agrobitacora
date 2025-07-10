@@ -8,15 +8,6 @@
     <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
     <span th:text="#{production.title}"></span>
   </h1>
-  <form class="api mb-4" method="post" action="/production">
-    <div class="row g-3">
-      <div class="col-md-6">
-        <label class="form-label">Fecha de producción</label>
-        <input type="datetime-local" step="1" name="productionDate" class="form-control" required>
-      </div>
-    </div>
-    <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Crear</button>
-  </form>
 
   <h2 class="mt-5">Registrar venta</h2>
   <form id="sale-form" class="api mb-4" method="post" action="/sale">
@@ -54,12 +45,13 @@
         <th>Fecha</th>
         <th>Paquetes</th>
         <th>Precio</th>
+        <th>Descripción</th>
       </tr>
     </thead>
     <tbody></tbody>
     <tfoot>
       <tr>
-        <td colspan="3" class="text-end fw-bold">Total</td>
+        <td colspan="4" class="text-end fw-bold">Total</td>
         <td id="sales-total"></td>
       </tr>
     </tfoot>
