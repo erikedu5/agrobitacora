@@ -1,10 +1,14 @@
 package com.meztlitech.agrobitacora.controller;
 
 import com.meztlitech.agrobitacora.dto.BillDto;
+import com.meztlitech.agrobitacora.dto.BillResponse;
+import com.meztlitech.agrobitacora.dto.BillSummaryResponse;
+import com.meztlitech.agrobitacora.dto.filters.BillFilter;
 import com.meztlitech.agrobitacora.entity.BillEntity;
 import com.meztlitech.agrobitacora.service.BillService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/bill")
@@ -47,6 +52,23 @@ public class BillController {
                                               @RequestHeader(value = "Authorization") final String token,
                                               @RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok(billService.uploadFile(id, file, token));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Page<BillResponse>> getAll(@RequestParam int page,
+                                                     @RequestParam int size,
+                                                     @RequestHeader(value = "cropId") final Long cropId,
+                                                     @RequestHeader(value = "Authorization") final String token) {
+        BillFilter filter = new BillFilter(page, size);
+        return ResponseEntity.ok(billService.getAll(filter, cropId, token));
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<BillSummaryResponse> summary(@RequestParam String start,
+                                                       @RequestParam String end,
+                                                       @RequestHeader(value = "cropId") final Long cropId,
+                                                       @RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(billService.summaryByRange(LocalDate.parse(start), LocalDate.parse(end), cropId, token));
     }
 
     @PutMapping("/{id}")
