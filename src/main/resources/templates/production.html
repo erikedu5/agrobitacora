@@ -17,6 +17,53 @@
     </div>
     <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Crear</button>
   </form>
+
+  <h2 class="mt-5">Registrar venta</h2>
+  <form id="sale-form" class="api mb-4" method="post" action="/sale">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Fecha de venta</label>
+        <input type="datetime-local" step="1" name="saleDate" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Paquetes vendidos</label>
+        <input type="number" name="packages" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Precio</label>
+        <input type="number" step="0.01" name="price" class="form-control" required>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success mt-3">Registrar</button>
+  </form>
+
+  <h2 class="mt-5">Corte de ventas por fecha</h2>
+  <form id="summary-form" class="row g-3 mb-3">
+    <div class="col-md-4">
+      <label class="form-label">Fecha</label>
+      <input type="date" name="date" class="form-control" required>
+    </div>
+    <div class="col-md-4 align-self-end">
+      <button type="submit" class="btn btn-primary">Consultar</button>
+    </div>
+  </form>
+  <table id="sales-table" class="table table-striped d-none">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Paquetes</th>
+        <th>Precio</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" class="text-end fw-bold">Total</td>
+        <td id="sales-total"></td>
+      </tr>
+    </tfoot>
+  </table>
   <table class="table table-striped">
     <thead>
       <tr>
@@ -32,6 +79,7 @@
 </div>
 <div th:replace="~{fragments/scripts :: base-scripts}"></div>
 <script th:src="@{/js/production.js}" defer></script>
+<script th:src="@{/js/sale.js}" defer></script>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>
