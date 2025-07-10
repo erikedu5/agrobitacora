@@ -164,6 +164,18 @@
         App.renumberProductGroups();
     };
 
+    App.hideVisitDate = function () {
+        if (localStorage.getItem('role') === 'Productor') {
+            const $visit = $('input[name="visitDate"]');
+            $visit.closest('.col-md-6').addClass('d-none');
+            $visit.prop('required', false);
+            const appVal = $('input[name="applicationDate"]').val();
+            if (appVal && !$visit.val()) {
+                $visit.val(appVal);
+            }
+        }
+    };
+
     App.showApplicationDetails = function (app) {
         const $modal = $('#detailModal');
         if ($modal.length === 0) return;

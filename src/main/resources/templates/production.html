@@ -30,7 +30,8 @@
     </tbody>
   </table>
 </div>
-<div th:replace="~{fragments/scripts :: farm-scripts}"></div>
+<div th:replace="~{fragments/scripts :: base-scripts}"></div>
+<script th:src="@{/js/production.js}" defer></script>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>
