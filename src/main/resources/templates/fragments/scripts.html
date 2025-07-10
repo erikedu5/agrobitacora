@@ -6,13 +6,3 @@
     <script th:src="@{/js/pwa.js}"></script>
     <script th:src="@{/js/weather.js}"></script>
 </th:block>
-
-<th:block th:fragment="farm-scripts">
-    <div th:replace="~{fragments/scripts :: base-scripts}"></div>
-    <script th:src="@{/js/farm.js}"></script>
-</th:block>
-
-<th:block th:fragment="admin-scripts">
-    <div th:replace="~{fragments/scripts :: base-scripts}"></div>
-    <script th:src="@{/js/admin.js}"></script>
-</th:block>

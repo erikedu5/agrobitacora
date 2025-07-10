@@ -5,12 +5,12 @@
       <span th:text="#{nav.title}">Agro Bitácora</span>
     </a>
     <div class="d-flex ms-auto align-items-center">
-      <select id="producer-select" class="form-select form-select-sm me-2 d-none"></select>
       <div class="navbar-nav flex-row align-items-center">
         <div class="nav-item dropdown">
           <a class="nav-link dropdown-toggle px-2" href="#" id="profileMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="#{nav.profile}">Perfil</a>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li class="px-3"><select id="crop-select" class="form-select form-select-sm d-none"></select></li>
+            <li class="px-3"><span th:text="#{admin.users.title}">Cliente: </span><select id="producer-select" class="form-select form-select-sm me-2 d-none"></select></li>
+            <li class="px-3"><span th:text="#{home.crops}">Cultivo: </span> <select id="crop-select" class="form-select form-select-sm d-none"></select></li>
             <li><a class="dropdown-item" th:href="@{?lang=es}">ES</a></li>
             <li><a class="dropdown-item" th:href="@{?lang=en}">EN</a></li>
             <li><hr class="dropdown-divider"></li>

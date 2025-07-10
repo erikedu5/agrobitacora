@@ -11,7 +11,8 @@
   </div>
   <div id="admin-counts" class="mb-4"></div>
 </div>
-<div th:replace="~{fragments/scripts :: admin-scripts}"></div>
+<div th:replace="~{fragments/scripts :: base-scripts}"></div>
+<script th:src="@{/js/admin-home.js}" defer></script>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>
