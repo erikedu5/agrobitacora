@@ -33,6 +33,7 @@
     <thead>
       <tr>
         <th>ID</th>
+        <th>Fecha</th>
         <th>Concepto</th>
         <th>Costo</th>
         <th></th>
@@ -41,6 +42,38 @@
     <tbody>
       <!-- Aquí se mostrarán las facturas -->
     </tbody>
+  </table>
+
+  <h2 class="mt-5">Resumen de gastos</h2>
+  <form id="bill-summary-form" class="row g-3 mb-3">
+    <div class="col-md-4">
+      <label class="form-label">Desde</label>
+      <input type="date" name="start" class="form-control" required>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Hasta</label>
+      <input type="date" name="end" class="form-control" required>
+    </div>
+    <div class="col-md-4 align-self-end">
+      <button type="submit" class="btn btn-primary">Consultar</button>
+    </div>
+  </form>
+  <table id="bill-summary-table" class="table table-striped d-none">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Concepto</th>
+        <th>Costo</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" class="text-end fw-bold">Total</td>
+        <td id="bill-summary-total"></td>
+      </tr>
+    </tfoot>
   </table>
 </div>
 <div th:replace="~{fragments/scripts :: base-scripts}"></div>
