@@ -56,22 +56,9 @@
       </tr>
     </tfoot>
   </table>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Fecha</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Aquí se mostrarán las producciones -->
-    </tbody>
-  </table>
 </div>
-<div th:replace="~{fragments/scripts :: base-scripts}"></div>
-<script th:src="@{/js/production.js}" defer></script>
-<script th:src="@{/js/sale.js}" defer></script>
+  <div th:replace="~{fragments/scripts :: base-scripts}"></div>
+  <script th:src="@{/js/sale.js}" defer></script>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>
