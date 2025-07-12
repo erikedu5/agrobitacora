@@ -1,7 +1,6 @@
 (function () {
     let notifications = [];
     let tray;
-    let trayInstance;
 
     async function loadNotifications() {
         const token = App.getToken();
@@ -51,12 +50,9 @@
     });
     function init() {
         tray = document.getElementById('notificationTray');
+        // Bootstrap will handle offcanvas toggling via data attributes
         if (tray) {
-            trayInstance = bootstrap.Offcanvas.getOrCreateInstance(tray);
-        }
-        const btn = document.getElementById('notificationsButton');
-        if (btn && trayInstance) {
-            btn.addEventListener('click', () => trayInstance.show());
+            bootstrap.Offcanvas.getOrCreateInstance(tray);
         }
         loadNotifications();
     }
