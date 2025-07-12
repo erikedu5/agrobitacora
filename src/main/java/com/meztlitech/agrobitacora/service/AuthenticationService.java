@@ -43,7 +43,7 @@ public class AuthenticationService {
                     .orElseThrow(() -> new IllegalArgumentException("Invalid credentials."));
 
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getUserName(), request.getPassword()));
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), request.getPassword()));
             String jwt = jwtService.generateToken(user, user.getId());
 
             UserResponse userDto = new UserResponse();
