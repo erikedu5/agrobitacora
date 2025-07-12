@@ -1,5 +1,7 @@
 (function () {
     let notifications = [];
+    let tray;
+    let trayInstance;
 
     async function loadNotifications() {
         const token = App.getToken();
@@ -47,6 +49,21 @@
             }
         }
     });
+    function init() {
+        tray = document.getElementById('notificationTray');
+        if (tray) {
+            trayInstance = bootstrap.Offcanvas.getOrCreateInstance(tray);
+        }
+        const btn = document.getElementById('notificationsButton');
+        if (btn && trayInstance) {
+            btn.addEventListener('click', () => trayInstance.show());
+        }
+        loadNotifications();
+    }
 
-    document.addEventListener('DOMContentLoaded', loadNotifications);
+    if (document.readyState !== 'loading') {
+        init();
+    } else {
+        document.addEventListener('DOMContentLoaded', init);
+    }
 })();
