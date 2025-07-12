@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.meztlitech.agrobitacora.dto.CatalogDto;
 
 @Service
 @RequiredArgsConstructor
@@ -148,5 +149,18 @@ public class NutritionService {
         cropUtil.validateCropByUser(token, application.getCrop().getId());
         applicationDetailRepository.deleteAll(applicationDetailRepository.findAllByApplicationId(id));
         applicationRepository.delete(application);
+    }
+
+    public List<CatalogDto> catalog(Long cropId, String token) {
+        cropUtil.validateCropByUser(token, cropId);
+        List<ApplicationEntity> apps = applicationRepository.findAllByApplicationType(ApplicationType.NUTRICION, cropId);
+        List<CatalogDto> list = new ArrayList<>();
+        apps.forEach(app -> {
+            CatalogDto dto = new CatalogDto();
+            dto.setId(app.getId());
+            dto.setDescription(app.getDetail() + " " + app.getApplicationDate());
+            list.add(dto);
+        });
+        return list;
     }
 }

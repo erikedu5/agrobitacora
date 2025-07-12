@@ -1,6 +1,7 @@
 package com.meztlitech.agrobitacora.service;
 
 import com.meztlitech.agrobitacora.dto.IrrigationDto;
+import com.meztlitech.agrobitacora.dto.CatalogDto;
 import com.meztlitech.agrobitacora.dto.enums.IrrigationType;
 import com.meztlitech.agrobitacora.dto.filters.IrrigationFilter;
 import com.meztlitech.agrobitacora.entity.IrrigationEntity;
@@ -55,5 +56,18 @@ public class IrrigationService {
         IrrigationEntity irrigation = irrigationRepository.findById(id).orElseThrow();
         cropUtil.validateCropByUser(token, irrigation.getCrop().getId());
         irrigationRepository.delete(irrigation);
+    }
+
+    public java.util.List<CatalogDto> catalog(Long cropId, String token) {
+        cropUtil.validateCropByUser(token, cropId);
+        java.util.List<IrrigationEntity> irrigations = irrigationRepository.findAllListByCropId(cropId);
+        java.util.List<CatalogDto> list = new java.util.ArrayList<>();
+        irrigations.forEach(ir -> {
+            CatalogDto dto = new CatalogDto();
+            dto.setId(ir.getId());
+            dto.setDescription(ir.getType() + " " + ir.getDate());
+            list.add(dto);
+        });
+        return list;
     }
 }

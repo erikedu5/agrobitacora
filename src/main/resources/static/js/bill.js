@@ -1,8 +1,8 @@
 const urlMap = {
-        'FUMIGATION': '/fumigation/all?page=0&size=50',
-        'IRRIGATION': '/irrigation/all?page=0&size=50',
-        'LABOR': '/labor/all?page=0&size=50',
-        'NUTRITION': '/nutrition/all?page=0&size=50'
+        'FUMIGATION': '/fumigation/catalog',
+        'IRRIGATION': '/irrigation/catalog',
+        'LABOR': '/labor/catalog',
+        'NUTRITION': '/nutrition/catalog'
     };
 
 async function loadAssociated(kind) {
@@ -21,14 +21,7 @@ async function loadAssociated(kind) {
         const items = Array.isArray(data) ? data : (data.content || []);
         $select.empty();
         items.forEach(i => {
-            let text = '';
-            if (kind === 'FUMIGATION' || kind === 'NUTRITION') {
-                text = `${i.id} - ${i.applicationDate || ''}`;
-            } else if (kind === 'IRRIGATION') {
-                text = `${i.id} - ${i.date || ''}`;
-            } else if (kind === 'LABOR') {
-                text = `${i.id} - ${i.laborDate || ''}`;
-            }
+            const text = i.description ? `${i.id} - ${i.description}` : i.id;
             $select.append(`<option value="${i.id}">${text}</option>`);
         });
         $container.removeClass('d-none');
