@@ -29,5 +29,6 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         $('#notificationsButton').on('click', loadNotifications);
+        loadNotifications();
     });
 })();
