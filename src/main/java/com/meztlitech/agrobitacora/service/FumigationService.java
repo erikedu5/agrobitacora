@@ -13,6 +13,8 @@ import com.meztlitech.agrobitacora.repository.ApplicationDetailRepository;
 import com.meztlitech.agrobitacora.repository.ApplicationRepository;
 import com.meztlitech.agrobitacora.repository.CropRepository;
 import com.meztlitech.agrobitacora.repository.UserRepository;
+import com.meztlitech.agrobitacora.service.NotificationService;
+import com.meztlitech.agrobitacora.entity.CropEntity;
 import com.meztlitech.agrobitacora.util.CropUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ public class FumigationService {
     private final ObjectMapper objectMapper;
     private final CropRepository cropRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     private static final String ROLE_PRODUCTOR = "Productor";
     private static final String ROLE_INGENIERO = "Ingeniero";
@@ -59,6 +62,11 @@ public class FumigationService {
         applicationEntity.setUser(userRepository.findById(userId).orElseThrow());
         applicationEntity.setCrop(cropRepository.findById(cropId).orElseThrow());
         ApplicationEntity saved = applicationRepository.save(applicationEntity);
+
+        if (role.getName().equals(ROLE_INGENIERO)) {
+            CropEntity crop = cropRepository.findById(cropId).orElseThrow();
+            notificationService.notify(crop.getUser(), "Nueva fumigación registrada", "/fumigation");
+        }
 
         List<ApplicationDetailEntity> detailEntities = new ArrayList<>();
         applicationDto.getAppDetails().forEach(appDetail -> {

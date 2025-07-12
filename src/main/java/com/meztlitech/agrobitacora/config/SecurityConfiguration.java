@@ -64,7 +64,8 @@ public class SecurityConfiguration {
                                 "/bill", "/crop", "/fumigation",
                                 "/irrigation", "/labor", "/nutrition",
                                 "/production", "/admin", "/admin/**",
-                                "/balance/**", "/js/**" ,"/home", "/weather/**").permitAll()
+                                "/balance/**", "/js/**" ,"/home", "/notification/**",
+                                "/notifications", "/weather/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(

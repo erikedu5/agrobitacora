@@ -6,6 +6,10 @@
     </a>
     <div class="d-flex ms-auto align-items-center">
       <div class="navbar-nav flex-row align-items-center">
+        <button id="notificationsButton" class="btn btn-link text-white me-2 position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#notificationTray">
+          <i class="bi bi-bell"></i>
+          <span id="notification-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+        </button>
         <div class="nav-item dropdown">
           <a class="nav-link dropdown-toggle px-2" href="#" id="profileMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="#{nav.profile}">Perfil</a>
           <ul class="dropdown-menu dropdown-menu-end">
@@ -24,3 +28,12 @@
     <div id="toast-container"></div>
   </div>
 </nav>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="notificationTray" aria-labelledby="notificationTrayLabel">
+  <div class="offcanvas-header">
+    <h5 id="notificationTrayLabel">Notificaciones</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul id="notification-list" class="list-group"></ul>
+  </div>
+</div>
