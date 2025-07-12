@@ -56,6 +56,11 @@ public class ViewController {
         return "production";
     }
 
+    @GetMapping("/balance")
+    public String balance() {
+        return "balance";
+    }
+
     @GetMapping("/admin")
     public String admin() {
         return "admin";

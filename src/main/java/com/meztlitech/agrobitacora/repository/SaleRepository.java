@@ -13,4 +13,7 @@ public interface SaleRepository extends JpaRepository<SaleEntity, Long> {
 
     @Query("FROM SaleEntity s WHERE s.crop.id = :cropId AND DATE(s.saleDate) = :date")
     List<SaleEntity> findAllByDate(Long cropId, LocalDate date);
+
+    @Query("FROM SaleEntity s WHERE s.crop.id = :cropId AND DATE(s.saleDate) BETWEEN :start AND :end")
+    List<SaleEntity> findAllByDateRange(Long cropId, LocalDate start, LocalDate end);
 }
