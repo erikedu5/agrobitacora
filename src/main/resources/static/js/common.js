@@ -479,7 +479,7 @@
             }
             let allow = all;
             if (role === 'Ingeniero') {
-                allow = ['#menu-fumigation','#menu-nutrition','#menu-balance'];
+                allow = ['#menu-fumigation','#menu-nutrition'];
             }
             allow.forEach(sel => $(sel).removeClass('d-none'));
         }
