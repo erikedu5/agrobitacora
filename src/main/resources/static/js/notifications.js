@@ -1,4 +1,6 @@
 (function () {
+    let notifications = [];
+
     async function loadNotifications() {
         const token = App.getToken();
         if (!token) return;
@@ -7,28 +9,44 @@
             res = await fetch('/notification', { headers: { Authorization: token } });
         } catch (e) { return; }
         if (!res.ok) return;
-        const list = await res.json();
+        notifications = await res.json();
+        render();
+    }
+
+    async function markAsRead(id) {
+        const token = App.getToken();
+        if (!token) return;
+        try { await fetch(`/notification/${id}/read`, { method: 'POST', headers: { Authorization: token } }); } catch (e) {}
+    }
+
+    function render() {
         const $list = $('#notification-list');
         $list.empty();
         let unread = 0;
-        list.forEach(n => {
-            const item = `<li class="list-group-item d-flex justify-content-between align-items-start${n.read ? '' : ' fw-bold'}">
-                <span>${n.message}</span>
-                ${n.read ? '' : `<button data-id="${n.id}" class="btn btn-sm btn-link mark-read">Marcar</button>`}
-            </li>`;
+        notifications.forEach(n => {
+            const item = $(
+                `<li class="list-group-item notification-item${n.read ? '' : ' fw-bold'}" data-id="${n.id}">
+                    <span>${n.message}</span>
+                </li>`
+            );
             $list.append(item);
             if (!n.read) unread++;
         });
         $('#notification-count').text(unread);
-        $('.mark-read').on('click', async function () {
-            const id = $(this).data('id');
-            await fetch(`/notification/${id}/read`, { method: 'POST', headers: { Authorization: token } });
-            loadNotifications();
-        });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        $('#notificationsButton').on('click', loadNotifications);
-        loadNotifications();
+    $(document).on('click', '.notification-item', async function () {
+        const id = $(this).data('id');
+        const notif = notifications.find(n => n.id === id);
+        if (notif) {
+            App.notify(notif.message, 'info');
+            if (!notif.read) {
+                await markAsRead(id);
+                notif.read = true;
+                render();
+            }
+        }
     });
+
+    document.addEventListener('DOMContentLoaded', loadNotifications);
 })();
