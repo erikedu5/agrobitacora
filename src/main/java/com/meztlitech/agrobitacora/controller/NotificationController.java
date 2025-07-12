@@ -23,7 +23,7 @@ public class NotificationController {
 
     @GetMapping
     public ResponseEntity<List<?>> getAll(@RequestHeader("Authorization") String token) {
-        Long userId = authenticationService.verify(token).getId();
+        Long userId = authenticationService.verify("Bearer " + token).getId();
         UserEntity user = userRepository.findById(userId).orElseThrow();
         return ResponseEntity.ok(notificationService.getNotifications(user));
     }

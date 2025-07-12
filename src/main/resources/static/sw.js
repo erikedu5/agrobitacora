@@ -18,6 +18,7 @@ const URLS_TO_CACHE = [
   '/js/pwa.js',
   '/js/weather.js',
   '/js/common.js',
+  '/js/notifications.js',
   // icons are embedded in the manifest as data URIs
 ];
 self.addEventListener('install', event => {
