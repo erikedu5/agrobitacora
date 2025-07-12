@@ -4,6 +4,7 @@ import com.meztlitech.agrobitacora.dto.IrrigationDto;
 import com.meztlitech.agrobitacora.dto.filters.IrrigationFilter;
 import com.meztlitech.agrobitacora.entity.IrrigationEntity;
 import com.meztlitech.agrobitacora.service.IrrigationService;
+import com.meztlitech.agrobitacora.dto.CatalogDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -64,5 +65,11 @@ public class IrrigationController {
                                        @RequestHeader(value = "Authorization") final String token) {
         irrigationService.delete(id, token);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/catalog")
+    public ResponseEntity<java.util.List<CatalogDto>> catalog(@RequestHeader(value = "cropId") final Long cropId,
+                                                              @RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(irrigationService.catalog(cropId, token));
     }
 }

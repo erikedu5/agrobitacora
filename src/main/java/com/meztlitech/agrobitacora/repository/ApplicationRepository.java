@@ -13,4 +13,7 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
 
     @Query("FROM ApplicationEntity a WHERE a.applicationType = :applicationType AND a.crop.id = :cropId")
     Page<ApplicationEntity> findAllByApplicationType(ApplicationType applicationType, Long cropId, Pageable paging);
+
+    @Query("FROM ApplicationEntity a WHERE a.applicationType = :applicationType AND a.crop.id = :cropId")
+    java.util.List<ApplicationEntity> findAllByApplicationType(ApplicationType applicationType, Long cropId);
 }

@@ -1,6 +1,7 @@
 package com.meztlitech.agrobitacora.service;
 
 import com.meztlitech.agrobitacora.dto.LaborDto;
+import com.meztlitech.agrobitacora.dto.CatalogDto;
 import com.meztlitech.agrobitacora.dto.filters.LaborFilter;
 import com.meztlitech.agrobitacora.entity.LaborEntity;
 import com.meztlitech.agrobitacora.repository.CropRepository;
@@ -55,5 +56,18 @@ public class LaborService {
         LaborEntity labor = laborRepository.findById(id).orElseThrow();
         cropUtil.validateCropByUser(token, labor.getCrop().getId());
         laborRepository.delete(labor);
+    }
+
+    public java.util.List<CatalogDto> catalog(Long cropId, String token) {
+        cropUtil.validateCropByUser(token, cropId);
+        java.util.List<LaborEntity> labors = laborRepository.findAllListByCropId(cropId);
+        java.util.List<CatalogDto> list = new java.util.ArrayList<>();
+        labors.forEach(lb -> {
+            CatalogDto dto = new CatalogDto();
+            dto.setId(lb.getId());
+            dto.setDescription((lb.getDescription() != null ? lb.getDescription() + " " : "") + lb.getKindLabor() + " " + lb.getLaborDate());
+            list.add(dto);
+        });
+        return list;
     }
 }

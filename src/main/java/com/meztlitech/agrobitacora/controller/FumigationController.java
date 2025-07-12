@@ -4,6 +4,7 @@ import com.meztlitech.agrobitacora.dto.ApplicationDto;
 import com.meztlitech.agrobitacora.dto.ApplicationResponse;
 import com.meztlitech.agrobitacora.dto.filters.ApplicationFilter;
 import com.meztlitech.agrobitacora.service.FumigationService;
+import com.meztlitech.agrobitacora.dto.CatalogDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -69,5 +70,11 @@ public class FumigationController {
                                        @RequestHeader(value = "Authorization") final String token) {
         fumigationService.delete(id, token);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/catalog")
+    public ResponseEntity<java.util.List<CatalogDto>> catalog(@RequestHeader(value = "cropId") final Long cropId,
+                                                              @RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(fumigationService.catalog(cropId, token));
     }
 }

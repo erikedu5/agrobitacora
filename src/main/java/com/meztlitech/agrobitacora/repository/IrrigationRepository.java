@@ -12,4 +12,7 @@ public interface IrrigationRepository extends JpaRepository<IrrigationEntity, Lo
 
     @Query("FROM IrrigationEntity ie WHERE ie.crop.id = :cropId")
     Page<IrrigationEntity> findAllByCropId(Long cropId, Pageable paging);
+
+    @Query("FROM IrrigationEntity ie WHERE ie.crop.id = :cropId")
+    java.util.List<IrrigationEntity> findAllListByCropId(Long cropId);
 }

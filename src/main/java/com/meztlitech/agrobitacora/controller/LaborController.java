@@ -4,6 +4,7 @@ import com.meztlitech.agrobitacora.dto.LaborDto;
 import com.meztlitech.agrobitacora.dto.filters.LaborFilter;
 import com.meztlitech.agrobitacora.entity.LaborEntity;
 import com.meztlitech.agrobitacora.service.LaborService;
+import com.meztlitech.agrobitacora.dto.CatalogDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -64,5 +65,11 @@ public class LaborController {
                                        @RequestHeader(value = "Authorization") final String token) {
         laborService.delete(id, token);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/catalog")
+    public ResponseEntity<java.util.List<CatalogDto>> catalog(@RequestHeader(value = "cropId") final Long cropId,
+                                                              @RequestHeader(value = "Authorization") final String token) {
+        return ResponseEntity.ok(laborService.catalog(cropId, token));
     }
 }
