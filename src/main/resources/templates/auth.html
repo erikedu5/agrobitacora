@@ -7,7 +7,7 @@
   <h1 class="mb-4">
     <span th:text="#{auth.title}"></span>
   </h1>
-  <div class="row">
+  <div class="row justify-content-center">
     <div class="col-md-6">
       <h2 th:text="#{sign.in}">Sign In</h2>
       <form id="sign-in-form" class="api" method="post" action="/auth/signIn">
@@ -19,30 +19,43 @@
           <label class="form-label">Contraseña</label>
           <input type="password" name="password" class="form-control">
         </div>
-        <button type="submit" class="btn btn-primary" th:text="#{sign.in}">Ingresar</button>
+        <div class="d-flex justify-content-between">
+          <button type="submit" class="btn btn-primary" th:text="#{sign.in}">Ingresar</button>
+          <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#signupModal" th:text="#{sign.up}">Registrarse</button>
+        </div>
       </form>
     </div>
-    <div class="col-md-6">
-      <h2 th:text="#{sign.up}">Sign Up</h2>
-      <form id="sign-up-form" class="api" method="post" action="/auth/signUp">
-        <div class="mb-3">
-          <label class="form-label">Nombre</label>
-          <input type="text" name="name" class="form-control">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Usuario</label>
-          <input type="text" name="email" class="form-control">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Whatsapp</label>
-          <input type="text" name="whatsapp" class="form-control">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Contraseña</label>
-          <input type="password" name="password" class="form-control">
-        </div>
-        <button type="submit" class="btn btn-success" th:text="#{sign.up}">Registrar</button>
-      </form>
+  </div>
+</div>
+<!-- Sign Up Modal -->
+<div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="signupModalLabel" th:text="#{sign.up}">Sign Up</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="sign-up-form" class="api" method="post" action="/auth/signUp">
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="name" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Usuario</label>
+            <input type="text" name="email" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Whatsapp</label>
+            <input type="text" name="whatsapp" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Contraseña</label>
+            <input type="password" name="password" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-success" th:text="#{sign.up}">Registrar</button>
+        </form>
+      </div>
     </div>
   </div>
 </div>
