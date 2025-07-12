@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignInRequest {
-    private String email;
+    // login can be either email or whatsapp number
+    private String login;
     private String password;
 }
