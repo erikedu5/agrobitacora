@@ -48,9 +48,28 @@
             }
         }
     });
-    function init() {
+    function ensureTrayExists() {
         tray = document.getElementById('notificationTray');
-        // Bootstrap will handle offcanvas toggling via data attributes
+        if (!tray) {
+            tray = document.createElement('div');
+            tray.id = 'notificationTray';
+            tray.className = 'offcanvas offcanvas-end';
+            tray.tabIndex = -1;
+            tray.setAttribute('aria-labelledby', 'notificationTrayLabel');
+            tray.innerHTML =
+                '<div class="offcanvas-header">' +
+                '<h5 id="notificationTrayLabel">Notificaciones</h5>' +
+                '<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>' +
+                '</div>' +
+                '<div class="offcanvas-body">' +
+                '<ul id="notification-list" class="list-group"></ul>' +
+                '</div>';
+            document.body.appendChild(tray);
+        }
+    }
+
+    function init() {
+        ensureTrayExists();
         if (tray) {
             bootstrap.Offcanvas.getOrCreateInstance(tray);
         }
