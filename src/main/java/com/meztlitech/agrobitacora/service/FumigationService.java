@@ -65,7 +65,7 @@ public class FumigationService {
 
         if (role.getName().equals(ROLE_INGENIERO)) {
             CropEntity crop = cropRepository.findById(cropId).orElseThrow();
-            notificationService.notify(crop.getUser(), "Nueva fumigación registrada");
+            notificationService.notify(crop.getUser(), "Nueva fumigación registrada", "/fumigation");
         }
 
         List<ApplicationDetailEntity> detailEntities = new ArrayList<>();

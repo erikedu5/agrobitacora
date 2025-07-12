@@ -66,7 +66,7 @@ public class NutritionService {
 
         if (role.getName().equals(ROLE_INGENIERO)) {
             CropEntity crop = cropRepository.findById(cropId).orElseThrow();
-            notificationService.notify(crop.getUser(), "Nueva nutrición registrada");
+            notificationService.notify(crop.getUser(), "Nueva nutrición registrada", "/nutrition");
         }
 
         List<ApplicationDetailEntity> detailEntities = new ArrayList<>();

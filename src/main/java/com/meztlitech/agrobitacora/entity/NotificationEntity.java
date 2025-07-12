@@ -32,6 +32,9 @@ public class NotificationEntity {
     @Column(name = "read")
     private boolean read;
 
+    @Column(name = "link")
+    private String link;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

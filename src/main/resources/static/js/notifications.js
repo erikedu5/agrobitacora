@@ -25,11 +25,8 @@
         $list.empty();
         let unread = 0;
         notifications.forEach(n => {
-            const item = $(
-                `<li class="list-group-item notification-item${n.read ? '' : ' fw-bold'}" data-id="${n.id}">
-                    <span>${n.message}</span>
-                </li>`
-            );
+            const unreadClass = n.read ? '' : ' fw-bold bg-warning-subtle';
+            const item = $(`<li class="list-group-item notification-item${unreadClass}" data-id="${n.id}"><span>${n.message}</span></li>`);
             $list.append(item);
             if (!n.read) unread++;
         });
@@ -40,11 +37,13 @@
         const id = $(this).data('id');
         const notif = notifications.find(n => n.id === id);
         if (notif) {
-            App.notify(notif.message, 'info');
             if (!notif.read) {
                 await markAsRead(id);
                 notif.read = true;
                 render();
+            }
+            if (notif.link) {
+                window.location.href = notif.link;
             }
         }
     });

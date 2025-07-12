@@ -18,12 +18,17 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
 
     public void notify(UserEntity user, String message) {
+        notify(user, message, null);
+    }
+
+    public void notify(UserEntity user, String message, String link) {
         try {
             NotificationEntity entity = new NotificationEntity();
             entity.setUser(user);
             entity.setMessage(message);
             entity.setCreatedAt(LocalDateTime.now());
             entity.setRead(false);
+            entity.setLink(link);
             notificationRepository.save(entity);
         } catch (Exception e) {
             log.error(e.getMessage());
