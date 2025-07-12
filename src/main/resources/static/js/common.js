@@ -467,7 +467,7 @@
 
         function showMenus() {
             const role = localStorage.getItem('role');
-            const all = ['#menu-bill','#menu-crop','#menu-fumigation','#menu-irrigation','#menu-labor','#menu-nutrition','#menu-production'];
+            const all = ['#menu-bill','#menu-crop','#menu-fumigation','#menu-irrigation','#menu-labor','#menu-nutrition','#menu-production','#menu-balance'];
             all.forEach(sel => $(sel).addClass('d-none'));
             $('#admin-menu').addClass('d-none');
             if (role === 'Admin') {
@@ -479,7 +479,7 @@
             }
             let allow = all;
             if (role === 'Ingeniero') {
-                allow = ['#menu-fumigation','#menu-nutrition'];
+                allow = ['#menu-fumigation','#menu-nutrition','#menu-balance'];
             }
             allow.forEach(sel => $(sel).removeClass('d-none'));
         }
