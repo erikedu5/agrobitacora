@@ -5,6 +5,30 @@
     App.registerEntity = (name, cfg) => entities[name] = cfg;
     App.enc = obj => encodeURIComponent(JSON.stringify(obj));
 
+    function getStored(key) {
+        return localStorage.getItem(key) || sessionStorage.getItem(key);
+    }
+
+    function clearAuth() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('role');
+    }
+
+    function setAuth(token, role, remember) {
+        const storage = remember ? localStorage : sessionStorage;
+        storage.setItem('token', token);
+        if (role) storage.setItem('role', role);
+        const other = remember ? sessionStorage : localStorage;
+        other.removeItem('token');
+        other.removeItem('role');
+    }
+
+    App.getToken = () => getStored('token');
+    App.getRole = () => getStored('role');
+    App.clearAuth = clearAuth;
+
     App.notify = function (message, type = 'success') {
         const $container = $('#toast-container');
         if ($container.length === 0) return;
@@ -165,7 +189,7 @@
     };
 
     App.hideVisitDate = function () {
-        if (localStorage.getItem('role') === 'Productor') {
+        if (App.getRole() === 'Productor') {
             const $visit = $('input[name="visitDate"]');
             $visit.closest('.col-md-6').addClass('d-none');
             $visit.prop('required', false);
@@ -307,7 +331,7 @@
             } else {
                 App.notify('Error al eliminar', 'danger');
                 if (resp.status === 401) {
-                    localStorage.removeItem('token');
+                    App.clearAuth();
                     location.href = '/auth';
                 }
             }
@@ -329,7 +353,7 @@
     };
 
     $(function () {
-        if (location.pathname !== '/auth' && !localStorage.getItem('token')) {
+        if (location.pathname !== '/auth' && !App.getToken()) {
             location.href = '/auth';
             return;
         }
@@ -338,9 +362,9 @@
         window.fetch = async (input, init = {}) => {
             init.headers = {
                 ...(init.headers || {}),
-                ...(localStorage.getItem('token') ? { 'Authorization': 'Bearer ' + localStorage.getItem('token') } : {}),
+                ...(App.getToken() ? { 'Authorization': 'Bearer ' + App.getToken() } : {}),
                 ...(localStorage.getItem('cropId') &&
-                    ['Productor', 'Ingeniero'].includes(localStorage.getItem('role'))
+                    ['Productor', 'Ingeniero'].includes(App.getRole())
                     ? { cropId: localStorage.getItem('cropId') }
                     : {})
             };
@@ -349,10 +373,10 @@
 
         $.ajaxSetup({
             beforeSend: function (xhr) {
-                if (localStorage.getItem('token')) {
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('token'));
+                if (App.getToken()) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + App.getToken());
                 }
-                if (['Productor', 'Ingeniero'].includes(localStorage.getItem('role')) && localStorage.getItem('cropId')) {
+                if (['Productor', 'Ingeniero'].includes(App.getRole()) && localStorage.getItem('cropId')) {
                     xhr.setRequestHeader('cropId', localStorage.getItem('cropId'));
                 }
             }
@@ -383,7 +407,7 @@
         App.attachProductAutoFill();
 
         async function ensureRole() {
-            if (isOffline || localStorage.getItem('role') || !localStorage.getItem('token')) {
+            if (isOffline || App.getRole() || !App.getToken()) {
                 return;
             }
             try {
@@ -391,7 +415,8 @@
                 if (res.ok) {
                     const info = await res.json();
                     if (info.role && info.role.name) {
-                        localStorage.setItem('role', info.role.name);
+                        const storage = localStorage.getItem('token') ? localStorage : sessionStorage;
+                        storage.setItem('role', info.role.name);
                     }
                 }
             } catch (e) {
@@ -400,7 +425,7 @@
         }
 
         async function loadCropSelect() {
-            const role = localStorage.getItem('role');
+            const role = App.getRole();
             const $cropSelect = $('#crop-select');
             if ($cropSelect.length === 0 || isOffline) return;
             if (role === 'Productor') {
@@ -466,7 +491,7 @@
         }
 
         function showMenus() {
-            const role = localStorage.getItem('role');
+            const role = App.getRole();
             const all = ['#menu-bill','#menu-crop','#menu-fumigation','#menu-irrigation','#menu-labor','#menu-nutrition','#menu-production','#menu-balance'];
             all.forEach(sel => $(sel).addClass('d-none'));
             $('#admin-menu').addClass('d-none');
@@ -486,7 +511,7 @@
 
        $('form.api').on('submit', async function (e) {
            e.preventDefault();
-            const role = localStorage.getItem('role');
+            const role = App.getRole();
             if (role === 'Ingeniero' && this.action.includes('/fumigation') && !localStorage.getItem('cropId')) {
                 App.notify('Debe seleccionar un cultivo', 'danger');
                 return;
@@ -515,10 +540,8 @@
         if (res.ok) {
                 if (this.id === 'sign-in-form' || this.id === 'sign-up-form') {
                     if (info && info.token) {
-                        localStorage.setItem('token', info.token);
-                        if (info.role && info.role.name) {
-                            localStorage.setItem('role', info.role.name);
-                        }
+                        const remember = document.querySelector('#remember')?.checked;
+                        setAuth(info.token, info.role && info.role.name, remember);
                         App.notify('Autenticado correctamente', 'success');
                         setTimeout(() => location.href = '/', 1000);
                     } else {
@@ -547,7 +570,7 @@
             }
             App.notify((info && (info.description || info.message)) || 'Error', 'danger');
             if (res.status === 401) {
-                localStorage.removeItem('token');
+                App.clearAuth();
                 location.href = '/auth';
             }
         }
@@ -559,7 +582,7 @@
                 if (!isOffline) {
                     try { await fetch('/auth/logout', { method: 'POST' }); } catch (e) {}
                 }
-                localStorage.removeItem('token');
+                App.clearAuth();
                 location.href = '/auth';
             });
         }

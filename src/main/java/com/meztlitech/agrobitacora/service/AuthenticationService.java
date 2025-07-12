@@ -39,10 +39,11 @@ public class AuthenticationService {
 
     public UserResponse signIn(SignInRequest request) {
         try {
+            UserEntity user = userRepository.findByUserNameOrWhatsapp(request.getLogin())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid credentials."));
+
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-            UserEntity user = userRepository.findByUserName(request.getEmail())
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
+                    new UsernamePasswordAuthenticationToken(user.getUserName(), request.getPassword()));
             String jwt = jwtService.generateToken(user, user.getId());
 
             UserResponse userDto = new UserResponse();
