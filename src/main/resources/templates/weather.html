@@ -3,38 +3,49 @@
 <head th:replace="~{fragments/head :: head(#{weather.title})}"></head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
-<div class="container mt-4">
+
+<button class="btn btn-primary m-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuDrawer">
+  <i class="bi bi-list"></i>
+</button>
+<div class="offcanvas offcanvas-start" tabindex="-1" id="menuDrawer">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" th:text="#{home.title}">Menu</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="list-group">
+      <a id="menu-bill" class="list-group-item list-group-item-action menu-item d-none" th:href="@{/bill}" th:text="#{home.bills}">Bills</a>
+      <a id="menu-crop" class="list-group-item list-group-item-action menu-item d-none" th:href="@{/crop}" th:text="#{home.crops}">Crops</a>
+      <a id="menu-fumigation" class="list-group-item list-group-item-action menu-item d-none" th:href="@{/fumigation}" th:text="#{home.fumigation}">Fumigation</a>
+      <a id="menu-irrigation" class="list-group-item list-group-item-action menu-item d-none" th:href="@{/irrigation}" th:text="#{home.irrigation}">Irrigation</a>
+      <a id="menu-labor" class="list-group-item list-group-item-action menu-item d-none" th:href="@{/labor}" th:text="#{home.labor}">Labor</a>
+      <a id="menu-nutrition" class="list-group-item list-group-item-action menu-item d-none" th:href="@{/nutrition}" th:text="#{home.nutrition}">Nutrition</a>
+      <a id="menu-production" class="list-group-item list-group-item-action menu-item d-none" th:href="@{/production}" th:text="#{home.production}">Production</a>
+      <a id="menu-balance" class="list-group-item list-group-item-action menu-item d-none" th:href="@{/balance}" >Balance</a>
+      <a id="menu-weather" class="list-group-item list-group-item-action menu-item d-none" th:href="@{/weather/details}" th:text="#{home.weather}">Weather</a>
+      <a id="admin-menu" class="list-group-item list-group-item-action d-none" th:href="@{/admin}" th:text="#{admin.title}">Admin</a>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt-4">
   <h1 class="mb-4">
     <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
     <span th:text="#{weather.title}">Weather</span>
   </h1>
-  <table class="table" id="weather-table">
-    <tbody>
-      <tr><th th:text="#{home.crops}">Crop</th><td id="wd-location"></td></tr>
-      <tr><th>ET₀ (mm)</th><td id="wd-et"></td></tr>
-      <tr><th th:text="'Temp. mín (°C)'"></th><td id="wd-tmin"></td></tr>
-      <tr><th th:text="'Temp. máx (°C)'"></th><td id="wd-tmax"></td></tr>
-      <tr><th th:text="'Lluvia (mm)'" ></th><td id="wd-rain"></td></tr>
-      <tr><th th:text="'Viento (km/h)'" ></th><td id="wd-wind"></td></tr>
-      <tr><th th:text="'Humedad relativa (%)'" ></th><td id="wd-rh"></td></tr>
-      <tr><th th:text="'Radiación (W/m²)'" ></th><td id="wd-rad"></td></tr>
-      <tr><th th:text="'Humedad del suelo (%)'" ></th><td id="wd-soil"></td></tr>
-    </tbody>
-  </table>
-  <form id="weather-form" class="api" method="post" action="/weather">
-    <div class="row g-3">
-      <div class="col-md-4">
-        <label class="form-label">Fecha</label>
-        <input type="date" name="date" class="form-control" required>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Humedad del suelo (%)</label>
-        <input type="number" step="0.1" name="soilHumidity" class="form-control">
-      </div>
-    </div>
-    <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Guardar</button>
-  </form>
+  <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+    <div class="col"><div class="card text-center"><div class="card-body"><h6 class="card-title" th:text="#{home.crops}">Crop</h6><p id="wd-location" class="card-text"></p></div></div></div>
+    <div class="col"><div class="card text-center"><div class="card-body"><h6 class="card-title">ET₀ (mm)</h6><p id="wd-et" class="card-text"></p></div></div></div>
+    <div class="col"><div class="card text-center"><div class="card-body"><h6 class="card-title">Temp. mín (°C)</h6><p id="wd-tmin" class="card-text"></p></div></div></div>
+    <div class="col"><div class="card text-center"><div class="card-body"><h6 class="card-title">Temp. máx (°C)</h6><p id="wd-tmax" class="card-text"></p></div></div></div>
+    <div class="col"><div class="card text-center"><div class="card-body"><h6 class="card-title">Lluvia (mm)</h6><p id="wd-rain" class="card-text"></p></div></div></div>
+    <div class="col"><div class="card text-center"><div class="card-body"><h6 class="card-title">Viento (km/h)</h6><p id="wd-wind" class="card-text"></p></div></div></div>
+    <div class="col"><div class="card text-center"><div class="card-body"><h6 class="card-title">Humedad relativa (%)</h6><p id="wd-rh" class="card-text"></p></div></div></div>
+    <div class="col"><div class="card text-center"><div class="card-body"><h6 class="card-title">Radiación (W/m²)</h6><p id="wd-rad" class="card-text"></p></div></div></div>
+    <div class="col"><div class="card text-center"><div class="card-body"><h6 class="card-title">Humedad del suelo (%)</h6><p id="wd-soil" class="card-text"></p></div></div></div>
+  </div>
 </div>
+
 <div th:replace="~{fragments/scripts :: base-scripts}"></div>
 <script th:src="@{/js/weather-page.js}" defer></script>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
