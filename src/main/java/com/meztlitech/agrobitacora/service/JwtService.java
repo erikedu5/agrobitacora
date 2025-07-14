@@ -29,6 +29,9 @@ public class JwtService {
     @Value("${token.expiration.millis}")
     private long expirationMillis;
 
+    @Value("${token.expiration.remember.millis}")
+    private long rememberExpirationMillis;
+
     private final UserRepository userRepository;
 
 
@@ -38,13 +41,18 @@ public class JwtService {
 
 
     public String generateToken(UserDetails userDetails, Long id) {
+        return generateToken(userDetails, id, false);
+    }
+
+    public String generateToken(UserDetails userDetails, Long id, boolean remember) {
         HashMap<String, Object> claims = new HashMap<>();
         claims.put("id", id);
         Optional<UserEntity> user = userRepository.findById(id);
-        claims.put("role", user.isPresent() ? user.get().getRole(): "N/A");
-        claims.put("email", user.isPresent() ? user.get().getUsername(): "N/A");
+        claims.put("role", user.isPresent() ? user.get().getRole() : "N/A");
+        claims.put("email", user.isPresent() ? user.get().getUsername() : "N/A");
         claims.put("fullName", user.get().getName());
-        return generateToken(claims, userDetails);
+        long exp = remember ? rememberExpirationMillis : expirationMillis;
+        return generateToken(claims, userDetails, exp);
     }
 
 
@@ -59,10 +67,10 @@ public class JwtService {
         return claimsResolvers.apply(claims);
     }
 
-    private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
         return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expirationMillis))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
     }
 
