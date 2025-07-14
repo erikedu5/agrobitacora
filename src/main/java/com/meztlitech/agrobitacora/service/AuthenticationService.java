@@ -8,6 +8,7 @@ import com.meztlitech.agrobitacora.dto.UserResponse;
 import com.meztlitech.agrobitacora.entity.UserEntity;
 import com.meztlitech.agrobitacora.repository.RoleRepository;
 import com.meztlitech.agrobitacora.repository.UserRepository;
+import com.meztlitech.agrobitacora.repository.CropRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -37,6 +38,8 @@ public class AuthenticationService {
 
     private final RoleRepository roleRepository;
 
+    private final CropRepository cropRepository;
+
     public UserResponse signIn(SignInRequest request) {
         try {
             UserEntity user = userRepository.findByUserNameOrWhatsapp(request.getLogin())
@@ -54,6 +57,7 @@ public class AuthenticationService {
             userDto.setRole(user.getRole());
             userDto.setToken(JwtAuthenticationResponse.builder().token(jwt).build().getToken());
             userDto.setMaxCrops(user.getMaxCrops());
+            userDto.setCropCount(cropRepository.countByUserId(user.getId()));
             return userDto;
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -171,6 +175,7 @@ public class AuthenticationService {
         userDto.setRole(user.getRole());
         userDto.setToken(token);
         userDto.setMaxCrops(user.getMaxCrops());
+        userDto.setCropCount(cropRepository.countByUserId(user.getId()));
 
         return userDto;
     }
@@ -190,6 +195,7 @@ public class AuthenticationService {
         userDto.setRole(user.getRole());
         userDto.setToken(newToken);
         userDto.setMaxCrops(user.getMaxCrops());
+        userDto.setCropCount(cropRepository.countByUserId(user.getId()));
 
         return userDto;
     }
