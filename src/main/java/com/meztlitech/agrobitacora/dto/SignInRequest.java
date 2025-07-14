@@ -13,4 +13,5 @@ public class SignInRequest {
     // login can be either email or whatsapp number
     private String login;
     private String password;
+    private boolean remember;
 }

@@ -44,7 +44,7 @@ public class AuthenticationService {
 
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getUsername(), request.getPassword()));
-            String jwt = jwtService.generateToken(user, user.getId());
+            String jwt = jwtService.generateToken(user, user.getId(), request.isRemember());
 
             UserResponse userDto = new UserResponse();
             userDto.setEmail(user.getUsername());
@@ -77,7 +77,7 @@ public class AuthenticationService {
             user.setMaxCrops(request.getMaxCrops());
             userRepository.save(user);
 
-            return this.signIn(new SignInRequest(request.getEmail(), request.getPassword()));
+            return this.signIn(new SignInRequest(request.getEmail(), request.getPassword(), false));
         } catch (Exception e) {
             log.info(e.getMessage());
         }

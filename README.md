@@ -10,7 +10,9 @@ controlador disponible.
 El ingreso a la aplicación ahora requiere autenticarse desde `/auth`. Se debe
 utilizar como usuario el correo electrónico con el que se registró. Tras un
 inicio de sesión o registro exitoso, el token JWT se guarda en `localStorage` y
-se envía automáticamente en cada petición mediante JavaScript.
+se envía automáticamente en cada petición mediante JavaScript. Si al iniciar
+sesión se marca la opción *Recordar sesión* el token tiene una vigencia de 30
+días, en caso contrario expira a la hora.
 
 Las páginas de gestión ahora muestran automáticamente los registros existentes.
 Se obtiene la lista con solicitudes `fetch` que incluyen el token almacenado y se

@@ -92,6 +92,8 @@
                     val = value ? new Date(value).toISOString().slice(0, 19) : null;
                 } else if (input.dataset.array === 'csv') {
                     val = value ? value.split(',').map(v => v.trim()).filter(v => v) : [];
+                } else if (input.type === 'checkbox') {
+                    val = input.checked;
                 }
             }
             const parts = key.split(/\.|\[|\]/).filter(Boolean);
