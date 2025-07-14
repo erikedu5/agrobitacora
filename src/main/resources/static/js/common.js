@@ -112,6 +112,7 @@
         if ($map.length === 0) return;
         const $lat = $('input[name="latitud"]');
         const $lng = $('input[name="longitud"]');
+        const $loc = $('input[name="location"]');
         const lat = parseFloat($lat.val()) || 19.4326;
         const lng = parseFloat($lng.val()) || -99.1332;
         if (!cropMap) {
@@ -128,11 +129,38 @@
                 const p = cropMarker.getLatLng();
                 setCropLocation(p.lat, p.lng);
             });
+            $loc.off('blur.geocode').on('blur.geocode', async function () {
+                const query = $loc.val().trim();
+                if (!query) return;
+                try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+                    if (res.ok) {
+                        const [info] = await res.json();
+                        if (info) {
+                            const lt = parseFloat(info.lat);
+                            const lg = parseFloat(info.lon);
+                            cropMarker.setLatLng([lt, lg]);
+                            cropMap.setView([lt, lg], 13);
+                            setCropLocation(lt, lg);
+                        }
+                    }
+                } catch (e) {}
+            });
         } else {
             cropMap.setView([lat, lng], 13);
             cropMarker.setLatLng([lat, lng]);
         }
-        setCropLocation(lat, lng);
+        if (!$lat.val() && !$lng.val() && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                const lt = pos.coords.latitude;
+                const lg = pos.coords.longitude;
+                cropMarker.setLatLng([lt, lg]);
+                cropMap.setView([lt, lg], 13);
+                setCropLocation(lt, lg);
+            }, () => setCropLocation(lat, lng));
+        } else {
+            setCropLocation(lat, lng);
+        }
     };
 
     async function setCropLocation(lat, lng) {
