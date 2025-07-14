@@ -26,6 +26,10 @@ public class I18nConfig implements WebMvcConfigurer {
     public LocaleResolver localeResolver() {
         CookieLocaleResolver resolver = new CookieLocaleResolver();
         resolver.setDefaultLocale(new Locale("es"));
+        resolver.setCookieName("lang");
+        resolver.setCookiePath("/");
+        // keep the cookie for a month so the preference persists
+        resolver.setCookieMaxAge(60 * 60 * 24 * 30);
         return resolver;
     }
 

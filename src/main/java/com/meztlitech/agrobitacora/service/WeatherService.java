@@ -32,7 +32,8 @@ public class WeatherService {
         } catch (Exception ex) {
             log.error("Error fetching weather", ex);
         }
-        return null;
+        // fallback values when the API cannot be reached
+        return new WeatherInfo(20.0, null, "Unknown");
     }
 
     private Double toDouble(Object obj) {
