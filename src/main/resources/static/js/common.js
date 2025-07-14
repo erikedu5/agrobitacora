@@ -567,7 +567,8 @@
                     if (info && info.token) {
                         setAuth(info.token, info.role && info.role.name);
                         App.notify('Autenticado correctamente', 'success');
-                        setTimeout(() => location.href = '/', 1000);
+                        const target = this.id === 'sign-up-form' ? '/crop' : '/';
+                        setTimeout(() => location.href = target, 1000);
                     } else {
                         App.notify('Credenciales inválidas', 'danger');
                     }

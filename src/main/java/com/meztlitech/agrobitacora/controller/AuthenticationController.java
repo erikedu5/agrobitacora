@@ -48,11 +48,7 @@ public class AuthenticationController {
         UserResponse response = authenticationService.create(userDto);
         if (response != null && response.getToken() != null) {
             HttpHeaders headers = new HttpHeaders();
-            String target = "/home";
-            if (response.getRole() != null && "Admin".equals(response.getRole().getName())) {
-                target = "/admin";
-            }
-            headers.add(HttpHeaders.LOCATION, target);
+            headers.add(HttpHeaders.LOCATION, "/crop");
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
