@@ -532,7 +532,7 @@
                 allow = ['#menu-fumigation','#menu-nutrition'];
             }
             const hasCrop = !!localStorage.getItem('cropId');
-            if (!hasCrop) {
+            if (!hasCrop && App.getToken()) {
                 allow = ['#menu-crop'];
                 if (location.pathname !== '/crop') location.href = '/crop';
             }
