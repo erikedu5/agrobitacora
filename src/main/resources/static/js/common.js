@@ -6,23 +6,17 @@
     App.enc = obj => encodeURIComponent(JSON.stringify(obj));
 
     function getStored(key) {
-        return localStorage.getItem(key) || sessionStorage.getItem(key);
+        return localStorage.getItem(key);
     }
 
     function clearAuth() {
         localStorage.removeItem('token');
         localStorage.removeItem('role');
-        sessionStorage.removeItem('token');
-        sessionStorage.removeItem('role');
     }
 
-    function setAuth(token, role, remember) {
-        const storage = remember ? localStorage : sessionStorage;
-        storage.setItem('token', token);
-        if (role) storage.setItem('role', role);
-        const other = remember ? sessionStorage : localStorage;
-        other.removeItem('token');
-        other.removeItem('role');
+    function setAuth(token, role) {
+        localStorage.setItem('token', token);
+        if (role) localStorage.setItem('role', role);
     }
 
     App.getToken = () => getStored('token');
@@ -443,8 +437,7 @@
                 if (res.ok) {
                     const info = await res.json();
                     if (info.role && info.role.name) {
-                        const storage = localStorage.getItem('token') ? localStorage : sessionStorage;
-                        storage.setItem('role', info.role.name);
+                        localStorage.setItem('role', info.role.name);
                     }
                 }
             } catch (e) {
@@ -568,8 +561,7 @@
         if (res.ok) {
                 if (this.id === 'sign-in-form' || this.id === 'sign-up-form') {
                     if (info && info.token) {
-                        const remember = document.querySelector('#remember')?.checked;
-                        setAuth(info.token, info.role && info.role.name, remember);
+                        setAuth(info.token, info.role && info.role.name);
                         App.notify('Autenticado correctamente', 'success');
                         setTimeout(() => location.href = '/', 1000);
                     } else {
