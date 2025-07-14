@@ -470,6 +470,7 @@
                 });
             } else if (role === 'Ingeniero') {
                 const $producerSelect = $('#producer-select');
+                const $producerLabel = $('#producer-label');
                 if ($producerSelect.length === 0) return;
                 let resProd;
                 try { resProd = await fetch('/engineer/producers'); } catch (e) { return; }
@@ -506,6 +507,7 @@
                     await loadCrops(producerId);
                 }
                 $producerSelect.removeClass('d-none');
+                $producerLabel.removeClass('d-none');
                 $producerSelect.on('change', async function () {
                     localStorage.setItem('producerId', this.value);
                     await loadCrops(this.value);
