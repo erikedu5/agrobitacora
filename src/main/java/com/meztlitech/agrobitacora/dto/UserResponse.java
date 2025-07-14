@@ -15,4 +15,5 @@ public class UserResponse {
     private Long id;
     private String token;
     private Integer maxCrops;
+    private Long cropCount;
 }

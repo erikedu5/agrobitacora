@@ -31,6 +31,8 @@ public class AuthenticationController {
             String target = "/home";
             if (response.getRole() != null && "Admin".equals(response.getRole().getName())) {
                 target = "/admin";
+            } else if (response.getCropCount() != null && response.getCropCount() == 0) {
+                target = "/crop";
             }
             headers.add(HttpHeaders.LOCATION, target);
             return new ResponseEntity<>(headers, HttpStatus.FOUND);

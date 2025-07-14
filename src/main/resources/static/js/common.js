@@ -531,6 +531,11 @@
             if (role === 'Ingeniero') {
                 allow = ['#menu-fumigation','#menu-nutrition'];
             }
+            const hasCrop = !!localStorage.getItem('cropId');
+            if (!hasCrop) {
+                allow = ['#menu-crop'];
+                if (location.pathname !== '/crop') location.href = '/crop';
+            }
             allow.forEach(sel => $(sel).removeClass('d-none'));
         }
 
@@ -567,7 +572,7 @@
                     if (info && info.token) {
                         setAuth(info.token, info.role && info.role.name);
                         App.notify('Autenticado correctamente', 'success');
-                        const target = this.id === 'sign-up-form' ? '/crop' : '/';
+                        const target = this.id === 'sign-up-form' || (info.cropCount !== undefined && info.cropCount === 0) ? '/crop' : '/';
                         setTimeout(() => location.href = target, 1000);
                     } else {
                         App.notify('Credenciales inválidas', 'danger');
