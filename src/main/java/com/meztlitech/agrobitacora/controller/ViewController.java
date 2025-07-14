@@ -61,6 +61,11 @@ public class ViewController {
         return "balance";
     }
 
+    @GetMapping("/weather/details")
+    public String weather() {
+        return "weather";
+    }
+
     @GetMapping("/admin")
     public String admin() {
         return "admin";
