@@ -49,7 +49,15 @@ public class EngineerController {
     @GetMapping("/producers")
     public ResponseEntity<List<UserEntity>> producers(@RequestHeader("Authorization") String token) {
         validateEngineer(token);
-        return ResponseEntity.ok(engineerService.getProducers());
+        return ResponseEntity.ok(engineerService.getProducers(token));
+    }
+
+    @PostMapping("/producers/{producerId}")
+    public ResponseEntity<Void> addProducer(@PathVariable Long producerId,
+                                            @RequestHeader("Authorization") String token) {
+        validateEngineer(token);
+        engineerService.addClient(token, producerId);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/crops")
