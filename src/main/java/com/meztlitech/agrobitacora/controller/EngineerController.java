@@ -2,7 +2,6 @@ package com.meztlitech.agrobitacora.controller;
 
 import com.meztlitech.agrobitacora.dto.filters.CropFilter;
 import com.meztlitech.agrobitacora.entity.CropEntity;
-import com.meztlitech.agrobitacora.entity.RoleEntity;
 import com.meztlitech.agrobitacora.entity.UserEntity;
 import com.meztlitech.agrobitacora.service.EngineerService;
 import com.meztlitech.agrobitacora.service.JwtService;
