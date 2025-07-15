@@ -54,7 +54,9 @@ async function initEngineer() {
 }
 
 async function loadAllEngineers() {
-    const res = await fetch('/producer/engineers');
+    const res = await fetch('/producer/engineers', {
+        headers: { Authorization: 'Bearer ' + App.getToken() }
+    });
     if (!res.ok) return;
     const data = await res.json();
     const tbody = document.querySelector('#all-engineers tbody');
@@ -66,14 +68,19 @@ async function loadAllEngineers() {
     });
     tbody.querySelectorAll('button[data-action="add-engineer"]').forEach(btn => {
         btn.addEventListener('click', async () => {
-            await fetch(`/producer/engineers/${btn.dataset.id}`, { method: 'POST' });
+            await fetch(`/producer/engineers/${btn.dataset.id}`, {
+                method: 'POST',
+                headers: { Authorization: 'Bearer ' + App.getToken() }
+            });
             loadMyEngineers();
         });
     });
 }
 
 async function loadMyEngineers() {
-    const res = await fetch('/producer/my-engineers');
+    const res = await fetch('/producer/my-engineers', {
+        headers: { Authorization: 'Bearer ' + App.getToken() }
+    });
     if (!res.ok) return;
     const data = await res.json();
     const tbody = document.querySelector('#my-engineers tbody');
@@ -85,14 +92,19 @@ async function loadMyEngineers() {
     });
     tbody.querySelectorAll('button[data-action="del-engineer"]').forEach(btn => {
         btn.addEventListener('click', async () => {
-            await fetch(`/producer/engineers/${btn.dataset.id}`, { method: 'DELETE' });
+            await fetch(`/producer/engineers/${btn.dataset.id}`, {
+                method: 'DELETE',
+                headers: { Authorization: 'Bearer ' + App.getToken() }
+            });
             loadMyEngineers();
         });
     });
 }
 
 async function loadAllProducers() {
-    const res = await fetch('/engineer/all-producers');
+    const res = await fetch('/engineer/all-producers', {
+        headers: { Authorization: 'Bearer ' + App.getToken() }
+    });
     if (!res.ok) return;
     const data = await res.json();
     const tbody = document.querySelector('#all-producers tbody');
@@ -104,14 +116,19 @@ async function loadAllProducers() {
     });
     tbody.querySelectorAll('button[data-action="add-producer"]').forEach(btn => {
         btn.addEventListener('click', async () => {
-            await fetch(`/engineer/producers/${btn.dataset.id}`, { method: 'POST' });
+            await fetch(`/engineer/producers/${btn.dataset.id}`, {
+                method: 'POST',
+                headers: { Authorization: 'Bearer ' + App.getToken() }
+            });
             loadMyProducers();
         });
     });
 }
 
 async function loadMyProducers() {
-    const res = await fetch('/engineer/producers');
+    const res = await fetch('/engineer/producers', {
+        headers: { Authorization: 'Bearer ' + App.getToken() }
+    });
     if (!res.ok) return;
     const data = await res.json();
     const tbody = document.querySelector('#my-producers tbody');
@@ -123,7 +140,10 @@ async function loadMyProducers() {
     });
     tbody.querySelectorAll('button[data-action="del-producer"]').forEach(btn => {
         btn.addEventListener('click', async () => {
-            await fetch(`/engineer/producers/${btn.dataset.id}`, { method: 'DELETE' });
+            await fetch(`/engineer/producers/${btn.dataset.id}`, {
+                method: 'DELETE',
+                headers: { Authorization: 'Bearer ' + App.getToken() }
+            });
             loadMyProducers();
         });
     });
