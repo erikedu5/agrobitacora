@@ -40,6 +40,15 @@ public class EngineerService {
         return userRepository.findByRoleName(ROLE_PRODUCTOR);
     }
 
+    public List<UserEntity> getAvailableProducers(String token) {
+        Claims claims = jwtService.decodeToken(token);
+        Long engineerId = Long.parseLong(claims.get("id").toString());
+        List<UserEntity> all = getAllProducers();
+        List<UserEntity> mine = engineerProducerRepository.findProducersByEngineerId(engineerId);
+        all.removeAll(mine);
+        return all;
+    }
+
     public List<UserEntity> getEngineers(String token) {
         Claims claims = jwtService.decodeToken(token);
         Long producerId = Long.parseLong(claims.get("id").toString());
@@ -48,6 +57,15 @@ public class EngineerService {
 
     public List<UserEntity> getAllEngineers() {
         return userRepository.findByRoleName("Ingeniero");
+    }
+
+    public List<UserEntity> getAvailableEngineers(String token) {
+        Claims claims = jwtService.decodeToken(token);
+        Long producerId = Long.parseLong(claims.get("id").toString());
+        List<UserEntity> all = getAllEngineers();
+        List<UserEntity> mine = engineerProducerRepository.findEngineersByProducerId(producerId);
+        all.removeAll(mine);
+        return all;
     }
 
     public void addClient(String token, Long producerId) {

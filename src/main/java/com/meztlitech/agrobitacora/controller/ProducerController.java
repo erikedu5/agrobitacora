@@ -42,7 +42,7 @@ public class ProducerController {
     @GetMapping("/engineers")
     public ResponseEntity<List<UserEntity>> engineers(@RequestHeader("Authorization") String token) {
         validateProducer(token);
-        return ResponseEntity.ok(engineerService.getAllEngineers());
+        return ResponseEntity.ok(engineerService.getAvailableEngineers(token));
     }
 
     @GetMapping("/my-engineers")

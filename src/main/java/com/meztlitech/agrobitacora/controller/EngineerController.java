@@ -67,7 +67,7 @@ public class EngineerController {
     @GetMapping("/all-producers")
     public ResponseEntity<List<UserEntity>> allProducers(@RequestHeader("Authorization") String token) {
         validateEngineer(token);
-        return ResponseEntity.ok(engineerService.getAllProducers());
+        return ResponseEntity.ok(engineerService.getAvailableProducers(token));
     }
 
     @GetMapping("/crops")

@@ -73,6 +73,7 @@ async function loadAllEngineers() {
                 headers: { Authorization: 'Bearer ' + App.getToken() }
             });
             loadMyEngineers();
+            loadAllEngineers();
         });
     });
 }
@@ -97,6 +98,7 @@ async function loadMyEngineers() {
                 headers: { Authorization: 'Bearer ' + App.getToken() }
             });
             loadMyEngineers();
+            loadAllEngineers();
         });
     });
 }
@@ -121,6 +123,7 @@ async function loadAllProducers() {
                 headers: { Authorization: 'Bearer ' + App.getToken() }
             });
             loadMyProducers();
+            loadAllProducers();
         });
     });
 }
@@ -145,6 +148,7 @@ async function loadMyProducers() {
                 headers: { Authorization: 'Bearer ' + App.getToken() }
             });
             loadMyProducers();
+            loadAllProducers();
         });
     });
 }
