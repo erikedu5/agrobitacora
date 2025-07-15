@@ -58,4 +58,12 @@ public class ProducerController {
         engineerService.addEngineer(token, engineerId);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/engineers/{engineerId}")
+    public ResponseEntity<Void> removeEngineer(@PathVariable Long engineerId,
+                                               @RequestHeader("Authorization") String token) {
+        validateProducer(token);
+        engineerService.removeEngineer(token, engineerId);
+        return ResponseEntity.ok().build();
+    }
 }

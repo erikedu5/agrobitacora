@@ -36,6 +36,10 @@ public class EngineerService {
         return engineerProducerRepository.findProducersByEngineerId(engineerId);
     }
 
+    public List<UserEntity> getAllProducers() {
+        return userRepository.findByRoleName(ROLE_PRODUCTOR);
+    }
+
     public List<UserEntity> getEngineers(String token) {
         Claims claims = jwtService.decodeToken(token);
         Long producerId = Long.parseLong(claims.get("id").toString());
@@ -58,6 +62,12 @@ public class EngineerService {
         }
     }
 
+    public void removeClient(String token, Long producerId) {
+        Claims claims = jwtService.decodeToken(token);
+        Long engineerId = Long.parseLong(claims.get("id").toString());
+        engineerProducerRepository.deleteByEngineerIdAndProducerId(engineerId, producerId);
+    }
+
     public void addEngineer(String token, Long engineerId) {
         Claims claims = jwtService.decodeToken(token);
         Long producerId = Long.parseLong(claims.get("id").toString());
@@ -68,6 +78,12 @@ public class EngineerService {
                     .build();
             engineerProducerRepository.save(ep);
         }
+    }
+
+    public void removeEngineer(String token, Long engineerId) {
+        Claims claims = jwtService.decodeToken(token);
+        Long producerId = Long.parseLong(claims.get("id").toString());
+        engineerProducerRepository.deleteByEngineerIdAndProducerId(engineerId, producerId);
     }
 
     public Page<CropEntity> getCrops(Long producerId, CropFilter filter) {
