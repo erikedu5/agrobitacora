@@ -517,7 +517,7 @@
 
         function showMenus() {
             const role = App.getRole();
-            const all = ['#menu-bill','#menu-crop','#menu-fumigation','#menu-irrigation','#menu-labor','#menu-nutrition','#menu-production','#menu-balance','#menu-weather'];
+            const all = ['#menu-bill','#menu-crop','#menu-fumigation','#menu-irrigation','#menu-labor','#menu-nutrition','#menu-production','#menu-balance'];
             all.forEach(sel => $(sel).addClass('d-none'));
             $('#admin-menu').addClass('d-none');
             if (role === 'Admin') {
@@ -529,7 +529,7 @@
             }
             let allow = all;
             if (role === 'Ingeniero') {
-                allow = ['#menu-fumigation','#menu-nutrition','#menu-weather'];
+                allow = ['#menu-fumigation','#menu-nutrition'];
             }
             const hasCrop = !!localStorage.getItem('cropId');
             if (!hasCrop && App.getToken()) {

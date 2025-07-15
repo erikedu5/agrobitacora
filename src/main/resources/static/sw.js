@@ -10,7 +10,6 @@ const URLS_TO_CACHE = [
   '/labor',
   '/nutrition',
   '/production',
-  '/weather/details',
   '/admin',
   '/admin/users',
   '/admin/engineers',
@@ -18,7 +17,6 @@ const URLS_TO_CACHE = [
   '/js/app.js',
   '/js/pwa.js',
   '/js/weather.js',
-  '/js/weather-page.js',
   '/js/common.js',
   '/js/notifications.js',
   // icons are embedded in the manifest as data URIs
