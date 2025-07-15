@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Clientes')}"></head>
+<body>
+<nav th:replace="~{fragments/nav :: nav}"></nav>
+<div class="container mt-4">
+  <h1 class="mb-4">Clientes</h1>
+  <form id="engineer-clients-form" class="api" method="post" action="/engineer/producers">
+    <div id="producer-list" class="mb-3"></div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+  </form>
+</div>
+<div th:replace="~{fragments/scripts :: base-scripts}"></div>
+<script th:src="@{/js/engineer-clients.js}" defer></script>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

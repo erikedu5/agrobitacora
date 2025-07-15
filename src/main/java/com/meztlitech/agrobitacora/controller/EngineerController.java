@@ -31,7 +31,7 @@ public class EngineerController {
     private final JwtService jwtService;
     private static final String ROLE_INGENIERO = "Ingeniero";
 
-    private void validateEngineer(String token) {
+    private Long validateEngineer(String token) {
         Claims claims = jwtService.decodeToken(token);
         Object roleObj = claims.get("role");
         String role = null;
@@ -44,12 +44,28 @@ public class EngineerController {
         if (!ROLE_INGENIERO.equals(role)) {
             throw new HttpServerErrorException(HttpStatus.FORBIDDEN, "Access denied");
         }
+        Object id = claims.get("id");
+        return Long.parseLong(id.toString());
     }
 
     @GetMapping("/producers")
     public ResponseEntity<List<UserEntity>> producers(@RequestHeader("Authorization") String token) {
+        Long engineerId = validateEngineer(token);
+        return ResponseEntity.ok(engineerService.getProducers(engineerId));
+    }
+
+    @GetMapping("/producers/all")
+    public ResponseEntity<List<UserEntity>> allProducers(@RequestHeader("Authorization") String token) {
         validateEngineer(token);
-        return ResponseEntity.ok(engineerService.getProducers());
+        return ResponseEntity.ok(engineerService.getAllProducers());
+    }
+
+    @PostMapping("/producers")
+    public ResponseEntity<Void> setProducers(@RequestBody List<Long> producerIds,
+                                             @RequestHeader("Authorization") String token) {
+        Long engineerId = validateEngineer(token);
+        engineerService.setEngineerProducers(engineerId, producerIds);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/crops")

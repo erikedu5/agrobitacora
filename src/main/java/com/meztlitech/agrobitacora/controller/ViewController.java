@@ -75,4 +75,14 @@ public class ViewController {
     public String adminEngineers() {
         return "admin-engineers";
     }
+
+    @GetMapping("/producer/engineers")
+    public String producerEngineers() {
+        return "producer-engineers";
+    }
+
+    @GetMapping("/engineer/clients")
+    public String engineerClients() {
+        return "engineer-clients";
+    }
 }
