@@ -41,3 +41,25 @@ CREATE TYPE public.irrigation_type AS ENUM (
     'GRAVEDAD',
     'HIDROPONICO'
 );
+
+CREATE TABLE public.engineer_producers (
+    id int8 NOT NULL,
+    engineer_id int8 NOT NULL,
+    producer_id int8 NOT NULL,
+    CONSTRAINT engineer_producers_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_engineer FOREIGN KEY (engineer_id) REFERENCES public.users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_producer FOREIGN KEY (producer_id) REFERENCES public.users(id) ON DELETE CASCADE,
+    CONSTRAINT uk_engineer_producer UNIQUE (engineer_id, producer_id)
+);
+CREATE TABLE public.engineer_reviews (
+    id int8 NOT NULL,
+    engineer_id int8 NOT NULL,
+    producer_id int8 NOT NULL,
+    rating int4 NULL,
+    review varchar(1000) NULL,
+    CONSTRAINT engineer_reviews_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_review_engineer FOREIGN KEY (engineer_id) REFERENCES public.users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_review_producer FOREIGN KEY (producer_id) REFERENCES public.users(id) ON DELETE CASCADE,
+    CONSTRAINT uk_review UNIQUE (engineer_id, producer_id)
+);
+

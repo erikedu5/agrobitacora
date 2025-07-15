@@ -56,6 +56,11 @@ public class ViewController {
         return "production";
     }
 
+    @GetMapping("/association")
+    public String association() {
+        return "association";
+    }
+
     @GetMapping("/balance")
     public String balance() {
         return "balance";
