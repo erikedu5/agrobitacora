@@ -22,6 +22,9 @@ public class AdminService {
     private final RoleRepository roleRepository;
     private final AuthenticationService authenticationService;
 
+    private static final Long ROLE_ID_PRODUCTOR = 3L;
+    private static final Long ROLE_ID_INGENIERO = 4L;
+
 
     public List<UserEntity> getUsers(String role) {
         if (role != null) {
@@ -64,8 +67,8 @@ public class AdminService {
 
     public AdminCountsDto getCounts() {
         AdminCountsDto dto = new AdminCountsDto();
-        dto.setProducers(userRepository.countByRoleName("Productor"));
-        dto.setEngineers(userRepository.countByRoleName("Ingeniero"));
+        dto.setProducers(userRepository.countByRoleId(ROLE_ID_PRODUCTOR));
+        dto.setEngineers(userRepository.countByRoleId(ROLE_ID_INGENIERO));
         dto.setAdmins(userRepository.countByRoleName("Admin"));
         return dto;
     }

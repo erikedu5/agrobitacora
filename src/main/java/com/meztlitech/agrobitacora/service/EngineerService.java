@@ -27,12 +27,15 @@ public class EngineerService {
     private static final String ROLE_PRODUCTOR = "Productor";
     private static final String ROLE_INGENIERO = "Ingeniero";
 
+    private static final Long ROLE_ID_PRODUCTOR = 3L;
+    private static final Long ROLE_ID_INGENIERO = 4L;
+
     public List<UserEntity> getAllProducers() {
-        return userRepository.findByRoleName(ROLE_PRODUCTOR);
+        return userRepository.findByRoleId(ROLE_ID_PRODUCTOR);
     }
 
     public List<UserEntity> getAllEngineers() {
-        return userRepository.findByRoleName(ROLE_INGENIERO);
+        return userRepository.findByRoleId(ROLE_ID_INGENIERO);
     }
 
     public List<UserEntity> getProducers(Long engineerId) {

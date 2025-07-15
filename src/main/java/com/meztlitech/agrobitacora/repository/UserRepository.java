@@ -19,6 +19,12 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("FROM UserEntity u WHERE u.role.name = :roleName AND u.active = true")
     java.util.List<UserEntity> findByRoleName(String roleName);
 
+    @Query("FROM UserEntity u WHERE u.role.id = :roleId AND u.active = true")
+    java.util.List<UserEntity> findByRoleId(Long roleId);
+
     @Query("SELECT COUNT(u) FROM UserEntity u WHERE u.role.name = :roleName AND u.active = true")
     long countByRoleName(String roleName);
+
+    @Query("SELECT COUNT(u) FROM UserEntity u WHERE u.role.id = :roleId AND u.active = true")
+    long countByRoleId(Long roleId);
 }
