@@ -66,4 +66,15 @@ public class ProducerController {
         engineerService.removeEngineer(token, engineerId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/engineers/{engineerId}/rating")
+    public ResponseEntity<Void> rateEngineer(@PathVariable Long engineerId,
+                                             @RequestHeader("Authorization") String token,
+                                             @RequestBody Map<String, Object> body) {
+        validateProducer(token);
+        int rating = Integer.parseInt(body.getOrDefault("rating", 0).toString());
+        String review = body.getOrDefault("review", "").toString();
+        engineerService.rateEngineer(token, engineerId, rating, review);
+        return ResponseEntity.ok().build();
+    }
 }

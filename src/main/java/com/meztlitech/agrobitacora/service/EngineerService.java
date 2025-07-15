@@ -6,8 +6,10 @@ import com.meztlitech.agrobitacora.entity.UserEntity;
 import com.meztlitech.agrobitacora.repository.CropRepository;
 import com.meztlitech.agrobitacora.repository.UserRepository;
 import com.meztlitech.agrobitacora.repository.EngineerProducerRepository;
+import com.meztlitech.agrobitacora.repository.EngineerReviewRepository;
 import com.meztlitech.agrobitacora.service.JwtService;
 import com.meztlitech.agrobitacora.entity.EngineerProducerEntity;
+import com.meztlitech.agrobitacora.entity.EngineerReviewEntity;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,6 +28,7 @@ public class EngineerService {
     private final UserRepository userRepository;
     private final CropRepository cropRepository;
     private final EngineerProducerRepository engineerProducerRepository;
+    private final EngineerReviewRepository engineerReviewRepository;
     private final JwtService jwtService;
 
     private static final String ROLE_PRODUCTOR = "Productor";
@@ -52,11 +55,17 @@ public class EngineerService {
     public List<UserEntity> getEngineers(String token) {
         Claims claims = jwtService.decodeToken(token);
         Long producerId = Long.parseLong(claims.get("id").toString());
-        return engineerProducerRepository.findEngineersByProducerId(producerId);
+        List<UserEntity> list = engineerProducerRepository.findEngineersByProducerId(producerId);
+        list.forEach(e -> e.setRanking(getAverageRanking(e.getId())));
+        list.sort((a,b) -> Double.compare(b.getRanking()==null?0:b.getRanking(), a.getRanking()==null?0:a.getRanking()));
+        return list;
     }
 
     public List<UserEntity> getAllEngineers() {
-        return userRepository.findByRoleName("Ingeniero");
+        List<UserEntity> list = userRepository.findByRoleName("Ingeniero");
+        list.forEach(e -> e.setRanking(getAverageRanking(e.getId())));
+        list.sort((a,b) -> Double.compare(b.getRanking()==null?0:b.getRanking(), a.getRanking()==null?0:a.getRanking()));
+        return list;
     }
 
     public List<UserEntity> getAvailableEngineers(String token) {
@@ -107,5 +116,24 @@ public class EngineerService {
     public Page<CropEntity> getCrops(Long producerId, CropFilter filter) {
         Pageable paging = PageRequest.of(filter.getPage(), filter.getSize());
         return cropRepository.findAllByUserId(producerId, paging);
+    }
+
+    private double getAverageRanking(Long engineerId) {
+        Double avg = engineerReviewRepository.averageRatingByEngineerId(engineerId);
+        return avg == null ? 0.0 : avg;
+    }
+
+    public void rateEngineer(String token, Long engineerId, int rating, String review) {
+        Claims claims = jwtService.decodeToken(token);
+        Long producerId = Long.parseLong(claims.get("id").toString());
+        EngineerReviewEntity entity = engineerReviewRepository
+                .findByEngineerIdAndProducerId(engineerId, producerId)
+                .orElseGet(() -> EngineerReviewEntity.builder()
+                        .engineer(userRepository.findById(engineerId).orElseThrow())
+                        .producer(userRepository.findById(producerId).orElseThrow())
+                        .build());
+        entity.setRating(rating);
+        entity.setReview(review);
+        engineerReviewRepository.save(entity);
     }
 }

@@ -53,6 +53,9 @@ public class UserEntity implements UserDetails {
     @JsonIgnore
     private RoleEntity role;
 
+    @Transient
+    private Double ranking;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<SimpleGrantedAuthority> authorities = new HashSet<>();

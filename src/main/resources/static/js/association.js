@@ -14,14 +14,14 @@ async function initProducer() {
       <div class="col-md-6">
         <h5 class="mb-3" data-i18n="association.available.engineers">Ingenieros disponibles</h5>
         <table id="all-engineers" class="table table-striped">
-          <thead><tr><th>ID</th><th>Nombre</th><th></th></tr></thead>
+          <thead><tr><th>ID</th><th>Nombre</th><th>Ranking</th><th></th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
       <div class="col-md-6">
         <h5 class="mb-3" data-i18n="association.my.engineers">Mis ingenieros</h5>
         <table id="my-engineers" class="table table-striped">
-          <thead><tr><th>ID</th><th>Nombre</th><th></th></tr></thead>
+          <thead><tr><th>ID</th><th>Nombre</th><th></th><th></th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -62,8 +62,9 @@ async function loadAllEngineers() {
     const tbody = document.querySelector('#all-engineers tbody');
     tbody.innerHTML = '';
     data.forEach(e => {
+        const rank = e.ranking ? e.ranking.toFixed(1) : '0';
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${e.id}</td><td>${e.name}</td><td><button class="btn btn-sm btn-primary" data-id="${e.id}" data-action="add-engineer">${i18n('association.add')}</button></td>`;
+        tr.innerHTML = `<td>${e.id}</td><td>${e.name}</td><td>${rank}</td><td><button class="btn btn-sm btn-primary" data-id="${e.id}" data-action="add-engineer">${i18n('association.add')}</button></td>`;
         tbody.appendChild(tr);
     });
     tbody.querySelectorAll('button[data-action="add-engineer"]').forEach(btn => {
@@ -88,8 +89,11 @@ async function loadMyEngineers() {
     tbody.innerHTML = '';
     data.forEach(e => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${e.id}</td><td>${e.name}</td><td><button class="btn btn-sm btn-danger" data-id="${e.id}" data-action="del-engineer">${i18n('association.remove')}</button></td>`;
+        tr.innerHTML = `<td>${e.id}</td><td>${e.name}</td><td><button class="btn btn-sm btn-secondary" data-id="${e.id}" data-action="rate-engineer">${i18n('association.rate')}</button></td><td><button class="btn btn-sm btn-danger" data-id="${e.id}" data-action="del-engineer">${i18n('association.remove')}</button></td>`;
         tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('button[data-action="rate-engineer"]').forEach(btn => {
+        btn.addEventListener('click', () => rateEngineer(btn.dataset.id));
     });
     tbody.querySelectorAll('button[data-action="del-engineer"]').forEach(btn => {
         btn.addEventListener('click', async () => {
@@ -156,5 +160,24 @@ async function loadMyProducers() {
 function i18n(key) {
     if (key === 'association.add') return document.getElementById('assoc-add').textContent.trim();
     if (key === 'association.remove') return document.getElementById('assoc-remove').textContent.trim();
+    if (key === 'association.rate') return document.getElementById('assoc-rate').textContent.trim();
+    if (key === 'association.ratingPrompt') return document.getElementById('assoc-rating-prompt').textContent.trim();
+    if (key === 'association.reviewPrompt') return document.getElementById('assoc-review-prompt').textContent.trim();
     return key;
+}
+
+async function rateEngineer(id) {
+    const rating = prompt(i18n('association.ratingPrompt') || 'Rating (1-5)');
+    if (!rating) return;
+    const review = prompt(i18n('association.reviewPrompt') || 'Review') || '';
+    await fetch(`/producer/engineers/${id}/rating`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + App.getToken()
+        },
+        body: JSON.stringify({ rating: parseInt(rating), review })
+    });
+    loadMyEngineers();
+    loadAllEngineers();
 }
