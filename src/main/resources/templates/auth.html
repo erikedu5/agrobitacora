@@ -2,7 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: head('Gestión de Autenticación')}"></head>
 <body>
-<nav th:replace="~{fragments/nav :: nav}"></nav>
+<nav class="navbar navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/}">Agro Bitácora</a>
+  </div>
+</nav>
 <div class="container mt-4">
   <h1 class="mb-4">
   <span>Gestión de Autenticación</span>
