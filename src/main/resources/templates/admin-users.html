@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head(#{admin.users.title})}"></head>
+<head th:replace="~{fragments/head :: head('Usuarios')}"></head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
   <h1 class="mb-4">
     <a th:href="@{/admin}" class="btn btn-secondary btn-sm me-2">&larr;</a>
-    <span th:text="#{admin.users.title}"></span>
+      <span>Usuarios</span>
   </h1>
   <div id="admin-counts" class="mb-4"></div>
   <form id="admin-user-form" class="api mb-4" method="post" action="/api/admin/users">
@@ -32,7 +32,7 @@
         <input type="number" name="maxCrops" class="form-control">
       </div>
     </div>
-    <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Crear</button>
+      <button type="submit" class="btn btn-success mt-3">Crear</button>
   </form>
 
   <table class="table table-striped">

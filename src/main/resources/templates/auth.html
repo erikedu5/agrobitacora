@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head(#{auth.title})}"></head>
+<head th:replace="~{fragments/head :: head('Gestión de Autenticación')}"></head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
   <h1 class="mb-4">
-    <span th:text="#{auth.title}"></span>
+  <span>Gestión de Autenticación</span>
   </h1>
   <div class="row justify-content-center">
     <div class="col-md-6">
-      <h2 th:text="#{sign.in}">Sign In</h2>
+        <h2>Iniciar sesión</h2>
       <form id="sign-in-form" class="api" method="post" action="/auth/signIn">
         <div class="mb-3">
           <label class="form-label">Correo o Whatsapp</label>
@@ -24,8 +24,8 @@
           <label class="form-check-label" for="remember">Recordar sesión</label>
         </div>
         <div class="d-flex justify-content-between">
-          <button type="submit" class="btn btn-primary" th:text="#{sign.in}">Ingresar</button>
-          <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#signupModal" th:text="#{sign.up}">Registrarse</button>
+            <button type="submit" class="btn btn-primary">Ingresar</button>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#signupModal">Registrarse</button>
         </div>
       </form>
     </div>
@@ -36,7 +36,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="signupModalLabel" th:text="#{sign.up}">Sign Up</h5>
+          <h5 class="modal-title" id="signupModalLabel">Registrarse</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -57,7 +57,7 @@
             <label class="form-label">Contraseña</label>
             <input type="password" name="password" class="form-control">
           </div>
-          <button type="submit" class="btn btn-success" th:text="#{sign.up}">Registrar</button>
+            <button type="submit" class="btn btn-success">Registrar</button>
         </form>
       </div>
     </div>

@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head(#{association.title})}"></head>
+<head th:replace="~{fragments/head :: head('Asociaciones')}"></head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
   <h1 class="mb-4">
     <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
-    <span th:text="#{association.title}"></span>
+      <span>Asociaciones</span>
   </h1>
-  <span id="assoc-add" th:text="#{association.add}" class="d-none"></span>
-  <span id="assoc-remove" th:text="#{association.remove}" class="d-none"></span>
-  <span id="assoc-rate" th:text="#{association.rate}" class="d-none"></span>
-  <span id="assoc-rating-prompt" th:text="#{association.rating.prompt}" class="d-none"></span>
-  <span id="assoc-review-prompt" th:text="#{association.review.prompt}" class="d-none"></span>
+  <span id="assoc-add" class="d-none">Agregar</span>
+  <span id="assoc-remove" class="d-none">Quitar</span>
+  <span id="assoc-rate" class="d-none">Calificar</span>
+  <span id="assoc-rating-prompt" class="d-none">Calificación (1-5)</span>
+  <span id="assoc-review-prompt" class="d-none">Reseña</span>
   <div id="association-content"></div>
 </div>
 <div th:replace="~{fragments/scripts :: base-scripts}"></div>

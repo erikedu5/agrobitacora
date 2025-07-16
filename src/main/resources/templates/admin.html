@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head(#{admin.title})}"></head>
+<head th:replace="~{fragments/head :: head('Administración')}"></head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
-  <h1 class="mb-4" th:text="#{admin.title}">Admin</h1>
+  <h1 class="mb-4">Administración</h1>
   <div class="list-group mb-4">
-    <a class="list-group-item list-group-item-action" th:href="@{/admin/users}" th:text="#{admin.menu.users}">Usuarios</a>
-    <a class="list-group-item list-group-item-action" th:href="@{/admin/engineers}" th:text="#{admin.menu.engineers}">Ingenieros</a>
+  <a class="list-group-item list-group-item-action" th:href="@{/admin/users}">Gestión de Usuarios</a>
+  <a class="list-group-item list-group-item-action" th:href="@{/admin/engineers}">Alta de Ingenieros</a>
   </div>
   <div id="admin-counts" class="mb-4"></div>
 </div>

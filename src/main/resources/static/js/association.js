@@ -14,14 +14,14 @@ async function initProducer() {
       <div class="col-md-6">
         <h5 class="mb-3" data-i18n="association.available.engineers">Ingenieros disponibles</h5>
         <table id="all-engineers" class="table table-striped">
-          <thead><tr><th>ID</th><th>Nombre</th><th>Ranking</th><th></th></tr></thead>
+          <thead><tr><th>ID</th><th>Nombre</th><th>Whatsapp</th><th>Ranking</th><th></th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
       <div class="col-md-6">
         <h5 class="mb-3" data-i18n="association.my.engineers">Mis ingenieros</h5>
         <table id="my-engineers" class="table table-striped">
-          <thead><tr><th>ID</th><th>Nombre</th><th></th><th></th></tr></thead>
+          <thead><tr><th>ID</th><th>Nombre</th><th>Whatsapp</th><th></th><th></th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -37,14 +37,14 @@ async function initEngineer() {
       <div class="col-md-6">
         <h5 class="mb-3" data-i18n="association.available.producers">Productores disponibles</h5>
         <table id="all-producers" class="table table-striped">
-          <thead><tr><th>ID</th><th>Nombre</th><th></th></tr></thead>
+          <thead><tr><th>ID</th><th>Nombre</th><th>Whatsapp</th><th></th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
       <div class="col-md-6">
         <h5 class="mb-3" data-i18n="association.my.producers">Mis productores</h5>
         <table id="my-producers" class="table table-striped">
-          <thead><tr><th>ID</th><th>Nombre</th><th></th></tr></thead>
+          <thead><tr><th>ID</th><th>Nombre</th><th>Whatsapp</th><th></th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -64,7 +64,8 @@ async function loadAllEngineers() {
     data.forEach(e => {
         const rank = e.ranking ? e.ranking.toFixed(1) : '0';
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${e.id}</td><td>${e.name}</td><td>${rank}</td><td><button class="btn btn-sm btn-primary" data-id="${e.id}" data-action="add-engineer">${i18n('association.add')}</button></td>`;
+        const whatsapp = e.whatsapp != null ? `https://wa.me/${e.whatsapp}?text=Hola!,%20Me%20gustaria%20que%20asesores,%20contactame!!!` : '';
+        tr.innerHTML = `<td>${e.id}</td><td>${e.name}</td><td><a target="_blank" href=${whatsapp}>${e.whatsapp}</a></td><td>${rank}</td><td><button class="btn btn-sm btn-primary" data-id="${e.id}" data-action="add-engineer">${i18n('association.add')}</button></td>`;
         tbody.appendChild(tr);
     });
     tbody.querySelectorAll('button[data-action="add-engineer"]').forEach(btn => {
@@ -73,8 +74,8 @@ async function loadAllEngineers() {
                 method: 'POST',
                 headers: { Authorization: 'Bearer ' + App.getToken() }
             });
-            loadMyEngineers();
-            loadAllEngineers();
+            await loadMyEngineers();
+            await loadAllEngineers();
         });
     });
 }
@@ -89,7 +90,8 @@ async function loadMyEngineers() {
     tbody.innerHTML = '';
     data.forEach(e => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${e.id}</td><td>${e.name}</td><td><button class="btn btn-sm btn-secondary" data-id="${e.id}" data-action="rate-engineer">${i18n('association.rate')}</button></td><td><button class="btn btn-sm btn-danger" data-id="${e.id}" data-action="del-engineer">${i18n('association.remove')}</button></td>`;
+        const whatsapp = e.whatsapp != null ? `https://wa.me/${e.whatsapp}` : '';
+        tr.innerHTML = `<td>${e.id}</td><td>${e.name}</td><td><a target="_blank" href=${whatsapp}>${e.whatsapp}</a></td><td><button class="btn btn-sm btn-secondary" data-id="${e.id}" data-action="rate-engineer">${i18n('association.rate')}</button></td><td><button class="btn btn-sm btn-danger" data-id="${e.id}" data-action="del-engineer">${i18n('association.remove')}</button></td>`;
         tbody.appendChild(tr);
     });
     tbody.querySelectorAll('button[data-action="rate-engineer"]').forEach(btn => {
@@ -101,8 +103,8 @@ async function loadMyEngineers() {
                 method: 'DELETE',
                 headers: { Authorization: 'Bearer ' + App.getToken() }
             });
-            loadMyEngineers();
-            loadAllEngineers();
+            await loadMyEngineers();
+            await loadAllEngineers();
         });
     });
 }
@@ -117,7 +119,8 @@ async function loadAllProducers() {
     tbody.innerHTML = '';
     data.forEach(p => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${p.id}</td><td>${p.name}</td><td><button class="btn btn-sm btn-primary" data-id="${p.id}" data-action="add-producer">${i18n('association.add')}</button></td>`;
+        const whatsapp = p.whatsapp != null ? `https://wa.me/${p.whatsapp}?text=Hola!,%20Ingresa%20a%20https://bitacora.pixka.com.mx%20para%20que%20te%20asesore` : '';
+        tr.innerHTML = `<td>${p.id}</td><td>${p.name}</td><td><a target="_blank" href=${whatsapp}>${p.whatsapp}</a></td><td><button class="btn btn-sm btn-primary" data-id="${p.id}" data-action="add-producer">${i18n('association.add')}</button></td>`;
         tbody.appendChild(tr);
     });
     tbody.querySelectorAll('button[data-action="add-producer"]').forEach(btn => {
@@ -126,8 +129,8 @@ async function loadAllProducers() {
                 method: 'POST',
                 headers: { Authorization: 'Bearer ' + App.getToken() }
             });
-            loadMyProducers();
-            loadAllProducers();
+            await loadMyProducers();
+            await loadAllProducers();
         });
     });
 }
@@ -142,7 +145,8 @@ async function loadMyProducers() {
     tbody.innerHTML = '';
     data.forEach(p => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${p.id}</td><td>${p.name}</td><td><button class="btn btn-sm btn-danger" data-id="${p.id}" data-action="del-producer">${i18n('association.remove')}</button></td>`;
+        const whatsapp = p.whatsapp != null ? `https://wa.me/${p.whatsapp}` : '';
+        tr.innerHTML = `<td>${p.id}</td><td>${p.name}</td><td><a target="_blank" href=${whatsapp}>${p.whatsapp}</a></td><td><button class="btn btn-sm btn-danger" data-id="${p.id}" data-action="del-producer">${i18n('association.remove')}</button></td>`;
         tbody.appendChild(tr);
     });
     tbody.querySelectorAll('button[data-action="del-producer"]').forEach(btn => {
@@ -151,8 +155,8 @@ async function loadMyProducers() {
                 method: 'DELETE',
                 headers: { Authorization: 'Bearer ' + App.getToken() }
             });
-            loadMyProducers();
-            loadAllProducers();
+            await loadMyProducers();
+            await loadAllProducers();
         });
     });
 }
@@ -178,6 +182,6 @@ async function rateEngineer(id) {
         },
         body: JSON.stringify({ rating: parseInt(rating), review })
     });
-    loadMyEngineers();
-    loadAllEngineers();
+    await loadMyEngineers();
+    await loadAllEngineers();
 }
