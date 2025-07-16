@@ -536,7 +536,7 @@
             }
             const hasCrop = !!localStorage.getItem('cropId');
             const roleId = App.getRoleId();
-            if (!hasCrop && App.getToken() && String(roleId) !== '4') {
+            if (!hasCrop && App.getToken() && String(roleId) === '3') {
                 allow = ['#menu-crop'];
                 if (location.pathname !== '/crop') location.href = '/crop';
             }
@@ -578,7 +578,9 @@
                         App.notify('Autenticado correctamente', 'success');
                         const needsCrop = info.cropCount !== undefined && info.cropCount === 0;
                         const roleId = info.role && info.role.id;
-                        const target = this.id === 'sign-up-form' || (needsCrop && String(roleId) !== '4') ? '/crop' : '/';
+                        const needsRoleCrop = String(roleId) === '3';
+                        const target = ((this.id === 'sign-up-form' && needsRoleCrop) ||
+                                        (needsCrop && needsRoleCrop)) ? '/crop' : '/';
                         setTimeout(() => location.href = target, 1000);
                     } else {
                         App.notify('Credenciales inválidas', 'danger');

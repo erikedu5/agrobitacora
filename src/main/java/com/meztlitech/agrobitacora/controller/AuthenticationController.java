@@ -32,7 +32,7 @@ public class AuthenticationController {
             if (response.getRole() != null && "Admin".equals(response.getRole().getName())) {
                 target = "/admin";
             } else if (response.getCropCount() != null && response.getCropCount() == 0
-                    && (response.getRole() == null || response.getRole().getId() != 4)) {
+                    && response.getRole() != null && response.getRole().getId() == 3) {
                 target = "/crop";
             }
             headers.add(HttpHeaders.LOCATION, target);
@@ -51,9 +51,9 @@ public class AuthenticationController {
         UserResponse response = authenticationService.create(userDto);
         if (response != null && response.getToken() != null) {
             HttpHeaders headers = new HttpHeaders();
-            String target = "/crop";
-            if (response.getRole() != null && response.getRole().getId() == 4) {
-                target = "/home";
+            String target = "/home";
+            if (response.getRole() != null && response.getRole().getId() == 3) {
+                target = "/crop";
             }
             headers.add(HttpHeaders.LOCATION, target);
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
