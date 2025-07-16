@@ -103,8 +103,36 @@ public class WeatherService {
         return recordRepository.save(record);
     }
 
-    public java.util.List<WeatherRecordEntity> getHistory(Long cropId) {
-        return recordRepository.findTop7ByCropIdOrderByDateDesc(cropId);
+    public java.util.List<WeatherRecordDto> getHistory(double latitude, double longitude) {
+        String url = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude +
+                "&longitude=" + longitude + "&past_days=7" +
+                "&daily=temperature_2m_max,temperature_2m_min" +
+                "&timezone=auto";
+        try {
+            Map<?, ?> resp = restTemplate.getForObject(url, Map.class);
+            if (resp != null && resp.containsKey("daily")) {
+                Object dailyObj = resp.get("daily");
+                if (dailyObj instanceof Map<?,?> d) {
+                    java.util.List<?> dates = (java.util.List<?>) d.get("time");
+                    java.util.List<?> tmin = (java.util.List<?>) d.get("temperature_2m_min");
+                    java.util.List<?> tmax = (java.util.List<?>) d.get("temperature_2m_max");
+                    java.util.List<WeatherRecordDto> result = new java.util.ArrayList<>();
+                    if (dates != null) {
+                        for (int i = 0; i < dates.size(); i++) {
+                            WeatherRecordDto dto = new WeatherRecordDto();
+                            dto.setDate(java.time.LocalDate.parse(String.valueOf(dates.get(i))));
+                            if (tmin != null && i < tmin.size()) dto.setTemperatureMin(toDouble(tmin.get(i)));
+                            if (tmax != null && i < tmax.size()) dto.setTemperatureMax(toDouble(tmax.get(i)));
+                            result.add(dto);
+                        }
+                    }
+                    return result;
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error fetching weather history", e);
+        }
+        return java.util.List.of();
     }
 
     public WeatherInfo mergeWithRecord(WeatherInfo info, Long cropId) {

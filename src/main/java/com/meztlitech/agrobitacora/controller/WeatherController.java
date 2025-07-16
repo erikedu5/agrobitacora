@@ -52,10 +52,11 @@ public class WeatherController {
     }
 
     @GetMapping("/history")
-    public ResponseEntity<java.util.List<WeatherRecordEntity>> history(
+    public ResponseEntity<java.util.List<WeatherRecordDto>> history(
             @RequestHeader("cropId") Long cropId,
             @RequestHeader("Authorization") String token) {
         cropUtil.validateCropByUser(token, cropId);
-        return ResponseEntity.ok(weatherService.getHistory(cropId));
+        CropEntity crop = cropRepository.findById(cropId).orElseThrow();
+        return ResponseEntity.ok(weatherService.getHistory(crop.getLatitud(), crop.getLongitud()));
     }
 }

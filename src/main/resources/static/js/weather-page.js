@@ -23,6 +23,8 @@
         }
     }
 
+    let historyChart;
+
     async function loadHistory() {
         const cropId = localStorage.getItem('cropId');
         const token = localStorage.getItem('token');
@@ -33,12 +35,33 @@
             });
             if (!res.ok) return;
             const data = await res.json();
-            const $tbody = $('#history tbody');
-            $tbody.empty();
-            (data || []).forEach(r => {
-                const tmin = r.temperatureMin != null ? r.temperatureMin.toFixed(1) : '';
-                const tmax = r.temperatureMax != null ? r.temperatureMax.toFixed(1) : '';
-                $tbody.append(`<tr><td>${r.date}</td><td>${tmin}</td><td>${tmax}</td></tr>`);
+            const labels = (data || []).map(r => r.date);
+            const tmin = (data || []).map(r => r.temperatureMin);
+            const tmax = (data || []).map(r => r.temperatureMax);
+            const ctx = document.getElementById('historyChart');
+            if (!ctx) return;
+            if (historyChart) historyChart.destroy();
+            historyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: ctx.dataset.tmin,
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            data: tmin
+                        },
+                        {
+                            label: ctx.dataset.tmax,
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                            data: tmax
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: false } }
+                }
             });
         } catch (e) {
             console.log('weather history error', e);
