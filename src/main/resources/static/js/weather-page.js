@@ -23,7 +23,54 @@
         }
     }
 
+    let historyChart;
+
+    async function loadHistory() {
+        const cropId = localStorage.getItem('cropId');
+        const token = localStorage.getItem('token');
+        if (!cropId || !token) return;
+        try {
+            const res = await fetch('/weather/history', {
+                headers: { cropId, Authorization: 'Bearer ' + token }
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            const labels = (data || []).map(r => r.date);
+            const tmin = (data || []).map(r => r.temperatureMin);
+            const tmax = (data || []).map(r => r.temperatureMax);
+            const ctx = document.getElementById('historyChart');
+            if (!ctx) return;
+            if (historyChart) historyChart.destroy();
+            historyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: ctx.dataset.tmin,
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            data: tmin
+                        },
+                        {
+                            label: ctx.dataset.tmax,
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                            data: tmax
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: false } }
+                }
+            });
+        } catch (e) {
+            console.log('weather history error', e);
+        }
+    }
+
     $(function () {
         loadDetails();
+        loadHistory();
     });
 })();

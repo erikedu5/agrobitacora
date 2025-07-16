@@ -1,9 +1,6 @@
 package com.meztlitech.agrobitacora.service;
 
 import com.meztlitech.agrobitacora.dto.WeatherRecordDto;
-import com.meztlitech.agrobitacora.entity.CropEntity;
-import com.meztlitech.agrobitacora.entity.WeatherRecordEntity;
-import com.meztlitech.agrobitacora.repository.CropRepository;
 import com.meztlitech.agrobitacora.repository.WeatherRecordRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,9 +21,8 @@ public class WeatherService {
 
     private final RestTemplate restTemplate;
     private final WeatherRecordRepository recordRepository;
-    private final CropRepository cropRepository;
 
-    public WeatherInfo getWeather(double latitude, double longitude, Long cropId) {
+    public WeatherInfo getWeather(double latitude, double longitude) {
         String url = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude +
                 "&longitude=" + longitude + "&current_weather=true" +
                 "&hourly=relative_humidity_2m,soil_moisture_0_1cm,shortwave_radiation" +
@@ -61,7 +57,6 @@ public class WeatherService {
         } catch (Exception ex) {
             log.error("Error fetching weather", ex);
         }
-        // fallback values when the API cannot be reached
         WeatherInfo info = new WeatherInfo();
         info.setTemperature(20.0);
         return info;
@@ -85,22 +80,36 @@ public class WeatherService {
         return null;
     }
 
-    public WeatherRecordEntity saveRecord(Long cropId, WeatherRecordDto dto) {
-        CropEntity crop = cropRepository.findById(cropId).orElseThrow();
-        WeatherRecordEntity record = recordRepository
-                .findTopByCropIdAndDate(cropId, dto.getDate())
-                .orElse(new WeatherRecordEntity());
-        record.setCrop(crop);
-        record.setDate(dto.getDate());
-        record.setEvapotranspiration(dto.getEvapotranspiration());
-        record.setTemperatureMin(dto.getTemperatureMin());
-        record.setTemperatureMax(dto.getTemperatureMax());
-        record.setPrecipitation(dto.getPrecipitation());
-        record.setWindSpeed(dto.getWindSpeed());
-        record.setRelativeHumidity(dto.getRelativeHumidity());
-        record.setSolarRadiation(dto.getSolarRadiation());
-        record.setSoilHumidity(dto.getSoilHumidity());
-        return recordRepository.save(record);
+    public java.util.List<WeatherRecordDto> getHistory(double latitude, double longitude) {
+        String url = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude +
+                "&longitude=" + longitude + "&past_days=7" +
+                "&daily=temperature_2m_max,temperature_2m_min" +
+                "&timezone=auto";
+        try {
+            Map<?, ?> resp = restTemplate.getForObject(url, Map.class);
+            if (resp != null && resp.containsKey("daily")) {
+                Object dailyObj = resp.get("daily");
+                if (dailyObj instanceof Map<?,?> d) {
+                    java.util.List<?> dates = (java.util.List<?>) d.get("time");
+                    java.util.List<?> tmin = (java.util.List<?>) d.get("temperature_2m_min");
+                    java.util.List<?> tmax = (java.util.List<?>) d.get("temperature_2m_max");
+                    java.util.List<WeatherRecordDto> result = new java.util.ArrayList<>();
+                    if (dates != null) {
+                        for (int i = 0; i < dates.size(); i++) {
+                            WeatherRecordDto dto = new WeatherRecordDto();
+                            dto.setDate(java.time.LocalDate.parse(String.valueOf(dates.get(i))));
+                            if (tmin != null && i < tmin.size()) dto.setTemperatureMin(toDouble(tmin.get(i)));
+                            if (tmax != null && i < tmax.size()) dto.setTemperatureMax(toDouble(tmax.get(i)));
+                            result.add(dto);
+                        }
+                    }
+                    return result;
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error fetching weather history", e);
+        }
+        return java.util.List.of();
     }
 
     public WeatherInfo mergeWithRecord(WeatherInfo info, Long cropId) {
