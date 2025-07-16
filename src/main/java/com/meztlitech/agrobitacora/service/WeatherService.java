@@ -103,6 +103,10 @@ public class WeatherService {
         return recordRepository.save(record);
     }
 
+    public java.util.List<WeatherRecordEntity> getHistory(Long cropId) {
+        return recordRepository.findTop7ByCropIdOrderByDateDesc(cropId);
+    }
+
     public WeatherInfo mergeWithRecord(WeatherInfo info, Long cropId) {
         LocalDate today = LocalDate.now();
         recordRepository.findTopByCropIdAndDate(cropId, today).ifPresent(r -> {

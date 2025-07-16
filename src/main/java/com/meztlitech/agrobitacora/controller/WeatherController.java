@@ -50,4 +50,12 @@ public class WeatherController {
         WeatherRecordEntity saved = weatherService.saveRecord(cropId, dto);
         return ResponseEntity.ok(saved);
     }
+
+    @GetMapping("/history")
+    public ResponseEntity<java.util.List<WeatherRecordEntity>> history(
+            @RequestHeader("cropId") Long cropId,
+            @RequestHeader("Authorization") String token) {
+        cropUtil.validateCropByUser(token, cropId);
+        return ResponseEntity.ok(weatherService.getHistory(cropId));
+    }
 }

@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface WeatherRecordRepository extends JpaRepository<WeatherRecordEntity, Long> {
     Optional<WeatherRecordEntity> findTopByCropIdAndDate(Long cropId, LocalDate date);
+
+    java.util.List<WeatherRecordEntity> findTop7ByCropIdOrderByDateDesc(Long cropId);
 }
