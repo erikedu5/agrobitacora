@@ -31,7 +31,8 @@ public class AuthenticationController {
             String target = "/home";
             if (response.getRole() != null && "Admin".equals(response.getRole().getName())) {
                 target = "/admin";
-            } else if (response.getCropCount() != null && response.getCropCount() == 0) {
+            } else if (response.getCropCount() != null && response.getCropCount() == 0
+                    && (response.getRole() == null || response.getRole().getId() != 4)) {
                 target = "/crop";
             }
             headers.add(HttpHeaders.LOCATION, target);
@@ -50,7 +51,11 @@ public class AuthenticationController {
         UserResponse response = authenticationService.create(userDto);
         if (response != null && response.getToken() != null) {
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.LOCATION, "/crop");
+            String target = "/crop";
+            if (response.getRole() != null && response.getRole().getId() == 4) {
+                target = "/home";
+            }
+            headers.add(HttpHeaders.LOCATION, target);
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

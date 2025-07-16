@@ -12,15 +12,18 @@
     function clearAuth() {
         localStorage.removeItem('token');
         localStorage.removeItem('role');
+        localStorage.removeItem('roleId');
     }
 
-    function setAuth(token, role) {
+    function setAuth(token, role, roleId) {
         localStorage.setItem('token', token);
         if (role) localStorage.setItem('role', role);
+        if (roleId !== undefined) localStorage.setItem('roleId', roleId);
     }
 
     App.getToken = () => getStored('token');
     App.getRole = () => getStored('role');
+    App.getRoleId = () => getStored('roleId');
     App.clearAuth = clearAuth;
 
     App.notify = function (message, type = 'success') {
@@ -532,7 +535,8 @@
                 allow = ['#menu-association','#menu-fumigation','#menu-nutrition'];
             }
             const hasCrop = !!localStorage.getItem('cropId');
-            if (!hasCrop && App.getToken()) {
+            const roleId = App.getRoleId();
+            if (!hasCrop && App.getToken() && String(roleId) !== '4') {
                 allow = ['#menu-crop'];
                 if (location.pathname !== '/crop') location.href = '/crop';
             }
@@ -570,9 +574,11 @@
         if (res.ok) {
                 if (this.id === 'sign-in-form' || this.id === 'sign-up-form') {
                     if (info && info.token) {
-                        setAuth(info.token, info.role && info.role.name);
+                        setAuth(info.token, info.role && info.role.name, info.role && info.role.id);
                         App.notify('Autenticado correctamente', 'success');
-                        const target = this.id === 'sign-up-form' || (info.cropCount !== undefined && info.cropCount === 0) ? '/crop' : '/';
+                        const needsCrop = info.cropCount !== undefined && info.cropCount === 0;
+                        const roleId = info.role && info.role.id;
+                        const target = this.id === 'sign-up-form' || (needsCrop && String(roleId) !== '4') ? '/crop' : '/';
                         setTimeout(() => location.href = target, 1000);
                     } else {
                         App.notify('Credenciales inválidas', 'danger');
