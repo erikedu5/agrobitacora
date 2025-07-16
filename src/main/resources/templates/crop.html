@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head(#{crop.title})}"></head>
+<head th:replace="~{fragments/head :: head('Gestión de Cultivos')}"></head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
   <h1 class="mb-4">
     <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
-    <span th:text="#{crop.title}"></span>
+      <span>Gestión de Cultivos</span>
   </h1>
   <form class="api mb-4" method="post" action="/crop">
     <div class="row g-3">
@@ -42,7 +42,7 @@
         <input type="number" name="numberPlants" class="form-control" required>
       </div>
     </div>
-    <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Crear</button>
+      <button type="submit" class="btn btn-success mt-3">Crear</button>
   </form>
   <table class="table table-striped">
     <thead>

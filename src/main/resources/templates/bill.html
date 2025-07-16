@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head(#{bill.title})}"></head>
+<head th:replace="~{fragments/head :: head('Gestión de Facturas')}"></head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
   <h1 class="mb-4">
     <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
-    <span th:text="#{bill.title}"></span>
+      <span>Gestión de Facturas</span>
   </h1>
   <form class="api mb-4" method="post" action="/bill">
     <div class="mb-3">
@@ -24,18 +24,18 @@
     <div class="mb-3">
       <label class="form-label">Tipo de factura</label>
       <select name="kindBillAssociated" id="kindBillAssociated" class="form-select" required>
-        <option value="FUMIGATION" th:text="#{bill.kind.FUMIGATION}">FUMIGATION</option>
-        <option value="IRRIGATION" th:text="#{bill.kind.IRRIGATION}">IRRIGATION</option>
-        <option value="LABOR" th:text="#{bill.kind.LABOR}">LABOR</option>
-        <option value="NUTRITION" th:text="#{bill.kind.NUTRITION}">NUTRITION</option>
-        <option value="OTHER" th:text="#{bill.kind.OTHER}">OTHER</option>
+          <option value="FUMIGATION">Fumigación</option>
+          <option value="IRRIGATION">Riego</option>
+          <option value="LABOR">Labor</option>
+          <option value="NUTRITION">Nutrición</option>
+          <option value="OTHER">Otros</option>
       </select>
     </div>
     <div class="mb-3 d-none" id="bill-associated-container">
       <label class="form-label">Relacionado con</label>
       <select name="idBillAssociated" id="bill-associated" class="form-select"></select>
     </div>
-    <button type="submit" class="btn btn-success" th:text="#{create.button}">Crear</button>
+      <button type="submit" class="btn btn-success">Crear</button>
   </form>
   <table class="table table-striped">
     <thead>

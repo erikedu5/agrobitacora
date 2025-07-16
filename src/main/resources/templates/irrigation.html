@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head(#{irrigation.title})}"></head>
+<head th:replace="~{fragments/head :: head('Gestión de Riegos')}"></head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
   <h1 class="mb-4">
     <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
-    <span th:text="#{irrigation.title}"></span>
+      <span>Gestión de Riegos</span>
   </h1>
   <form class="api mb-4" method="post" action="/irrigation">
     <div class="row g-3">
@@ -17,10 +17,10 @@
       <div class="col-md-6">
         <label class="form-label">Tipo</label>
         <select name="type" class="form-select" required>
-          <option value="ASPERSION" th:text="#{irr.type.ASPERSION}">ASPERSION</option>
-          <option value="GOTEO" th:text="#{irr.type.GOTEO}">GOTEO</option>
-          <option value="GRAVEDAD" th:text="#{irr.type.GRAVEDAD}">GRAVEDAD</option>
-          <option value="HIDROPONICO" th:text="#{irr.type.HIDROPONICO}">HIDROPONICO</option>
+          <option value="ASPERSION">Aspersión</option>
+          <option value="GOTEO">Goteo</option>
+          <option value="GRAVEDAD">Gravedad</option>
+          <option value="HIDROPONICO">Hidropónico</option>
         </select>
       </div>
       <div class="col-md-6">
@@ -28,7 +28,7 @@
         <input type="number" name="timeInIrrigationInMinutes" class="form-control" required>
       </div>
     </div>
-    <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Crear</button>
+      <button type="submit" class="btn btn-success mt-3">Crear</button>
   </form>
   <table class="table table-striped">
     <thead>

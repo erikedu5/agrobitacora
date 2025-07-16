@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head(#{nutrition.title})}"></head>
+<head th:replace="~{fragments/head :: head('Gestión de Nutrición')}"></head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
   <h1 class="mb-4">
     <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
-    <span th:text="#{nutrition.title}"></span>
+      <span>Gestión de Nutrición</span>
   </h1>
   <hr>
-  <h3 class="mb-4" th:text="#{nutrition.generate.title}"></h3>
+    <h3 class="mb-4">Creación de Nutrición</h3>
   <form class="api mb-4" method="post" action="/nutrition">
     <div class="row g-3">
       <div class="col-md-6" hidden="true">
         <label class="form-label">Tipo de aplicación</label>
         <select name="applicationType" class="form-select" required>
-          <option value="FUMIGACION" th:text="#{app.type.FUMIGACION}">FUMIGACION</option>
-          <option value="NUTRICION" th:text="#{app.type.NUTRICION}">NUTRICION</option>
+          <option value="FUMIGACION">Fumigación</option>
+          <option value="NUTRICION">Nutrición</option>
         </select>
       </div>
       <div class="col-md-6">
@@ -67,7 +67,7 @@
         </div>
       </template>
     </div>
-    <button type="submit" class="btn btn-success mt-3" th:text="#{create.button}">Crear</button>
+      <button type="submit" class="btn btn-success mt-3">Crear</button>
   </form>
   <table class="table table-striped">
     <thead>

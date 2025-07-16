@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head(#{production.title})}"></head>
+<head th:replace="~{fragments/head :: head('Gestión de Producción')}"></head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <div class="container mt-4">
   <h1 class="mb-4">
     <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
-    <span th:text="#{production.title}"></span>
+      <span>Gestión de Producción</span>
   </h1>
 
   <h2 class="mt-5">Registrar venta</h2>
