@@ -59,6 +59,30 @@ self.addEventListener('activate', (event) => {
 });
 
 // Manejo de peticiones
+function networkFirst(request) {
+  return fetch(request)
+    .then(resp => {
+      if (resp && resp.status === 200) {
+        const clone = resp.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+      }
+      return resp;
+    })
+    .catch(() => caches.match(request));
+}
+
+function cacheFirst(request) {
+  return caches.match(request).then(cached => {
+    return cached || fetch(request).then(resp => {
+      if (resp && resp.status === 200) {
+        const clone = resp.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+      }
+      return resp;
+    }).catch(() => undefined);
+  });
+}
+
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
@@ -71,32 +95,17 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network First para navegación
   if (req.mode === 'navigate') {
-    event.respondWith(
-      fetch(req)
-        .then(resp => {
-          const clone = resp.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
-          return resp;
-        })
-        .catch(() => {
-          return caches.match(req);
-        })
-    );
+    event.respondWith(networkFirst(req));
     return;
   }
 
-  // Cache First para archivos estáticos
-  event.respondWith(
-    caches.match(req).then(cached => {
-      return cached || fetch(req).then(resp => {
-        if (resp && resp.status === 200) {
-          const clone = resp.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
-        }
-        return resp;
-      }).catch(() => undefined);
-    })
-  );
+  // Solo usa cache-first para recursos estáticos (js, css, img, fonts)
+  if (req.destination && ['script', 'style', 'image', 'font'].includes(req.destination)) {
+    event.respondWith(cacheFirst(req));
+    return;
+  }
+
+  // Para peticiones AJAX usa network-first
+  event.respondWith(networkFirst(req));
 });
