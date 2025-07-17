@@ -1,26 +1,29 @@
 package com.meztlitech.agrobitacora.service;
-
 import com.meztlitech.agrobitacora.repository.UserRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
 public class UserService {
 
     private final UserRepository userRepository;
 
     public UserDetailsService userDetailsService() {
-        try {
-            return username -> userRepository.findByUserName(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        } catch (Exception e){
-            log.info(e.getMessage());
-        }
-        return null;
+        return username -> {
+            var user = userRepository.findByUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+            return User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .authorities(List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName().toUpperCase())))
+                .build();
+        };
     }
 }

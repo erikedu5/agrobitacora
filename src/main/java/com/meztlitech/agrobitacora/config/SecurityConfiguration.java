@@ -43,16 +43,16 @@ public class SecurityConfiguration {
     private final UserService userService;
 
     private static final String[] AUTH_WHITE_LIST = {
-            "/v3/api-docs/**",
-            "/swagger-ui/**",
-            "/v2/api-docs/**",
-            "/swagger-resources/**",
-            "/auth/**",
-            "/favicon.ico",
-            "/sw.js",
-            "/manifest.webmanifest",
-            "/icons/**",
-            "/"
+        "/v3/api-docs/**",
+        "/swagger-ui/**",
+        "/v2/api-docs/**",
+        "/swagger-resources/**",
+        "/auth/**",
+        "/favicon.ico",
+        "/sw.js",
+        "/manifest.webmanifest",
+        "/icons/**",
+        "/"
     };
 
     @Bean
@@ -63,11 +63,11 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,
                                 "/bill", "/crop", "/fumigation",
                                 "/irrigation", "/labor", "/nutrition",
-                                "/production",
+                                "/production", "/admin", "/users",
                                 "/balance/**", "/js/**", "/home", "/notification/**",
                                 "/notifications", "/weather/**", "/association/**",
                                 "/producer/**", "/css/**").permitAll()
-                        .requestMatchers("/admin", "/admin/**").hasRole("Admin")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
@@ -103,7 +103,7 @@ public class SecurityConfiguration {
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-            throws Exception {
+        throws Exception {
         return config.getAuthenticationManager();
     }
 
