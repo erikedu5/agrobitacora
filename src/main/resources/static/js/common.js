@@ -9,19 +9,35 @@
         return localStorage.getItem(key);
     }
 
+    function setCookie(name, value, days) {
+        const exp = days ? `; max-age=${days * 86400}` : '';
+        document.cookie = `${name}=${encodeURIComponent(value || '')}; path=/${exp}`;
+    }
+
+    function getCookie(name) {
+        const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+        return match ? decodeURIComponent(match[1]) : null;
+    }
+
+    function deleteCookie(name) {
+        document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+    }
+
     function clearAuth() {
         localStorage.removeItem('token');
         localStorage.removeItem('role');
         localStorage.removeItem('roleId');
+        deleteCookie('token');
     }
 
-    function setAuth(token, role, roleId) {
+    function setAuth(token, role, roleId, remember) {
         localStorage.setItem('token', token);
         if (role) localStorage.setItem('role', role);
         if (roleId !== undefined) localStorage.setItem('roleId', roleId);
+        setCookie('token', token, remember ? 30 : 1);
     }
 
-    App.getToken = () => getStored('token');
+    App.getToken = () => getStored('token') || getCookie('token');
     App.getRole = () => getStored('role');
     App.getRoleId = () => getStored('roleId');
     App.clearAuth = clearAuth;
@@ -574,7 +590,7 @@
         if (res.ok) {
                 if (this.id === 'sign-in-form' || this.id === 'sign-up-form') {
                     if (info && info.token) {
-                        setAuth(info.token, info.role && info.role.name, info.role && info.role.id);
+                        setAuth(info.token, info.role && info.role.name, info.role && info.role.id, data.remember);
                         App.notify('Autenticado correctamente', 'success');
                         const needsCrop = info.cropCount !== undefined && info.cropCount === 0;
                         const roleId = info.role && info.role.id;

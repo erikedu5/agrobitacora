@@ -9,6 +9,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @Controller
@@ -19,6 +21,18 @@ public class ViewController {
     private final JwtService jwtService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final String ROLE_ADMIN = "Admin";
+
+    private String getToken(HttpServletRequest request, String header) {
+        if (header != null) return header;
+        if (request.getCookies() != null) {
+            for (Cookie c : request.getCookies()) {
+                if ("token".equals(c.getName())) {
+                    return "Bearer " + c.getValue();
+                }
+            }
+        }
+        return null;
+    }
 
     private boolean isAdmin(String token) {
         if (token == null) {
@@ -95,32 +109,36 @@ public class ViewController {
     }
 
     @GetMapping("/admin")
-    public String admin(@RequestHeader(value = "Authorization", required = false) String token) {
-        if (!isAdmin(token)) {
+    public String admin(HttpServletRequest request, @RequestHeader(value = "Authorization", required = false) String token) {
+        String tk = getToken(request, token);
+        if (!isAdmin(tk)) {
             return "redirect:/home";
         }
         return "admin";
     }
 
     @GetMapping("/admin/users")
-    public String adminUsers(@RequestHeader(value = "Authorization", required = false) String token) {
-        if (!isAdmin(token)) {
+    public String adminUsers(HttpServletRequest request, @RequestHeader(value = "Authorization", required = false) String token) {
+        String tk = getToken(request, token);
+        if (!isAdmin(tk)) {
             return "redirect:/home";
         }
         return "admin-users";
     }
 
     @GetMapping("/admin/engineers")
-    public String adminEngineers(@RequestHeader(value = "Authorization", required = false) String token) {
-        if (!isAdmin(token)) {
+    public String adminEngineers(HttpServletRequest request, @RequestHeader(value = "Authorization", required = false) String token) {
+        String tk = getToken(request, token);
+        if (!isAdmin(tk)) {
             return "redirect:/home";
         }
         return "admin-engineers";
     }
 
     @GetMapping("/admin/admins")
-    public String adminAdmins(@RequestHeader(value = "Authorization", required = false) String token) {
-        if (!isAdmin(token)) {
+    public String adminAdmins(HttpServletRequest request, @RequestHeader(value = "Authorization", required = false) String token) {
+        String tk = getToken(request, token);
+        if (!isAdmin(tk)) {
             return "redirect:/home";
         }
         return "admin-admins";
