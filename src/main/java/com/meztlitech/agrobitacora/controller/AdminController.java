@@ -62,6 +62,13 @@ public class AdminController {
         return ResponseEntity.ok(adminService.createEngineer(userDto));
     }
 
+    @PostMapping("/admins")
+    public ResponseEntity<UserResponse> createAdmin(@Valid @RequestBody UserDto userDto,
+                                                    @RequestHeader(value = "Authorization") String token) {
+        validateAdmin(token);
+        return ResponseEntity.ok(adminService.createAdmin(userDto));
+    }
+
     @PutMapping("/users/{id}/password")
     public ResponseEntity<ActionStatusResponse> changePassword(@PathVariable Long id,
                                                                @RequestBody UserDto userDto,

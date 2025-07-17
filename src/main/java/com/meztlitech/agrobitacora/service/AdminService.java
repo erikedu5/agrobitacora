@@ -62,6 +62,11 @@ public class AdminService {
         return authenticationService.create(userDto);
     }
 
+    public UserResponse createAdmin(UserDto userDto) {
+        userDto.setRoleId(roleRepository.findByName("Admin").getId());
+        return authenticationService.create(userDto);
+    }
+
     public AdminCountsDto getCounts() {
         AdminCountsDto dto = new AdminCountsDto();
         dto.setProducers(userRepository.countByRoleName("Productor"));

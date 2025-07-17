@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Administradores')}"></head>
+<body>
+<nav th:replace="~{fragments/nav :: nav}"></nav>
+<div class="container mt-4">
+  <h1 class="mb-4">
+    <a th:href="@{/admin}" class="btn btn-secondary btn-sm me-2">&larr;</a>
+      <span>Administradores</span>
+  </h1>
+  <div id="admin-counts" class="mb-4"></div>
+  <form id="admin-admin-form" class="api mb-4" method="post" action="/api/admin/admins">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Nombre</label>
+        <input type="text" name="name" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Usuario</label>
+        <input type="text" name="email" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Whatsapp</label>
+        <input type="text" name="whatsapp" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Contraseña</label>
+        <input type="password" name="password" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Límite cultivos</label>
+        <input type="number" name="maxCrops" class="form-control">
+      </div>
+    </div>
+      <button type="submit" class="btn btn-success mt-3">Crear</button>
+  </form>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Usuario</th>
+        <th>Whatsapp</th>
+        <th>Límite</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- user rows -->
+    </tbody>
+  </table>
+</div>
+<div th:replace="~{fragments/scripts :: base-scripts}"></div>
+<script th:src="@{/js/admin-admins.js}" defer></script>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
