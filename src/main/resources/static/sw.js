@@ -1,86 +1,102 @@
-const CACHE_NAME = 'agrobitacora-cache-v4';
-const URLS_TO_CACHE = [
+const CACHE_NAME = 'agrobitacora-cache-v7';
+let userRole = 'GUEST'; // valor por defecto
+
+// Rutas comunes para todos los usuarios
+const COMMON_ROUTES = [
   '/',
   '/home',
   '/auth',
-  '/bill',
-  '/crop',
-  '/fumigation',
-  '/irrigation',
-  '/labor',
-  '/nutrition',
-  '/production',
-  '/admin',
-  '/admin/users',
-  '/admin/engineers',
   '/manifest.webmanifest',
   '/js/app.js',
   '/js/pwa.js',
   '/js/weather.js',
   '/js/common.js',
-  '/js/notifications.js',
-  // icons are embedded in the manifest as data URIs
+  '/js/notifications.js'
 ];
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(URLS_TO_CACHE))
-  );
+
+// Rutas específicas según el rol
+const ROLE_ROUTES = {
+  ADMIN: [
+    '/admin',
+    '/admin/users',
+    '/admin/engineers'
+  ],
+  USER: [
+    '/crop',
+    '/bill',
+    '/irrigation',
+    '/fumigation',
+    '/nutrition',
+    '/production',
+    '/labor',
+    '/association',
+    '/balance'
+  ]
+};
+
+// Captura el rol del usuario desde el frontend
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'ROLE') {
+    userRole = event.data.value || 'GUEST';
+  }
 });
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') {
+
+// Cacheo en instalación, basado en rol
+self.addEventListener('install', (event) => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    const roleRoutes = ROLE_ROUTES[userRole] || [];
+    const routesToCache = [...COMMON_ROUTES, ...roleRoutes];
+    await cache.addAll(routesToCache);
+  })());
+});
+
+// Limpieza de versiones anteriores
+self.addEventListener('activate', (event) => {
+  event.waitUntil(caches.keys().then(keys =>
+    Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+  ));
+});
+
+// Manejo de peticiones
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  const url = new URL(req.url);
+
+  if (req.method !== 'GET') return;
+
+  // Bloqueo explícito a /admin si no tiene el rol
+  if (url.pathname.startsWith('/admin') && userRole !== 'ADMIN') {
+    event.respondWith(Response.redirect('/auth'));
     return;
   }
 
-  const dest = event.request.destination;
-
-  if (event.request.mode !== 'navigate' && dest === '') {
-    // network first for API/AJAX requests
+  // Network First para navegación
+  if (req.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request)
+      fetch(req)
         .then(resp => {
-          if (resp && resp.status === 200) {
-            const clone = resp.clone();
-            caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
-          }
+          const clone = resp.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
           return resp;
         })
-        .catch(() => caches.match(event.request))
+        .catch(() => {
+          return caches.match(req);
+        })
     );
     return;
   }
 
+  // Cache First para archivos estáticos
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) {
-        return cached;
-      }
-      if (!self.navigator.onLine) {
-        if (event.request.mode === 'navigate') {
-          return caches.match('/');
+    caches.match(req).then(cached => {
+      return cached || fetch(req).then(resp => {
+        if (resp && resp.status === 200) {
+          const clone = resp.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
         }
-        return;
-      }
-      return fetch(event.request)
-        .then(resp => {
-          if (resp && resp.status === 200) {
-            const clone = resp.clone();
-            caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
-          }
-          return resp;
-        })
-        .catch(() => {
-          if (event.request.mode === 'navigate') {
-            return caches.match('/');
-          }
-        });
+        return resp;
+      }).catch(() => undefined);
     })
-  );
-});
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-    ))
   );
 });

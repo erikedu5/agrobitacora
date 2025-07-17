@@ -63,11 +63,10 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,
                                 "/bill", "/crop", "/fumigation",
                                 "/irrigation", "/labor", "/nutrition",
-                                "/production", "/admin", "/users",
+                                "/production", "/admin/**", "/users",
                                 "/balance/**", "/js/**", "/home", "/notification/**",
                                 "/notifications", "/weather/**", "/association/**",
                                 "/producer/**", "/css/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
