@@ -13,6 +13,7 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import java.util.regex.Pattern;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,6 +40,21 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
 
     private final CropRepository cropRepository;
+
+    private static final Pattern EMAIL_PATTERN =
+            Pattern.compile("^[\\w.%+-]+@[\\w.-]+\\.[A-Za-z]{2,}$");
+    private static final Pattern WHATSAPP_PATTERN =
+            Pattern.compile("^\\+?\\d{10,15}$");
+
+    private void validateContactInfo(String email, String whatsapp) {
+        boolean emailValid = StringUtils.isNotBlank(email)
+                && EMAIL_PATTERN.matcher(email).matches();
+        boolean phoneValid = StringUtils.isNotBlank(whatsapp)
+                && WHATSAPP_PATTERN.matcher(whatsapp).matches();
+        if (!emailValid && !phoneValid) {
+            throw new IllegalArgumentException("Correo o whatsapp inválido");
+        }
+    }
 
     public UserResponse signIn(SignInRequest request) {
         try {
@@ -79,6 +95,7 @@ public class AuthenticationService {
             user.setActive(true);
             user.setWhatsapp(request.getWhatsapp());
             user.setMaxCrops(request.getMaxCrops());
+            validateContactInfo(user.getUserName(), user.getWhatsapp());
             userRepository.save(user);
 
             return this.signIn(new SignInRequest(request.getEmail(), request.getPassword(), false));
@@ -149,6 +166,7 @@ public class AuthenticationService {
             if (userDto.getMaxCrops() != null) {
                 user.setMaxCrops(userDto.getMaxCrops());
             }
+            validateContactInfo(user.getUserName(), user.getWhatsapp());
             userRepository.save(user);
             actionStatusResponse.setId(user.getId());
             actionStatusResponse.setStatus(HttpStatus.OK);
