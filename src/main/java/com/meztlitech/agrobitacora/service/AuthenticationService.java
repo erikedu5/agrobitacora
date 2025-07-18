@@ -42,7 +42,7 @@ public class AuthenticationService {
 
     public UserResponse signIn(SignInRequest request) {
         try {
-            UserEntity user = userRepository.findByUserNameOrWhatsapp(request.getLogin())
+            UserEntity user = userRepository.findByUserName(request.getLogin())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid credentials."));
 
             authenticationManager.authenticate(
