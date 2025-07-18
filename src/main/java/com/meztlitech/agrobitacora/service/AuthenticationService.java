@@ -56,6 +56,19 @@ public class AuthenticationService {
         }
     }
 
+    private void validateUnique(String email, String whatsapp, Long userId) {
+        if (StringUtils.isNotBlank(email)) {
+            userRepository.findByUserName(email)
+                    .filter(u -> userId == null || !u.getId().equals(userId))
+                    .ifPresent(u -> { throw new IllegalArgumentException("Correo ya registrado"); });
+        }
+        if (StringUtils.isNotBlank(whatsapp)) {
+            userRepository.findByWhatsapp(whatsapp)
+                    .filter(u -> userId == null || !u.getId().equals(userId))
+                    .ifPresent(u -> { throw new IllegalArgumentException("Whatsapp ya registrado"); });
+        }
+    }
+
     public UserResponse signIn(SignInRequest request) {
         try {
             UserEntity user = userRepository.findByUserName(request.getLogin())
@@ -96,6 +109,7 @@ public class AuthenticationService {
             user.setWhatsapp(request.getWhatsapp());
             user.setMaxCrops(request.getMaxCrops());
             validateContactInfo(user.getUserName(), user.getWhatsapp());
+            validateUnique(user.getUserName(), user.getWhatsapp(), null);
             userRepository.save(user);
 
             return this.signIn(new SignInRequest(request.getEmail(), request.getPassword(), false));
@@ -167,6 +181,7 @@ public class AuthenticationService {
                 user.setMaxCrops(userDto.getMaxCrops());
             }
             validateContactInfo(user.getUserName(), user.getWhatsapp());
+            validateUnique(user.getUserName(), user.getWhatsapp(), user.getId());
             userRepository.save(user);
             actionStatusResponse.setId(user.getId());
             actionStatusResponse.setStatus(HttpStatus.OK);

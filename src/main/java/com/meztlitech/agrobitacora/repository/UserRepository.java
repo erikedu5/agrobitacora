@@ -13,6 +13,12 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("FROM UserEntity u WHERE u.userName = :username")
     Optional<UserEntity> findByUserName(String username);
 
+    boolean existsByUserName(String userName);
+
+    Optional<UserEntity> findByWhatsapp(String whatsapp);
+
+    boolean existsByWhatsapp(String whatsapp);
+
     @Query("FROM UserEntity u WHERE u.userName = :login OR u.whatsapp = :login")
     Optional<UserEntity> findByUserNameOrWhatsapp(String login);
 
