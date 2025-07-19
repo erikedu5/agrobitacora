@@ -575,6 +575,13 @@
                 if (this.id === 'sign-in-form' || this.id === 'sign-up-form') {
                     if (info && info.token) {
                         setAuth(info.token, info.role && info.role.name, info.role && info.role.id);
+                        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                            const roleName = (info.role && info.role.name ? info.role.name : 'GUEST').toUpperCase();
+                            navigator.serviceWorker.controller.postMessage({
+                                type: 'ROLE',
+                                value: roleName
+                            });
+                        }
                         App.notify('Autenticado correctamente', 'success');
                         const needsCrop = info.cropCount !== undefined && info.cropCount === 0;
                         const roleId = info.role && info.role.id;
