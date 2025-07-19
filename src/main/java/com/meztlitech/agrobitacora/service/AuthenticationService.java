@@ -5,6 +5,7 @@ import com.meztlitech.agrobitacora.dto.JwtAuthenticationResponse;
 import com.meztlitech.agrobitacora.dto.SignInRequest;
 import com.meztlitech.agrobitacora.dto.UserDto;
 import com.meztlitech.agrobitacora.dto.UserResponse;
+import com.meztlitech.agrobitacora.dto.PasswordRecoveryRequest;
 import com.meztlitech.agrobitacora.entity.UserEntity;
 import com.meztlitech.agrobitacora.repository.RoleRepository;
 import com.meztlitech.agrobitacora.repository.UserRepository;
@@ -192,6 +193,28 @@ public class AuthenticationService {
             actionStatusResponse.setErrors(errors);
         }
         return actionStatusResponse;
+    }
+
+    public ActionStatusResponse recoverPassword(PasswordRecoveryRequest request) {
+        ActionStatusResponse resp = new ActionStatusResponse();
+        try {
+            validateContactInfo(request.getEmail(), request.getWhatsapp());
+            UserEntity user = userRepository.findByUserName(request.getEmail())
+                    .orElseThrow(() -> new IllegalArgumentException("Datos inválidos"));
+            if (!StringUtils.equals(user.getWhatsapp(), request.getWhatsapp())) {
+                throw new IllegalArgumentException("Datos inválidos");
+            }
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            userRepository.save(user);
+            resp.setId(user.getId());
+            resp.setStatus(HttpStatus.OK);
+            resp.setDescription("Actualizado correctamente");
+        } catch (Exception ex) {
+            Map<HttpStatus, String> errors = new HashMap<>();
+            errors.put(HttpStatus.BAD_REQUEST, ex.getMessage());
+            resp.setErrors(errors);
+        }
+        return resp;
     }
 
     public UserResponse verify(String token) {

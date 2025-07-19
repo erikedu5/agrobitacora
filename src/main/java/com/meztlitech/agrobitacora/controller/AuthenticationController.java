@@ -70,6 +70,11 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
+    @PostMapping("/recoverPassword")
+    public ResponseEntity<ActionStatusResponse> recoverPassword(@Valid @RequestBody PasswordRecoveryRequest request) {
+        return ResponseEntity.ok(authenticationService.recoverPassword(request));
+    }
+
     @PostMapping("/verifySession")
     public ResponseEntity<UserResponse> verify(@RequestHeader(value = "Authorization") final String token) {
         return ResponseEntity.ok(authenticationService.verify(token));

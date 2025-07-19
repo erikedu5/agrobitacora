@@ -586,6 +586,10 @@
                         App.notify('Credenciales inválidas', 'danger');
                     }
                     return;
+                } else if (this.id === 'recover-form') {
+                    App.notify('Contraseña actualizada', 'success');
+                    this.reset();
+                    return;
                 }
                 App.notify('Guardado correctamente', 'success');
                 App.loadData(page);
