@@ -1,23 +1,24 @@
 package com.meztlitech.agrobitacora.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignInRequest {
-    // login must be a valid email
+public class PasswordRecoveryRequest {
     @NotBlank
     @Email
-    private String login;
+    private String email;
+
+    @NotBlank
+    private String whatsapp;
 
     @NotBlank
     private String password;
-    private boolean remember;
 }

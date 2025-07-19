@@ -586,6 +586,10 @@
                         App.notify('Credenciales inválidas', 'danger');
                     }
                     return;
+                } else if (this.id === 'recover-form') {
+                    App.notify('Contraseña actualizada', 'success');
+                    this.reset();
+                    return;
                 }
                 App.notify('Guardado correctamente', 'success');
                 App.loadData(page);
@@ -609,7 +613,9 @@
             App.notify((info && (info.description || info.message)) || 'Error', 'danger');
             if (res.status === 401) {
                 App.clearAuth();
-                location.href = '/auth';
+                if (this.id !== 'sign-in-form') {
+                    location.href = '/auth';
+                }
             }
         }
         });

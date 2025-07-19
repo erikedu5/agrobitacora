@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,12 +20,18 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/signIn")
-    public ResponseEntity<UserResponse> signIn(@RequestBody SignInRequest request) {
-        return ResponseEntity.ok(authenticationService.signIn(request));
+    public ResponseEntity<?> signIn(@Valid @RequestBody SignInRequest request) {
+        UserResponse response = authenticationService.signIn(request);
+        if (response == null || response.getToken() == null) {
+            ActionStatusResponse error = new ActionStatusResponse();
+            error.setDescription("Credenciales inválidas");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(value = "/signIn", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<Void> signInForm(SignInRequest request) {
+    public ResponseEntity<?> signInForm(@Valid SignInRequest request) {
         UserResponse response = authenticationService.signIn(request);
         if (response != null && response.getToken() != null) {
             HttpHeaders headers = new HttpHeaders();
@@ -38,16 +45,18 @@ public class AuthenticationController {
             headers.add(HttpHeaders.LOCATION, target);
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        ActionStatusResponse error = new ActionStatusResponse();
+        error.setDescription("Credenciales inválidas");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @PostMapping("/signUp")
-    public ResponseEntity<UserResponse> signup(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserResponse> signup(@Valid @RequestBody UserDto userDto) {
         return ResponseEntity.ok(authenticationService.create(userDto));
     }
 
     @PostMapping(value = "/signUp", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<Void> signupForm(UserDto userDto) {
+    public ResponseEntity<Void> signupForm(@Valid UserDto userDto) {
         UserResponse response = authenticationService.create(userDto);
         if (response != null && response.getToken() != null) {
             HttpHeaders headers = new HttpHeaders();
@@ -59,6 +68,11 @@ public class AuthenticationController {
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    @PostMapping("/recoverPassword")
+    public ResponseEntity<ActionStatusResponse> recoverPassword(@Valid @RequestBody PasswordRecoveryRequest request) {
+        return ResponseEntity.ok(authenticationService.recoverPassword(request));
     }
 
     @PostMapping("/verifySession")

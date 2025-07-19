@@ -5,6 +5,7 @@ import com.meztlitech.agrobitacora.dto.JwtAuthenticationResponse;
 import com.meztlitech.agrobitacora.dto.SignInRequest;
 import com.meztlitech.agrobitacora.dto.UserDto;
 import com.meztlitech.agrobitacora.dto.UserResponse;
+import com.meztlitech.agrobitacora.dto.PasswordRecoveryRequest;
 import com.meztlitech.agrobitacora.entity.UserEntity;
 import com.meztlitech.agrobitacora.repository.RoleRepository;
 import com.meztlitech.agrobitacora.repository.UserRepository;
@@ -13,6 +14,7 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import java.util.regex.Pattern;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,9 +42,37 @@ public class AuthenticationService {
 
     private final CropRepository cropRepository;
 
+    private static final Pattern EMAIL_PATTERN =
+            Pattern.compile("^[\\w.%+-]+@[\\w.-]+\\.[A-Za-z]{2,}$");
+    private static final Pattern WHATSAPP_PATTERN =
+            Pattern.compile("^\\+?\\d{10,15}$");
+
+    private void validateContactInfo(String email, String whatsapp) {
+        boolean emailValid = StringUtils.isNotBlank(email)
+                && EMAIL_PATTERN.matcher(email).matches();
+        boolean phoneValid = StringUtils.isNotBlank(whatsapp)
+                && WHATSAPP_PATTERN.matcher(whatsapp).matches();
+        if (!emailValid && !phoneValid) {
+            throw new IllegalArgumentException("Correo o whatsapp inválido");
+        }
+    }
+
+    private void validateUnique(String email, String whatsapp, Long userId) {
+        if (StringUtils.isNotBlank(email)) {
+            userRepository.findByUserName(email)
+                    .filter(u -> userId == null || !u.getId().equals(userId))
+                    .ifPresent(u -> { throw new IllegalArgumentException("Correo ya registrado"); });
+        }
+        if (StringUtils.isNotBlank(whatsapp)) {
+            userRepository.findByWhatsapp(whatsapp)
+                    .filter(u -> userId == null || !u.getId().equals(userId))
+                    .ifPresent(u -> { throw new IllegalArgumentException("Whatsapp ya registrado"); });
+        }
+    }
+
     public UserResponse signIn(SignInRequest request) {
         try {
-            UserEntity user = userRepository.findByUserNameOrWhatsapp(request.getLogin())
+            UserEntity user = userRepository.findByUserName(request.getLogin())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid credentials."));
 
             authenticationManager.authenticate(
@@ -79,6 +109,8 @@ public class AuthenticationService {
             user.setActive(true);
             user.setWhatsapp(request.getWhatsapp());
             user.setMaxCrops(request.getMaxCrops());
+            validateContactInfo(user.getUserName(), user.getWhatsapp());
+            validateUnique(user.getUserName(), user.getWhatsapp(), null);
             userRepository.save(user);
 
             return this.signIn(new SignInRequest(request.getEmail(), request.getPassword(), false));
@@ -149,6 +181,8 @@ public class AuthenticationService {
             if (userDto.getMaxCrops() != null) {
                 user.setMaxCrops(userDto.getMaxCrops());
             }
+            validateContactInfo(user.getUserName(), user.getWhatsapp());
+            validateUnique(user.getUserName(), user.getWhatsapp(), user.getId());
             userRepository.save(user);
             actionStatusResponse.setId(user.getId());
             actionStatusResponse.setStatus(HttpStatus.OK);
@@ -159,6 +193,28 @@ public class AuthenticationService {
             actionStatusResponse.setErrors(errors);
         }
         return actionStatusResponse;
+    }
+
+    public ActionStatusResponse recoverPassword(PasswordRecoveryRequest request) {
+        ActionStatusResponse resp = new ActionStatusResponse();
+        try {
+            validateContactInfo(request.getEmail(), request.getWhatsapp());
+            UserEntity user = userRepository.findByUserName(request.getEmail())
+                    .orElseThrow(() -> new IllegalArgumentException("Datos inválidos"));
+            if (!StringUtils.equals(user.getWhatsapp(), request.getWhatsapp())) {
+                throw new IllegalArgumentException("Datos inválidos");
+            }
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            userRepository.save(user);
+            resp.setId(user.getId());
+            resp.setStatus(HttpStatus.OK);
+            resp.setDescription("Actualizado correctamente");
+        } catch (Exception ex) {
+            Map<HttpStatus, String> errors = new HashMap<>();
+            errors.put(HttpStatus.BAD_REQUEST, ex.getMessage());
+            resp.setErrors(errors);
+        }
+        return resp;
     }
 
     public UserResponse verify(String token) {
