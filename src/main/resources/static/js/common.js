@@ -609,7 +609,9 @@
             App.notify((info && (info.description || info.message)) || 'Error', 'danger');
             if (res.status === 401) {
                 App.clearAuth();
-                location.href = '/auth';
+                if (this.id !== 'sign-in-form') {
+                    location.href = '/auth';
+                }
             }
         }
         });

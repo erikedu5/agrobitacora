@@ -20,12 +20,18 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/signIn")
-    public ResponseEntity<UserResponse> signIn(@Valid @RequestBody SignInRequest request) {
-        return ResponseEntity.ok(authenticationService.signIn(request));
+    public ResponseEntity<?> signIn(@Valid @RequestBody SignInRequest request) {
+        UserResponse response = authenticationService.signIn(request);
+        if (response == null || response.getToken() == null) {
+            ActionStatusResponse error = new ActionStatusResponse();
+            error.setDescription("Credenciales inválidas");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(value = "/signIn", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<Void> signInForm(@Valid SignInRequest request) {
+    public ResponseEntity<?> signInForm(@Valid SignInRequest request) {
         UserResponse response = authenticationService.signIn(request);
         if (response != null && response.getToken() != null) {
             HttpHeaders headers = new HttpHeaders();
@@ -39,7 +45,9 @@ public class AuthenticationController {
             headers.add(HttpHeaders.LOCATION, target);
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        ActionStatusResponse error = new ActionStatusResponse();
+        error.setDescription("Credenciales inválidas");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @PostMapping("/signUp")
