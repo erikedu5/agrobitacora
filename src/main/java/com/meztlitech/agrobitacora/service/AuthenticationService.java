@@ -88,6 +88,7 @@ public class AuthenticationService {
             userDto.setToken(JwtAuthenticationResponse.builder().token(jwt).build().getToken());
             userDto.setMaxCrops(user.getMaxCrops());
             userDto.setCropCount(cropRepository.countByUserId(user.getId()));
+            userDto.setBranchId(user.getBranchId());
             return userDto;
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -232,6 +233,7 @@ public class AuthenticationService {
         userDto.setToken(token);
         userDto.setMaxCrops(user.getMaxCrops());
         userDto.setCropCount(cropRepository.countByUserId(user.getId()));
+        userDto.setBranchId(user.getBranchId());
 
         return userDto;
     }
@@ -252,6 +254,7 @@ public class AuthenticationService {
         userDto.setToken(newToken);
         userDto.setMaxCrops(user.getMaxCrops());
         userDto.setCropCount(cropRepository.countByUserId(user.getId()));
+        userDto.setBranchId(user.getBranchId());
 
         return userDto;
     }

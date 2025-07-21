@@ -520,7 +520,7 @@
 
         function showMenus() {
             const role = App.getRole();
-            const all = ['#menu-association','#menu-bill','#menu-crop','#menu-fumigation','#menu-irrigation','#menu-labor','#menu-nutrition','#menu-production','#menu-balance'];
+            const all = ['#menu-association','#menu-bill','#menu-crop','#menu-fumigation','#menu-irrigation','#menu-labor','#menu-nutrition','#menu-production','#menu-balance','#menu-store'];
             all.forEach(sel => $(sel).addClass('d-none'));
             $('#admin-menu').addClass('d-none');
             if (role === 'Admin') {

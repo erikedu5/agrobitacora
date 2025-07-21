@@ -16,4 +16,5 @@ public class UserResponse {
     private String token;
     private Integer maxCrops;
     private Long cropCount;
+    private Long branchId;
 }
