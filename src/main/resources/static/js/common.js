@@ -283,10 +283,10 @@
                 }
             }
             if (notFound.length) {
-                alert(`La tienda podría no tener: ${notFound.join(', ')}`);
+                App.notify(`No se encontraron en la tienda: ${notFound.join(', ')}`, 'warning');
             }
             const storeName = localStorage.getItem('storeName') || '';
-            const msg = `¿Enviar pedido a ${storeName || 'la tienda'} con los productos: ${selected.join(', ')}?`;
+            const msg = `¿Confirmar envío del pedido a ${storeName || 'la tienda'} con los productos: ${selected.join(', ')}?`;
             if (!confirm(msg)) return;
             await App.placeOrder(items, selected);
         });
@@ -317,6 +317,11 @@
                 body: JSON.stringify({ items })
             });
             App.notify('Pedido enviado');
+            const modalEl = document.getElementById('detailModal');
+            if (modalEl) {
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+            }
             const phone = localStorage.getItem('storePhone');
             if (phone) {
                 const text = `Hola, me gustaría pedir: ${names.join(', ')}`;
