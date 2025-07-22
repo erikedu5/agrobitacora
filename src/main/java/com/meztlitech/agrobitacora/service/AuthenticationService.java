@@ -12,10 +12,10 @@ import com.meztlitech.agrobitacora.repository.UserRepository;
 import com.meztlitech.agrobitacora.repository.CropRepository;
 import com.meztlitech.agrobitacora.repository.StoreRepository;
 import io.jsonwebtoken.Claims;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
-import java.util.regex.Pattern;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -75,7 +75,7 @@ public class AuthenticationService {
 
     public UserResponse signIn(SignInRequest request) {
         try {
-            UserEntity user = userRepository.findByUserName(request.getLogin())
+            UserEntity user = userRepository.findByUserNameOrWhatsapp(request.getLogin())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid credentials."));
 
             authenticationManager.authenticate(
@@ -118,9 +118,9 @@ public class AuthenticationService {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setActive(true);
             user.setWhatsapp(request.getWhatsapp());
-            user.setMaxCrops(request.getMaxCrops());
-            validateContactInfo(user.getUserName(), user.getWhatsapp());
-            validateUnique(user.getUserName(), user.getWhatsapp(), null);
+            user.setMaxCrops(2);
+            validateContactInfo(user.getUsername(), user.getWhatsapp());
+            validateUnique(user.getUsername(), user.getWhatsapp(), null);
             userRepository.save(user);
 
             return this.signIn(new SignInRequest(request.getEmail(), request.getPassword(), false));
@@ -191,8 +191,6 @@ public class AuthenticationService {
             if (userDto.getMaxCrops() != null) {
                 user.setMaxCrops(userDto.getMaxCrops());
             }
-            validateContactInfo(user.getUserName(), user.getWhatsapp());
-            validateUnique(user.getUserName(), user.getWhatsapp(), user.getId());
             userRepository.save(user);
             actionStatusResponse.setId(user.getId());
             actionStatusResponse.setStatus(HttpStatus.OK);

@@ -14,9 +14,10 @@ async function loadStores() {
         const data = await res.json();
         select.innerHTML = '';
         data.forEach(s => {
+            console.log('Store:', s);
             const opt = document.createElement('option');
-            opt.value = s.id || s.ID || s.codigo || '';
-            opt.textContent = s.nombre || s.name || ('Sucursal ' + opt.value);
+            opt.value = s.id;
+            opt.textContent =  s.empresa.nombre + ' - '  + s.nombre;
             opt.dataset.phone = s.whatsapp || s.telefono || s.phone || '';
             select.appendChild(opt);
         });

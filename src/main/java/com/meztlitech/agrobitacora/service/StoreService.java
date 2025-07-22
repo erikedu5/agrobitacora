@@ -1,6 +1,7 @@
 package com.meztlitech.agrobitacora.service;
 
 import com.meztlitech.agrobitacora.entity.StoreEntity;
+import com.meztlitech.agrobitacora.dto.OrderItem;
 import com.meztlitech.agrobitacora.entity.UserEntity;
 import com.meztlitech.agrobitacora.repository.StoreRepository;
 import com.meztlitech.agrobitacora.repository.UserRepository;
@@ -109,7 +110,7 @@ public class StoreService {
         }
     }
 
-    public void placeOrder(String token, List<Map<String, Object>> items) {
+    public void placeOrder(String token, List<OrderItem> items) {
         try {
             Claims claims = jwtService.decodeToken(token);
             Long userId = Long.parseLong(claims.get("id").toString());

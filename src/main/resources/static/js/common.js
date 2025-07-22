@@ -13,6 +13,7 @@
         localStorage.removeItem('token');
         localStorage.removeItem('role');
         localStorage.removeItem('roleId');
+        localStorage.removeItem('cropId');
         localStorage.removeItem('storeId');
         localStorage.removeItem('storeName');
         localStorage.removeItem('storePhone');
@@ -663,18 +664,21 @@
         if (res.ok) {
                 if (this.id === 'sign-in-form' || this.id === 'sign-up-form') {
                     if (info && info.token) {
-                        setAuth(info.token,
-                            info.role && info.role.name,
-                            info.role && info.role.id,
-                            info.branchId,
-                            info.storeName,
-                            info.storePhone);
+                        setAuth(info.token, info.role && info.role.name, info.role && info.role.id, info.branchId);
+                        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                            const roleName = (info.role && info.role.name ? info.role.name : 'GUEST').toUpperCase();
+                            navigator.serviceWorker.controller.postMessage({
+                                type: 'ROLE',
+                                value: roleName
+                            });
+                        }
                         App.notify('Autenticado correctamente', 'success');
                         const needsCrop = info.cropCount !== undefined && info.cropCount === 0;
                         const roleId = info.role && info.role.id;
                         const needsRoleCrop = String(roleId) === '3';
                         const target = ((this.id === 'sign-up-form' && needsRoleCrop) ||
                                         (needsCrop && needsRoleCrop)) ? '/crop' : '/';
+                        console.log('redirecting to', target);
                         setTimeout(() => location.href = target, 1000);
                     } else {
                         App.notify('Credenciales inválidas', 'danger');

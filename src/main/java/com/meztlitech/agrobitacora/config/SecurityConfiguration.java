@@ -63,7 +63,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,
                                 "/bill", "/crop", "/fumigation",
                                 "/irrigation", "/labor", "/nutrition",
-                                "/production", "/admin/**", "/users",
+                                "/production", "/admin/**", "/users", "/store/**",
                                 "/balance/**", "/js/**", "/home", "/notification/**",
                                 "/notifications", "/weather/**", "/association/**",
                                 "/producer/**", "/css/**").permitAll()
