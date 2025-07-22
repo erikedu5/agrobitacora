@@ -13,17 +13,27 @@
         localStorage.removeItem('token');
         localStorage.removeItem('role');
         localStorage.removeItem('roleId');
+        localStorage.removeItem('cropId');
+        localStorage.removeItem('storeId');
+        localStorage.removeItem('storeName');
+        localStorage.removeItem('storePhone');
     }
 
-    function setAuth(token, role, roleId) {
+    function setAuth(token, role, roleId, storeId, storeName, storePhone) {
         localStorage.setItem('token', token);
         if (role) localStorage.setItem('role', role);
         if (roleId !== undefined) localStorage.setItem('roleId', roleId);
+        if (storeId !== undefined && storeId !== null) localStorage.setItem('storeId', storeId);
+        if (storeName !== undefined && storeName !== null) localStorage.setItem('storeName', storeName);
+        if (storePhone !== undefined && storePhone !== null) localStorage.setItem('storePhone', storePhone);
     }
 
     App.getToken = () => getStored('token');
     App.getRole = () => getStored('role');
     App.getRoleId = () => getStored('roleId');
+    App.getStoreId = () => getStored('storeId');
+    App.getStoreName = () => getStored('storeName');
+    App.getStorePhone = () => getStored('storePhone');
     App.clearAuth = clearAuth;
 
     App.notify = function (message, type = 'success') {
@@ -234,10 +244,87 @@
         const $tbody = $modal.find('#detail-table');
         $tbody.empty();
         (app.appDetails || []).forEach(d => {
-            $tbody.append(`<tr><td>${d.productName}</td><td>${d.activeIngredient}</td><td>${d.dosis}</td><td>${d.unit}</td><td>${(d.condiciones || []).join(', ')}</td></tr>`);
+            $tbody.append(
+                `<tr data-name="${d.productName}">
+                   <td><input type="checkbox" class="order-check"></td>
+                   <td>${d.productName}</td>
+                   <td>${d.activeIngredient}</td>
+                   <td>${d.dosis}</td>
+                   <td>${d.unit}</td>
+                   <td>${(d.condiciones || []).join(', ')}</td>
+                 </tr>`);
+        });
+        const $btnOrder = $modal.find('#make-order');
+        const storeId = localStorage.getItem('storeId');
+        if (!storeId) {
+            $btnOrder.prop('disabled', true);
+        } else {
+            $btnOrder.prop('disabled', false);
+        }
+        $btnOrder.off('click').on('click', async function () {
+            if (!localStorage.getItem('storeId')) return;
+            const selected = [];
+            $tbody.find('tr').each(function () {
+                const $row = $(this);
+                const chk = $row.find('.order-check')[0];
+                if (chk && chk.checked) {
+                    selected.push($row.data('name'));
+                }
+            });
+            if (!selected.length) return;
+            const items = [];
+            const notFound = [];
+            for (const name of selected) {
+                const product = await App.searchStoreProduct(name);
+                if (product && product.id) {
+                    items.push({ producto_id: product.id, cantidad: 1 });
+                } else {
+                    notFound.push(name);
+                }
+            }
+            if (notFound.length) {
+                alert(`La tienda podría no tener: ${notFound.join(', ')}`);
+            }
+            const storeName = localStorage.getItem('storeName') || '';
+            const msg = `¿Enviar pedido a ${storeName || 'la tienda'} con los productos: ${selected.join(', ')}?`;
+            if (!confirm(msg)) return;
+            await App.placeOrder(items, selected);
         });
         const modal = new bootstrap.Modal($modal[0]);
         modal.show();
+    };
+
+    App.searchStoreProduct = async function (name) {
+        const storeId = localStorage.getItem('storeId');
+        if (!storeId || !name) return null;
+        try {
+            const res = await fetch(`/store/${storeId}/products?q=${encodeURIComponent(name)}`);
+            if (res.ok) {
+                const data = await res.json();
+                return Array.isArray(data) ? data[0] : null;
+            }
+        } catch (e) {
+            console.log('searchStoreProduct error', e);
+        }
+        return null;
+    };
+
+    App.placeOrder = async function (items, names) {
+        try {
+            await fetch('/store/order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items })
+            });
+            App.notify('Pedido enviado');
+            const phone = localStorage.getItem('storePhone');
+            if (phone) {
+                const text = `Hola, me gustaría pedir: ${names.join(', ')}`;
+                window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
+            }
+        } catch (e) {
+            console.log('placeOrder error', e);
+        }
     };
 
     function saveLocalData(type, items) {
@@ -444,6 +531,9 @@
                     if (info.role && info.role.name) {
                         localStorage.setItem('role', info.role.name);
                     }
+                    if (info.branchId) localStorage.setItem('storeId', info.branchId);
+                    if (info.storeName) localStorage.setItem('storeName', info.storeName);
+                    if (info.storePhone) localStorage.setItem('storePhone', info.storePhone);
                 }
             } catch (e) {
                 console.log('ensureRole: offline');
@@ -520,7 +610,7 @@
 
         function showMenus() {
             const role = App.getRole();
-            const all = ['#menu-association','#menu-bill','#menu-crop','#menu-fumigation','#menu-irrigation','#menu-labor','#menu-nutrition','#menu-production','#menu-balance'];
+            const all = ['#menu-association','#menu-bill','#menu-crop','#menu-fumigation','#menu-irrigation','#menu-labor','#menu-nutrition','#menu-production','#menu-balance','#menu-store'];
             all.forEach(sel => $(sel).addClass('d-none'));
             $('#admin-menu').addClass('d-none');
             if (role === 'Admin') {
@@ -574,13 +664,21 @@
         if (res.ok) {
                 if (this.id === 'sign-in-form' || this.id === 'sign-up-form') {
                     if (info && info.token) {
-                        setAuth(info.token, info.role && info.role.name, info.role && info.role.id);
+                        setAuth(info.token, info.role && info.role.name, info.role && info.role.id, info.branchId);
+                        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                            const roleName = (info.role && info.role.name ? info.role.name : 'GUEST').toUpperCase();
+                            navigator.serviceWorker.controller.postMessage({
+                                type: 'ROLE',
+                                value: roleName
+                            });
+                        }
                         App.notify('Autenticado correctamente', 'success');
                         const needsCrop = info.cropCount !== undefined && info.cropCount === 0;
                         const roleId = info.role && info.role.id;
                         const needsRoleCrop = String(roleId) === '3';
                         const target = ((this.id === 'sign-up-form' && needsRoleCrop) ||
                                         (needsCrop && needsRoleCrop)) ? '/crop' : '/';
+                        console.log('redirecting to', target);
                         setTimeout(() => location.href = target, 1000);
                     } else {
                         App.notify('Credenciales inválidas', 'danger');
