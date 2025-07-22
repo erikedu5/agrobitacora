@@ -53,6 +53,27 @@
         $toast.on('hidden.bs.toast', () => $toast.remove());
     };
 
+    App.confirm = function (message) {
+        return new Promise(resolve => {
+            const $modal = $('#confirmModal');
+            if ($modal.length === 0) {
+                resolve(window.confirm(message));
+                return;
+            }
+            $modal.find('.modal-body').text(message);
+            const modal = new bootstrap.Modal($modal[0]);
+            const cleanup = () => {
+                $modal.off('click.confirm');
+                $modal.off('hidden.bs.modal', handleDismiss);
+            };
+            const handleDismiss = () => { cleanup(); resolve(false); };
+            $modal.on('click.confirm', '.btn-accept', () => { cleanup(); resolve(true); modal.hide(); });
+            $modal.on('click.confirm', '.btn-cancel', () => { cleanup(); resolve(false); modal.hide(); });
+            $modal.on('hidden.bs.modal', handleDismiss);
+            modal.show();
+        });
+    };
+
     App.fillForm = function (form, data, prefix = '') {
         Object.entries(data).forEach(([k, v]) => {
             const name = prefix ? `${prefix}.${k}` : k;
@@ -283,11 +304,12 @@
                 }
             }
             if (notFound.length) {
-                alert(`La tienda podría no tener: ${notFound.join(', ')}`);
+                App.notify(`No se encontraron en la tienda: ${notFound.join(', ')}`, 'warning');
             }
             const storeName = localStorage.getItem('storeName') || '';
-            const msg = `¿Enviar pedido a ${storeName || 'la tienda'} con los productos: ${selected.join(', ')}?`;
-            if (!confirm(msg)) return;
+            const msg = `¿Confirmar envío del pedido a ${storeName || 'la tienda'} con los productos: ${selected.join(', ')}?`;
+            const ok = await App.confirm(msg);
+            if (!ok) return;
             await App.placeOrder(items, selected);
         });
         const modal = new bootstrap.Modal($modal[0]);
@@ -317,6 +339,11 @@
                 body: JSON.stringify({ items })
             });
             App.notify('Pedido enviado');
+            const modalEl = document.getElementById('detailModal');
+            if (modalEl) {
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+            }
             const phone = localStorage.getItem('storePhone');
             if (phone) {
                 const text = `Hola, me gustaría pedir: ${names.join(', ')}`;
