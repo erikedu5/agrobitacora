@@ -15,14 +15,16 @@
         localStorage.removeItem('roleId');
         localStorage.removeItem('storeId');
         localStorage.removeItem('storeName');
+        localStorage.removeItem('storePhone');
     }
 
-    function setAuth(token, role, roleId, storeId, storeName) {
+    function setAuth(token, role, roleId, storeId, storeName, storePhone) {
         localStorage.setItem('token', token);
         if (role) localStorage.setItem('role', role);
         if (roleId !== undefined) localStorage.setItem('roleId', roleId);
         if (storeId !== undefined && storeId !== null) localStorage.setItem('storeId', storeId);
         if (storeName !== undefined && storeName !== null) localStorage.setItem('storeName', storeName);
+        if (storePhone !== undefined && storePhone !== null) localStorage.setItem('storePhone', storePhone);
     }
 
     App.getToken = () => getStored('token');
@@ -30,6 +32,7 @@
     App.getRoleId = () => getStored('roleId');
     App.getStoreId = () => getStored('storeId');
     App.getStoreName = () => getStored('storeName');
+    App.getStorePhone = () => getStored('storePhone');
     App.clearAuth = clearAuth;
 
     App.notify = function (message, type = 'success') {
@@ -527,6 +530,9 @@
                     if (info.role && info.role.name) {
                         localStorage.setItem('role', info.role.name);
                     }
+                    if (info.branchId) localStorage.setItem('storeId', info.branchId);
+                    if (info.storeName) localStorage.setItem('storeName', info.storeName);
+                    if (info.storePhone) localStorage.setItem('storePhone', info.storePhone);
                 }
             } catch (e) {
                 console.log('ensureRole: offline');
@@ -657,7 +663,12 @@
         if (res.ok) {
                 if (this.id === 'sign-in-form' || this.id === 'sign-up-form') {
                     if (info && info.token) {
-                        setAuth(info.token, info.role && info.role.name, info.role && info.role.id, info.branchId);
+                        setAuth(info.token,
+                            info.role && info.role.name,
+                            info.role && info.role.id,
+                            info.branchId,
+                            info.storeName,
+                            info.storePhone);
                         App.notify('Autenticado correctamente', 'success');
                         const needsCrop = info.cropCount !== undefined && info.cropCount === 0;
                         const roleId = info.role && info.role.id;

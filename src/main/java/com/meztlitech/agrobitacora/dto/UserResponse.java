@@ -17,4 +17,6 @@ public class UserResponse {
     private Integer maxCrops;
     private Long cropCount;
     private Long branchId;
+    private String storeName;
+    private String storePhone;
 }
