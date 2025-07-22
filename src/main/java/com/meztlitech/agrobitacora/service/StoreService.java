@@ -32,6 +32,9 @@ public class StoreService {
     @Value("${stores.api-key:}")
     private String apiKey;
 
+    @Value("${stores.order-url:http://localhost:8000/api/pedidos}")
+    private String orderUrl;
+
     public List<?> getStores() {
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -56,5 +59,50 @@ public class StoreService {
         UserEntity user = userRepository.findById(userId).orElseThrow();
         user.setBranchId(storeId);
         userRepository.save(user);
+    }
+
+    public List<?> searchProducts(Long storeId, String name) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            if (apiKey != null && !apiKey.isBlank()) {
+                headers.set("X-API-KEY", apiKey);
+            }
+            String url = storesUrl + "/" + storeId + "/productos?busqueda=" + name;
+            ResponseEntity<List> res = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    new HttpEntity<>(headers),
+                    List.class);
+            return res.getBody();
+        } catch (Exception e) {
+            log.error("Error searching products", e);
+            return Collections.emptyList();
+        }
+    }
+
+    public void placeOrder(String token, List<Map<String, Object>> items) {
+        try {
+            Claims claims = jwtService.decodeToken(token);
+            Long userId = Long.parseLong(claims.get("id").toString());
+            UserEntity user = userRepository.findById(userId).orElseThrow();
+            if (user.getBranchId() == null) return;
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/json");
+            if (apiKey != null && !apiKey.isBlank()) {
+                headers.set("X-API-KEY", apiKey);
+            }
+
+            Map<String, Object> body = Map.of(
+                    "sucursal_id", user.getBranchId(),
+                    "productos", items,
+                    "nombre_solicitante", user.getName(),
+                    "numero_solicitante", user.getWhatsapp()
+            );
+
+            restTemplate.postForEntity(orderUrl, new HttpEntity<>(body, headers), String.class);
+        } catch (Exception e) {
+            log.error("Error placing order", e);
+        }
     }
 }
