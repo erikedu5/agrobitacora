@@ -269,18 +269,22 @@
             });
             if (!selected.length) return;
             const items = [];
+            const notFound = [];
             for (const name of selected) {
                 const product = await App.searchStoreProduct(name);
                 if (product && product.id) {
                     items.push({ producto_id: product.id, cantidad: 1 });
+                } else {
+                    notFound.push(name);
                 }
             }
-            if (items.length) {
-                const storeName = localStorage.getItem('storeName') || '';
-                const msg = `¿Enviar pedido a ${storeName || 'la tienda'} con los productos: ${selected.join(', ')}?`;
-                if (!confirm(msg)) return;
-                await App.placeOrder(items);
+            if (notFound.length) {
+                alert(`La tienda podría no tener: ${notFound.join(', ')}`);
             }
+            const storeName = localStorage.getItem('storeName') || '';
+            const msg = `¿Enviar pedido a ${storeName || 'la tienda'} con los productos: ${selected.join(', ')}?`;
+            if (!confirm(msg)) return;
+            await App.placeOrder(items, selected);
         });
         const modal = new bootstrap.Modal($modal[0]);
         modal.show();
@@ -301,7 +305,7 @@
         return null;
     };
 
-    App.placeOrder = async function (items) {
+    App.placeOrder = async function (items, names) {
         try {
             await fetch('/store/order', {
                 method: 'POST',
@@ -309,6 +313,11 @@
                 body: JSON.stringify({ items })
             });
             App.notify('Pedido enviado');
+            const phone = localStorage.getItem('storePhone');
+            if (phone) {
+                const text = `Hola, me gustaría pedir: ${names.join(', ')}`;
+                window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
+            }
         } catch (e) {
             console.log('placeOrder error', e);
         }

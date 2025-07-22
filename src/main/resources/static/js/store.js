@@ -17,13 +17,17 @@ async function loadStores() {
             const opt = document.createElement('option');
             opt.value = s.id || s.ID || s.codigo || '';
             opt.textContent = s.nombre || s.name || ('Sucursal ' + opt.value);
+            opt.dataset.phone = s.whatsapp || s.telefono || s.phone || '';
             select.appendChild(opt);
         });
         const saved = localStorage.getItem('storeId');
         if (saved) {
             select.value = saved;
             const opt = select.options[select.selectedIndex];
-            if (opt) localStorage.setItem('storeName', opt.textContent);
+            if (opt) {
+                localStorage.setItem('storeName', opt.textContent);
+                localStorage.setItem('storePhone', opt.dataset.phone || '');
+            }
         }
     } catch (e) {
         select.innerHTML = '<option>Error</option>';
@@ -40,8 +44,10 @@ async function saveStore() {
             headers: { Authorization: 'Bearer ' + App.getToken() }
         });
         localStorage.setItem('storeId', id);
-        const name = select.options[select.selectedIndex].textContent;
+        const opt = select.options[select.selectedIndex];
+        const name = opt.textContent;
         localStorage.setItem('storeName', name);
+        localStorage.setItem('storePhone', opt.dataset.phone || '');
         App.notify('Tienda guardada');
     } catch (e) {
         console.log('save store error', e);
