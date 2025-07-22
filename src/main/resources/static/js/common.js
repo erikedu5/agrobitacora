@@ -14,19 +14,22 @@
         localStorage.removeItem('role');
         localStorage.removeItem('roleId');
         localStorage.removeItem('storeId');
+        localStorage.removeItem('storeName');
     }
 
-    function setAuth(token, role, roleId, storeId) {
+    function setAuth(token, role, roleId, storeId, storeName) {
         localStorage.setItem('token', token);
         if (role) localStorage.setItem('role', role);
         if (roleId !== undefined) localStorage.setItem('roleId', roleId);
         if (storeId !== undefined && storeId !== null) localStorage.setItem('storeId', storeId);
+        if (storeName !== undefined && storeName !== null) localStorage.setItem('storeName', storeName);
     }
 
     App.getToken = () => getStored('token');
     App.getRole = () => getStored('role');
     App.getRoleId = () => getStored('roleId');
     App.getStoreId = () => getStored('storeId');
+    App.getStoreName = () => getStored('storeName');
     App.clearAuth = clearAuth;
 
     App.notify = function (message, type = 'success') {
@@ -247,7 +250,15 @@
                    <td>${(d.condiciones || []).join(', ')}</td>
                  </tr>`);
         });
-        $modal.find('#make-order').off('click').on('click', async function () {
+        const $btnOrder = $modal.find('#make-order');
+        const storeId = localStorage.getItem('storeId');
+        if (!storeId) {
+            $btnOrder.prop('disabled', true);
+        } else {
+            $btnOrder.prop('disabled', false);
+        }
+        $btnOrder.off('click').on('click', async function () {
+            if (!localStorage.getItem('storeId')) return;
             const selected = [];
             $tbody.find('tr').each(function () {
                 const $row = $(this);
@@ -265,6 +276,9 @@
                 }
             }
             if (items.length) {
+                const storeName = localStorage.getItem('storeName') || '';
+                const msg = `¿Enviar pedido a ${storeName || 'la tienda'} con los productos: ${selected.join(', ')}?`;
+                if (!confirm(msg)) return;
                 await App.placeOrder(items);
             }
         });

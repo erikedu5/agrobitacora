@@ -20,14 +20,19 @@ async function loadStores() {
             select.appendChild(opt);
         });
         const saved = localStorage.getItem('storeId');
-        if (saved) select.value = saved;
+        if (saved) {
+            select.value = saved;
+            const opt = select.options[select.selectedIndex];
+            if (opt) localStorage.setItem('storeName', opt.textContent);
+        }
     } catch (e) {
         select.innerHTML = '<option>Error</option>';
     }
 }
 
 async function saveStore() {
-    const id = document.getElementById('store-select').value;
+    const select = document.getElementById('store-select');
+    const id = select.value;
     if (!id) return;
     try {
         await fetch('/store/' + id, {
@@ -35,6 +40,8 @@ async function saveStore() {
             headers: { Authorization: 'Bearer ' + App.getToken() }
         });
         localStorage.setItem('storeId', id);
+        const name = select.options[select.selectedIndex].textContent;
+        localStorage.setItem('storeName', name);
         App.notify('Tienda guardada');
     } catch (e) {
         console.log('save store error', e);
