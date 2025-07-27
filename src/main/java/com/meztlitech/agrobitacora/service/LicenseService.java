@@ -24,6 +24,10 @@ public class LicenseService {
 
     private final LicenseRepository licenseRepository;
 
+    public java.util.List<License> findAll() {
+        return licenseRepository.findAll();
+    }
+
     public LicenseSchoolResponse generateLicense(LicenseSchoolRequest request) {
         try {
             String payload = decryptStrong(request.getKey());
