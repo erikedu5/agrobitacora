@@ -347,7 +347,7 @@
             const phone = localStorage.getItem('storePhone');
             if (phone) {
                 const text = `Hola, me gustaría pedir: ${names.join(', ')}`;
-                window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
+                window.open(`https://wa.me/521${phone}?text=${encodeURIComponent(text)}`, '_blank');
             }
         } catch (e) {
             console.log('placeOrder error', e);

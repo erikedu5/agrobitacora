@@ -64,7 +64,7 @@ async function loadAllEngineers() {
     data.forEach(e => {
         const rank = e.ranking ? e.ranking.toFixed(1) : '0';
         const tr = document.createElement('tr');
-        const whatsapp = e.whatsapp != null ? `https://wa.me/${e.whatsapp}?text=Hola!,%20Me%20gustaria%20que%20asesores,%20contactame!!!` : '';
+        const whatsapp = e.whatsapp != null ? `https://wa.me/521${e.whatsapp}?text=Hola!,%20Me%20gustaria%20que%20asesores,%20contactame!!!` : '';
         tr.innerHTML = `<td>${e.id}</td><td>${e.name}</td><td><a target="_blank" href=${whatsapp}>${e.whatsapp}</a></td><td>${rank}</td><td><button class="btn btn-sm btn-primary" data-id="${e.id}" data-action="add-engineer">${i18n('association.add')}</button></td>`;
         tbody.appendChild(tr);
     });
@@ -90,7 +90,7 @@ async function loadMyEngineers() {
     tbody.innerHTML = '';
     data.forEach(e => {
         const tr = document.createElement('tr');
-        const whatsapp = e.whatsapp != null ? `https://wa.me/${e.whatsapp}` : '';
+        const whatsapp = e.whatsapp != null ? `https://wa.me/521${e.whatsapp}` : '';
         tr.innerHTML = `<td>${e.id}</td><td>${e.name}</td><td><a target="_blank" href=${whatsapp}>${e.whatsapp}</a></td><td><button class="btn btn-sm btn-secondary" data-id="${e.id}" data-action="rate-engineer">${i18n('association.rate')}</button></td><td><button class="btn btn-sm btn-danger" data-id="${e.id}" data-action="del-engineer">${i18n('association.remove')}</button></td>`;
         tbody.appendChild(tr);
     });
@@ -119,7 +119,7 @@ async function loadAllProducers() {
     tbody.innerHTML = '';
     data.forEach(p => {
         const tr = document.createElement('tr');
-        const whatsapp = p.whatsapp != null ? `https://wa.me/${p.whatsapp}?text=Hola!,%20Ingresa%20a%20https://bitacora.pixka.com.mx%20para%20que%20te%20asesore` : '';
+        const whatsapp = p.whatsapp != null ? `https://wa.me/521${p.whatsapp}?text=Hola!,%20Ingresa%20a%20https://bitacora.pixka.com.mx%20para%20que%20te%20asesore` : '';
         tr.innerHTML = `<td>${p.id}</td><td>${p.name}</td><td><a target="_blank" href=${whatsapp}>${p.whatsapp}</a></td><td><button class="btn btn-sm btn-primary" data-id="${p.id}" data-action="add-producer">${i18n('association.add')}</button></td>`;
         tbody.appendChild(tr);
     });
@@ -145,7 +145,7 @@ async function loadMyProducers() {
     tbody.innerHTML = '';
     data.forEach(p => {
         const tr = document.createElement('tr');
-        const whatsapp = p.whatsapp != null ? `https://wa.me/${p.whatsapp}` : '';
+        const whatsapp = p.whatsapp != null ? `https://wa.me/521${p.whatsapp}` : '';
         tr.innerHTML = `<td>${p.id}</td><td>${p.name}</td><td><a target="_blank" href=${whatsapp}>${p.whatsapp}</a></td><td><button class="btn btn-sm btn-danger" data-id="${p.id}" data-action="del-producer">${i18n('association.remove')}</button></td>`;
         tbody.appendChild(tr);
     });
