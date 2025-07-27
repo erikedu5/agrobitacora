@@ -15,6 +15,10 @@ App.registerEntity('adminlicenses', {
         </td>
     </tr>`,
     afterLoad: () => {
+        const tbody = document.querySelector('table tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((a, b) => parseInt(b.children[0].textContent) - parseInt(a.children[0].textContent));
+        rows.forEach(r => tbody.appendChild(r));
         document.querySelectorAll('.send-wa').forEach(btn => {
             btn.addEventListener('click', () => {
                 const item = JSON.parse(decodeURIComponent(btn.closest('tr').dataset.item));
@@ -30,4 +34,28 @@ App.registerEntity('adminlicenses', {
             });
         });
     }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('license-form');
+    if (!form) return;
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const data = App.formDataToObject(form);
+        const res = await fetch(form.action, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        if (res.ok) {
+            const modalEl = document.getElementById('licenseModal');
+            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modal.hide();
+            form.reset();
+            App.notify('Guardado correctamente', 'success');
+            App.loadData('adminlicenses');
+        } else {
+            App.notify('Error', 'danger');
+        }
+    });
 });
