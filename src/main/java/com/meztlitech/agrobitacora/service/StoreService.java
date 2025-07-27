@@ -30,14 +30,11 @@ public class StoreService {
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
 
-    @Value("${stores.url:http://localhost:8000/api/sucursales}")
+    @Value("${stores.url:http://localhost:8000/api/}")
     private String storesUrl;
 
     @Value("${stores.api-key:}")
     private String apiKey;
-
-    @Value("${stores.order-url:http://localhost:8000/api/pedidos}")
-    private String orderUrl;
 
     public List<?> getStores() {
         try {
@@ -46,7 +43,7 @@ public class StoreService {
                 headers.set("X-API-KEY", apiKey);
             }
             ResponseEntity<List> res = restTemplate.exchange(
-                    storesUrl,
+                    storesUrl.concat("sucursales"),
                     HttpMethod.GET,
                     new HttpEntity<>(headers),
                     List.class);
@@ -97,7 +94,7 @@ public class StoreService {
             if (apiKey != null && !apiKey.isBlank()) {
                 headers.set("X-API-KEY", apiKey);
             }
-            String url = storesUrl + "/" + storeId + "/productos?busqueda=" + name;
+            String url = storesUrl + "sucursales/" + storeId + "/productos?busqueda=" + name;
             ResponseEntity<List> res = restTemplate.exchange(
                     url,
                     HttpMethod.GET,
@@ -130,7 +127,7 @@ public class StoreService {
                     "numero_solicitante", user.getWhatsapp()
             );
 
-            restTemplate.postForEntity(orderUrl, new HttpEntity<>(body, headers), String.class);
+            restTemplate.postForEntity(storesUrl.concat("pedidos"), new HttpEntity<>(body, headers), String.class);
         } catch (Exception e) {
             log.error("Error placing order", e);
         }
