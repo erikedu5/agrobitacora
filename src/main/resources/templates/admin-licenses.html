@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Licencias')}"
+></head>
+<body>
+<nav th:replace="~{fragments/nav :: nav}"></nav>
+<div class="container mt-4">
+  <h1 class="mb-4">
+    <a th:href="@{/admin}" class="btn btn-secondary btn-sm me-2">&larr;</a>
+    <span>Licencias</span>
+  </h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Escuela</th>
+        <th>Estudiantes</th>
+        <th>Expira</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+<div th:replace="~{fragments/scripts :: base-scripts}"></div>
+<script th:src="@{/js/admin-licenses.js}" defer></script>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

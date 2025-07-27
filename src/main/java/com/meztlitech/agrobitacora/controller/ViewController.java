@@ -85,4 +85,9 @@ public class ViewController {
     public String adminEngineers() {
         return "admin-engineers";
     }
+
+    @GetMapping("/admin/licenses")
+    public String adminLicenses() {
+        return "admin-licenses";
+    }
 }
