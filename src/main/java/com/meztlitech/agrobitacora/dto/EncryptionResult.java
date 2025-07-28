@@ -1,4 +1,13 @@
 package com.meztlitech.agrobitacora.dto;
 
-public record EncryptionResult(byte[] cipherText, byte[] key, byte[] iv) { }
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class EncryptionResult {
+    byte[] cipherText;
+    byte[] key;
+    byte[] iv;
+}
 

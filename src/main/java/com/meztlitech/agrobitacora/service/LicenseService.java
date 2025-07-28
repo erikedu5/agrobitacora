@@ -1,5 +1,6 @@
 package com.meztlitech.agrobitacora.service;
 
+import com.meztlitech.agrobitacora.dto.EncryptionResult;
 import com.meztlitech.agrobitacora.dto.LicenseSchoolRequest;
 import com.meztlitech.agrobitacora.dto.LicenseSchoolResponse;
 import com.meztlitech.agrobitacora.entity.License;
@@ -23,6 +24,7 @@ import org.springframework.web.client.HttpServerErrorException;
 public class LicenseService {
 
     private final LicenseRepository licenseRepository;
+    private final EncryptionService encryptionService;
 
     public java.util.List<License> findAll() {
         return licenseRepository.findAll();
@@ -32,18 +34,18 @@ public class LicenseService {
         try {
             String payload = decryptStrong(request.getKey());
             String[] parts = payload.split("\\|");
-            if (parts.length < 5) {
+            if (parts.length < 4) {
                 throw new IllegalArgumentException("Invalid payload format");
             }
-            String[] decript = decryptInner(parts[0], parts[1], parts[2]).split("\\|");
+            EncryptionResult excrypted = encryptionService.encrypt(parts[0]);
             License license = new License();
-            license.setDecryptedText(decript[1]);
-            license.setIv(parts[0]);
-            license.setKey(parts[1]);
-            license.setCipherText(parts[2]);
-            license.setStudentTotal(parts[3]);
-            license.setSchoolName(parts[4]);
-            license.setExpirationDate(decript[0]);
+            license.setDecryptedText(parts[1]);
+            license.setIv(Base64.getEncoder().encodeToString(excrypted.getIv()));
+            license.setKey(Base64.getEncoder().encodeToString(excrypted.getKey()));
+            license.setCipherText(Base64.getEncoder().encodeToString(excrypted.getCipherText()));
+            license.setStudentTotal(parts[2]);
+            license.setSchoolName(parts[3]);
+            license.setExpirationDate(parts[0]);
             log.info("Decrypted License: {}", license.toString());
             License saved = licenseRepository.save(license);
             LicenseSchoolResponse response = new LicenseSchoolResponse();
