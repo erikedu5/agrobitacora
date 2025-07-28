@@ -37,12 +37,12 @@ public class LicenseService {
             if (parts.length < 4) {
                 throw new IllegalArgumentException("Invalid payload format");
             }
-            EncryptionResult excrypted = encryptionService.encrypt(parts[0]);
+            EncryptionResult encrypted = encryptionService.encrypt(parts[0].concat("|").concat(parts[1]));
             License license = new License();
             license.setDecryptedText(parts[1]);
-            license.setIv(Base64.getEncoder().encodeToString(excrypted.getIv()));
-            license.setKey(Base64.getEncoder().encodeToString(excrypted.getKey()));
-            license.setCipherText(Base64.getEncoder().encodeToString(excrypted.getCipherText()));
+            license.setIv(Base64.getEncoder().encodeToString(encrypted.getIv()));
+            license.setKey(Base64.getEncoder().encodeToString(encrypted.getKey()));
+            license.setCipherText(Base64.getEncoder().encodeToString(encrypted.getCipherText()));
             license.setStudentTotal(parts[2]);
             license.setSchoolName(parts[3]);
             license.setExpirationDate(parts[0]);
