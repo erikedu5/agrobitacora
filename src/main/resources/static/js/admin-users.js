@@ -5,6 +5,7 @@ App.registerEntity('adminusers', {
     onEdit: data => {
         const $form = $('#admin-user-form');
         if ($form.length) {
+            data.email = data.username;
             App.fillForm($form[0], data);
             $form.attr('action', `/api/admin/users/${data.id}`);
             $form[0].dataset.method = 'PUT';

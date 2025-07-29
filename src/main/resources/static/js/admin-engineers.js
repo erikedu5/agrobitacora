@@ -5,13 +5,14 @@ App.registerEntity('adminengineers', {
     onEdit: data => {
         const $form = $('#admin-engineer-form');
         if ($form.length) {
+            data.email = data.username;
             App.fillForm($form[0], data);
             $form.attr('action', `/api/admin/users/${data.id}`);
             $form[0].dataset.method = 'PUT';
         }
         const limit = prompt('Límite de cultivos', data.maxCrops || '');
         if (limit !== null) {
-            fetch(`/admin/users/${data.id}/limit`, {
+            fetch(`/api/admin/users/${data.id}/limit`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ maxCrops: parseInt(limit) })
