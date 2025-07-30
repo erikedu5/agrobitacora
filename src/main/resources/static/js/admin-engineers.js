@@ -11,7 +11,7 @@ App.registerEntity('adminengineers', {
         }
         const limit = prompt('Límite de cultivos', data.maxCrops || '');
         if (limit !== null) {
-            fetch(`/admin/users/${data.id}/limit`, {
+            fetch(`/api/admin/users/${data.id}/limit`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ maxCrops: parseInt(limit) })
