@@ -6,6 +6,8 @@ App.registerEntity('adminusers', {
         const $form = $('#admin-user-form');
         if ($form.length) {
             App.fillForm($form[0], data);
+            // API returns username but form expects email field
+            $form.find('[name=email]').val(data.username || data.email || '');
             $form.attr('action', `/api/admin/users/${data.id}`);
             $form[0].dataset.method = 'PUT';
             $form.find('[name=password]').val('').removeAttr('required');
