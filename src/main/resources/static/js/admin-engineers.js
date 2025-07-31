@@ -6,17 +6,28 @@ App.registerEntity('adminengineers', {
         const $form = $('#admin-engineer-form');
         if ($form.length) {
             App.fillForm($form[0], data);
+            // API returns username but form expects email field
+            $form.find('[name=email]').val(data.username || data.email || '');
             $form.attr('action', `/api/admin/users/${data.id}`);
             $form[0].dataset.method = 'PUT';
+            $form.find('[name=password]').val('').removeAttr('required');
         }
         const limit = prompt('Límite de cultivos', data.maxCrops || '');
         if (limit !== null) {
-            fetch(`/admin/users/${data.id}/limit`, {
+            fetch(`/api/admin/users/${data.id}/limit`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ maxCrops: parseInt(limit) })
             }).then(() => App.loadData(window.page));
         }
     },
+    skipFormEdit: true,
     afterLoad: App.loadAdminCounts
+});
+
+const $engineerForm = $('#admin-engineer-form');
+$engineerForm.on('reset', () => {
+    $engineerForm.attr('action', '/api/admin/engineers');
+    delete $engineerForm[0].dataset.method;
+    $engineerForm.find('[name=password]').attr('required', true);
 });

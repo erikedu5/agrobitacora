@@ -499,7 +499,7 @@
             return;
         }
 
-        const originalFetch = window.fetch;
+        const originalFetch = window.fetch.bind(window);
         window.fetch = async (input, init = {}) => {
             init.headers = {
                 ...(init.headers || {}),
