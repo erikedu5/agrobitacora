@@ -22,14 +22,14 @@ App.registerEntity('adminlicenses', {
         document.querySelectorAll('.send-wa').forEach(btn => {
             btn.addEventListener('click', () => {
                 const item = JSON.parse(decodeURIComponent(btn.closest('tr').dataset.item));
-                const payload = JSON.stringify({ CipherText: item.cipherText, Iv: item.iv, Key: item.key });
+                const payload = JSON.stringify({ C: item.cipherText, I: item.iv, K: item.key, F: item.expirationDate });
                 window.open(`https://wa.me/5217228259581?text=${encodeURIComponent(payload)}`, '_blank');
             });
         });
         document.querySelectorAll('.send-wa1').forEach(btn => {
             btn.addEventListener('click', () => {
                 const item = JSON.parse(decodeURIComponent(btn.closest('tr').dataset.item));
-                const payload = JSON.stringify({ CipherText: item.cipherText, Iv: item.iv, Key: item.key });
+                const payload = JSON.stringify({ C: item.cipherText, I: item.iv, K: item.key, F: item.expirationDate });
                 window.open(`https://wa.me/5217221833593?text=${encodeURIComponent(payload)}`, '_blank');
             });
         });
