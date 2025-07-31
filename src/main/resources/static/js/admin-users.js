@@ -8,7 +8,15 @@ App.registerEntity('adminusers', {
             App.fillForm($form[0], data);
             $form.attr('action', `/api/admin/users/${data.id}`);
             $form[0].dataset.method = 'PUT';
+            $form.find('[name=password]').val('').removeAttr('required');
         }
     },
     afterLoad: App.loadAdminCounts
+});
+
+const $userForm = $('#admin-user-form');
+$userForm.on('reset', () => {
+    $userForm.attr('action', '/api/admin/users');
+    delete $userForm[0].dataset.method;
+    $userForm.find('[name=password]').attr('required', true);
 });

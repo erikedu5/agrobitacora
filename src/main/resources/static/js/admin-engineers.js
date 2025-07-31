@@ -8,6 +8,7 @@ App.registerEntity('adminengineers', {
             App.fillForm($form[0], data);
             $form.attr('action', `/api/admin/users/${data.id}`);
             $form[0].dataset.method = 'PUT';
+            $form.find('[name=password]').val('').removeAttr('required');
         }
         const limit = prompt('Límite de cultivos', data.maxCrops || '');
         if (limit !== null) {
@@ -19,4 +20,11 @@ App.registerEntity('adminengineers', {
         }
     },
     afterLoad: App.loadAdminCounts
+});
+
+const $engineerForm = $('#admin-engineer-form');
+$engineerForm.on('reset', () => {
+    $engineerForm.attr('action', '/api/admin/engineers');
+    delete $engineerForm[0].dataset.method;
+    $engineerForm.find('[name=password]').attr('required', true);
 });
