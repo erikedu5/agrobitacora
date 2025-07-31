@@ -19,6 +19,7 @@ App.registerEntity('adminengineers', {
             }).then(() => App.loadData(window.page));
         }
     },
+    skipFormEdit: true,
     afterLoad: App.loadAdminCounts
 });
 

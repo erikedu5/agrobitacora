@@ -11,6 +11,7 @@ App.registerEntity('adminusers', {
             $form.find('[name=password]').val('').removeAttr('required');
         }
     },
+    skipFormEdit: true,
     afterLoad: App.loadAdminCounts
 });
 
