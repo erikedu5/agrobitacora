@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body th:replace="~{layouts/main :: layout(~{::section})}">
+<section th:fragment="content">
+<div class="container mt-4">
+  <h1 class="mb-4">
+    <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
+      <span>Gestión de Facturas</span>
+  </h1>
+  <div class="mb-3">
+    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#billModal">Nueva factura</button>
+  </div>
+  <div class="modal fade" id="billModal" tabindex="-1" aria-labelledby="billModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="billModalLabel">Nueva factura</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="api" method="post" action="/bill">
+            <div class="mb-3">
+              <label class="form-label">Fecha</label>
+              <input type="datetime-local" step="1" name="billDate" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Concepto</label>
+              <input type="text" name="concept" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Costo</label>
+              <input type="number" step="0.01" name="cost" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Tipo de factura</label>
+              <select name="kindBillAssociated" id="kindBillAssociated" class="form-select" required>
+                  <option value="FUMIGATION">Fumigación</option>
+                  <option value="IRRIGATION">Riego</option>
+                  <option value="LABOR">Labor</option>
+                  <option value="NUTRITION">Nutrición</option>
+                  <option value="OTHER">Otros</option>
+              </select>
+            </div>
+            <div class="mb-3 d-none" id="bill-associated-container">
+              <label class="form-label">Relacionado con</label>
+              <select name="idBillAssociated" id="bill-associated" class="form-select"></select>
+            </div>
+            <button type="submit" class="btn btn-success">Crear</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Concepto</th>
+        <th>Costo</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Aquí se mostrarán las facturas -->
+    </tbody>
+  </table>
+
+  <h2 class="mt-5">Resumen de gastos</h2>
+  <form id="bill-summary-form" class="row g-3 mb-3">
+    <div class="col-md-4">
+      <label class="form-label">Desde</label>
+      <input type="date" name="start" class="form-control" required>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Hasta</label>
+      <input type="date" name="end" class="form-control" required>
+    </div>
+    <div class="col-md-4 align-self-end">
+      <button type="submit" class="btn btn-primary">Consultar</button>
+    </div>
+  </form>
+  <table id="bill-summary-table" class="table table-striped d-none">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Concepto</th>
+        <th>Costo</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" class="text-end fw-bold">Total</td>
+        <td id="bill-summary-total"></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+</section>
+</body>
+</html>

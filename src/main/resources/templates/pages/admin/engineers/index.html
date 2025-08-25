@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body th:replace="~{layouts/main :: layout(~{::section})}">
+<section th:fragment="content">
+<div class="container mt-4">
+  <h1 class="mb-4">
+    <a th:href="@{/admin}" class="btn btn-secondary btn-sm me-2">&larr;</a>
+      <span>Ingenieros</span>
+  </h1>
+  <div id="admin-counts" class="mb-4"></div>
+  <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#engineerModal">Nuevo ingeniero</button>
+  <div class="modal fade" id="engineerModal" tabindex="-1" aria-labelledby="engineerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="engineerModalLabel">Nuevo ingeniero</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="admin-engineer-form" class="api" method="post" action="/api/admin/engineers">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">Nombre</label>
+                <input type="text" name="name" class="form-control" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Usuario</label>
+                <input type="text" name="email" class="form-control" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Whatsapp</label>
+                <input type="text" name="whatsapp" class="form-control">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Contraseña</label>
+                <input type="password" name="password" class="form-control" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Límite cultivos</label>
+                <input type="number" name="maxCrops" class="form-control">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success mt-3">Crear</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Usuario</th>
+        <th>Whatsapp</th>
+        <th>Límite</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- engineer rows -->
+    </tbody>
+  </table>
+</div>
+</section>
+</body>
+</html>
