@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
+<head th:replace="~{fragments/head :: head(${title})}"></head>
+<body th:attr="data-page=${pageId}">
+<nav th:replace="~{fragments/nav :: nav}"></nav>
+<main class="page" th:replace="${content}"></main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<div th:replace="~{fragments/scripts :: base-scripts}"></div>
+<script type="module" th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body th:replace="~{layouts/main :: layout(~{::section})}">
+<section th:fragment="content">
+<div class="container mt-4">
+  <h1 class="mb-4">
+    <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
+      <span>Gestión de Fumigaciones</span>
+  </h1>
+
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Fecha aplicación</th>
+      <th>Detalle</th>
+      <th>Productos</th>
+      <th>Mostrar</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Aquí se mostrarán las aplicaciones -->
+    </tbody>
+  </table>
+
+  <hr>
+  <h3 class="mb-4">Creación de Fumigaciones</h3>
+
+  <form class="api mb-4" method="post" action="/fumigation">
+    <div class="row g-3">
+      <div class="col-md-6" hidden="true">
+        <label class="form-label">Tipo de aplicación</label>
+        <select name="applicationType" class="form-select" required>
+          <option value="FUMIGACION">Fumigación</option>
+          <option value="NUTRICION">Nutrición</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Fecha de visita</label>
+        <input type="datetime-local" step="1" name="visitDate" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Fecha de aplicación</label>
+        <input type="datetime-local" step="1" name="applicationDate" class="form-control" required>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Detalle</label>
+        <textarea name="detail" class="form-control" required></textarea>
+      </div>
+      <div class="col-12">
+        <hr>
+        <h5>Productos</h5>
+      </div>
+      <div id="products"></div>
+      <div class="col-12">
+        <button type="button" id="add-product" class="btn btn-secondary btn-sm">Agregar producto</button>
+      </div>
+      <template id="product-template">
+        <div class="row g-3 product-item border p-2 mt-2">
+          <div class="col-md-6">
+            <label class="form-label">Nombre del producto</label>
+            <input type="text" data-field="productName" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Ingrediente activo</label>
+            <input type="text" data-field="activeIngredient" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Dosis</label>
+            <input type="number" data-field="dosis" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Unidad</label>
+            <input type="text" data-field="unit" class="form-control" required>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Condiciones (separadas por coma)</label>
+            <input type="text" data-field="condiciones" data-array="csv" class="form-control">
+          </div>
+          <div class="col-12 text-end">
+            <button type="button" class="btn btn-danger btn-sm remove-product">Eliminar</button>
+          </div>
+        </div>
+      </template>
+    </div>
+      <button type="submit" class="btn btn-success mt-3">Crear</button>
+  </form>
+</div>
+<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detalle de aplicación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="app-info"></p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Producto</th>
+              <th>Ingrediente activo</th>
+              <th>Dosis</th>
+              <th>Unidad</th>
+              <th>Detalles</th>
+            </tr>
+          </thead>
+          <tbody id="detail-table"></tbody>
+        </table>
+        <div class="text-end">
+          <button id="make-order" class="btn btn-primary">Pedir quimicos seleccionados a tienda</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+</body>
+</html>
