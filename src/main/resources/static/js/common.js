@@ -53,6 +53,51 @@
         $toast.on('hidden.bs.toast', () => $toast.remove());
     };
 
+    App.initModalForms = function () {
+        document.querySelectorAll('form.api').forEach((form, idx) => {
+            if (form.closest('.modal') || form.dataset.noModal !== undefined) return;
+            const formId = form.id || `form-${idx}`;
+            form.id = formId;
+            const modalId = `${formId}-modal`;
+            const btnText = form.dataset.btnText || 'Crear';
+            const title = form.dataset.modalTitle || btnText;
+            const parent = form.parentNode;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-success mb-3';
+            btn.textContent = btnText;
+            btn.setAttribute('data-bs-toggle', 'modal');
+            btn.setAttribute('data-bs-target', `#${modalId}`);
+            parent.insertBefore(btn, form);
+
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.id = modalId;
+            modal.tabIndex = -1;
+            modal.innerHTML = '<div class="modal-dialog"><div class="modal-content">'
+                + `<div class="modal-header"><h5 class="modal-title">${title}</h5>`
+                + '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>'
+                + '<div class="modal-body"></div></div></div>';
+            const body = modal.querySelector('.modal-body');
+            body.appendChild(form);
+            document.body.appendChild(modal);
+            form.dataset.baseAction = form.getAttribute('action');
+            modal.addEventListener('hidden.bs.modal', () => {
+                form.reset();
+                form.setAttribute('action', form.dataset.baseAction);
+                delete form.dataset.method;
+            });
+        });
+    };
+
+    App.openFormModal = function (form) {
+        const modalEl = form.closest('.modal');
+        if (modalEl) {
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            modal.show();
+        }
+    };
+
     App.confirm = function (message) {
         return new Promise(resolve => {
             const $modal = $('#confirmModal');
@@ -485,6 +530,7 @@
             App.fillForm($form[0], item);
             $form.attr('action', `${location.pathname}/${item.id}`);
             $form[0].dataset.method = 'PUT';
+            App.openFormModal($form[0]);
         });
         $tbody.find('button.show-detail').on('click', function () {
             const item = JSON.parse(decodeURIComponent($(this).closest('tr').data('item')));
@@ -522,6 +568,8 @@
                 }
             }
         });
+
+        App.initModalForms();
 
         App.attachProductAutoFill = function () {
             $(document).off('blur.productSearch')
@@ -719,6 +767,11 @@
                 App.notify('Guardado correctamente', 'success');
                 App.loadData(page);
                 this.reset();
+                const modal = this.closest('.modal');
+                if (modal) {
+                    const m = bootstrap.Modal.getInstance(modal);
+                    if (m) m.hide();
+                }
             } else {
             if (isOffline || res.offline) {
                 const type = this.action.includes('/fumigation') ? 'fumigation' :
