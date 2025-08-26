@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body th:replace="~{layouts/main :: layout(~{::section})}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main :: layout(~{::section})}">
 <section th:fragment="content">
 <div class="container mt-4">
   <h1 class="mb-4">
@@ -62,5 +61,4 @@
   </table>
 </div>
 </section>
-</body>
 </html>

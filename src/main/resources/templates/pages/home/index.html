@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body th:replace="~{layouts/main :: layout(~{::section})}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main :: layout(~{::section})}">
 <section th:fragment="content">
 <div class="container-fluid mt-4">
   <h1 class="mb-4"><span>Condiciones climáticas</span></h1>
@@ -21,5 +20,4 @@
     </div>
   </div>
 </section>
-</body>
 </html>
