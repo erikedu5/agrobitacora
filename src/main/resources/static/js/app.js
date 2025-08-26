@@ -13,11 +13,18 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const page = document.body?.getAttribute('data-page');
-  if (page) {
-    import(`/js/pages/${page}/index.js`).then(m => m?.init?.()).catch(() => {
-      import(`/js/pages/${page}.js`).then(m => m?.init?.()).catch(() => {});
-    });
-  }
-});
+function loadPageModule() {
+  const body = document.body || document.getElementsByTagName('body')[0];
+  const pageAttr = body?.getAttribute('data-page') ||
+    document.documentElement?.getAttribute('data-page');
+  if (!pageAttr) return;
+  import(`/js/pages/${pageAttr}/index.js`).then(m => m?.init?.()).catch(() => {
+    import(`/js/pages/${pageAttr}.js`).then(m => m?.init?.()).catch(() => {});
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadPageModule);
+} else {
+  loadPageModule();
+}
