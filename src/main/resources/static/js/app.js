@@ -13,9 +13,11 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-const page = document.body.getAttribute('data-page');
-if (page) {
-  import(`/js/pages/${page}/index.js`).then(m => m?.init?.()).catch(() => {
-    import(`/js/pages/${page}.js`).then(m => m?.init?.()).catch(() => {});
-  });
-}
+document.addEventListener('DOMContentLoaded', () => {
+  const page = document.body?.getAttribute('data-page');
+  if (page) {
+    import(`/js/pages/${page}/index.js`).then(m => m?.init?.()).catch(() => {
+      import(`/js/pages/${page}.js`).then(m => m?.init?.()).catch(() => {});
+    });
+  }
+});
