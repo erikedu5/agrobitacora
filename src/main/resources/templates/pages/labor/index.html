@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main :: layout(~{::section})}">
+<section th:fragment="content">
+<div class="container mt-4">
+  <h1 class="mb-4">
+    <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
+      <span>Gestión de Labores</span>
+  </h1>
+  <div class="mb-3">
+    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#laborModal">Nueva labor</button>
+  </div>
+  <div class="modal fade" id="laborModal" tabindex="-1" aria-labelledby="laborModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="laborModalLabel">Nueva labor</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="api" method="post" action="/labor">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Fecha</label>
+                <input type="datetime-local" step="1" name="laborDate" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Tipo</label>
+                <input type="text" name="kindLabor" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Tiempo</label>
+                <input type="number" name="timeLabor" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Trabajadores</label>
+                <input type="number" name="workers_number" class="form-control" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Descripción</label>
+                <textarea name="description" class="form-control" required></textarea>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success mt-3">Crear</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tipo</th>
+        <th>Fecha</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Aquí se mostrarán las labores -->
+    </tbody>
+  </table>
+</div>
+</section>
+</html>

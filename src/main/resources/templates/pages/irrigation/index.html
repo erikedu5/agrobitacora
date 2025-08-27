@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main :: layout(~{::section})}">
+<section th:fragment="content">
+<div class="container mt-4">
+  <h1 class="mb-4">
+    <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
+      <span>Gestión de Riegos</span>
+  </h1>
+  <div class="mb-3">
+    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#irrigationModal">Nuevo riego</button>
+  </div>
+  <div class="modal fade" id="irrigationModal" tabindex="-1" aria-labelledby="irrigationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="irrigationModalLabel">Nuevo riego</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="api" method="post" action="/irrigation">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Fecha</label>
+                <input type="datetime-local" step="1" name="date" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Tipo</label>
+                <select name="type" class="form-select" required>
+                  <option value="ASPERSION">Aspersión</option>
+                  <option value="GOTEO">Goteo</option>
+                  <option value="GRAVEDAD">Gravedad</option>
+                  <option value="HIDROPONICO">Hidropónico</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Duración (minutos)</label>
+                <input type="number" name="timeInIrrigationInMinutes" class="form-control" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success mt-3">Crear</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Tipo</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Aquí se listarán los riegos -->
+    </tbody>
+  </table>
+</div>
+</section>
+</html>

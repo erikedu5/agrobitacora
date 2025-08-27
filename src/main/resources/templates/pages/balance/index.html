@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main :: layout(~{::section})}">
+<section th:fragment="content">
+<div class="container mt-4">
+  <h1 class="mb-4">
+    <a th:href="@{/}" class="btn btn-secondary btn-sm me-2">&larr;</a>
+    Balance general
+  </h1>
+  <form id="balance-form" class="row g-3 mb-3">
+    <div class="col-md-4">
+      <label class="form-label">Desde</label>
+      <input type="date" name="start" class="form-control" required>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Hasta</label>
+      <input type="date" name="end" class="form-control" required>
+    </div>
+    <div class="col-md-4 align-self-end">
+      <button type="submit" class="btn btn-primary">Consultar</button>
+    </div>
+  </form>
+  <table id="balance-table" class="table table-striped d-none">
+    <tbody>
+      <tr><th>Gastos</th><td id="balance-bills"></td></tr>
+      <tr><th>Ventas</th><td id="balance-sales"></td></tr>
+      <tr><th>Balance</th><td id="balance-total"></td></tr>
+    </tbody>
+  </table>
+</div>
+</section>
+</html>

@@ -482,6 +482,11 @@
             if (typeof config.onEdit === 'function') config.onEdit(item);
             const $form = $('form.api');
             if ($form.length === 0 || config.skipFormEdit) return;
+            const modalEl = $form.closest('.modal')[0];
+            if (modalEl) {
+                const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                modal.show();
+            }
             App.fillForm($form[0], item);
             $form.attr('action', `${location.pathname}/${item.id}`);
             $form[0].dataset.method = 'PUT';
@@ -719,6 +724,11 @@
                 App.notify('Guardado correctamente', 'success');
                 App.loadData(page);
                 this.reset();
+                const modalEl = this.closest('.modal');
+                if (modalEl) {
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+                }
             } else {
             if (isOffline || res.offline) {
                 const type = this.action.includes('/fumigation') ? 'fumigation' :
